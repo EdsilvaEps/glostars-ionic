@@ -1,0 +1,53 @@
+/* styles from the initial page */
+.logbackground {
+    background: #e6005c;
+    font-style: italic;
+    color: white;
+    text-align: center;
+    
+}
+
+.pad {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.logimg {
+    padding-left: 80px;
+    padding-top: 50px;
+}
+
+.item.item-input{
+    background-color: transparent;
+    border-top: none;
+    border-left: 40px;
+    border-right: 40px;
+}
+
+.logbutton {
+    border: solid 1px white;
+    background-color: transparent;
+    font-style: italic;
+    color: white;
+    border-radius: 30;
+}
+
+/* styles for the sign up page */
+.signupbackground {
+    background: #b3c6ff;
+    font-style: italic;
+    
+}
+
+.centerPad{
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.test {
+    margin-top: 20px;
+    
+}
+

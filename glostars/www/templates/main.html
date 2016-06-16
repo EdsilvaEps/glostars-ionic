@@ -1,0 +1,47 @@
+<ion-view>
+    <ion-nav-buttons side="right">
+        <div class="bar bar-header item-input-inset">
+            <label class="item-input-wrapper textbox-search">
+                <i class="icon ion-ios7-search placeholder-icon"></i>
+                <input type="search" placeholder="search">
+            </label>
+        </div>
+    </ion-nav-buttons>
+    <ion-content>
+        <div class="list card">
+            <!-- TODO: make this div repeat for every picture available -->
+            <div class="item item-avatar">
+                <img src="../img/0,5.jpg"> <!-- get image from user -->
+                <!-- TODO make factory service to get user data from server -->
+                <h3>{{user.name}}</h3>
+                <!-- TODO get user name -->
+                <p>Something about this picture</p>
+                <!-- TODO get user comment -->
+            </div>
+            <div class="item item-image">
+                <img src="../img/3.jpg">
+                <!-- TODO get image from user-->
+            </div>
+            <p>
+                <a href="#" class="subdued">1 Like</a>
+                <a href="#" class="subdued">5 Comments</a>
+            </p>
+            
+        </div>
+        
+        
+        
+        
+    </ion-content>
+    <div class="tabs tabs-icon-only">
+        <a class="tab-item">
+            <i class="icon ion-home"></i>
+        </a>
+        <a class="tab-item">
+            <i class="icon ion-camera"></i>
+        </a>
+        <a class="tab-item">
+            <i class="icon ion-ribbon-b"></i>
+        </a>
+</div>
+</ion-view>
