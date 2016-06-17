@@ -1,4 +1,5 @@
-<ion-view class="signupbackground pad">
+<ion-view class="signupbackground pad" hide-nav-bar="true">
+    
     <ion-content class="pad">
         <div class="row">
             <h3>Sign up</h3>
@@ -11,28 +12,28 @@
             <p style="text-align: center">or</p>
         </div>
         <!-- TODO: build the js functions and variables for this form  -->
-        <form ng-submit="signUp()">
+        <form ng-submit="createAcc()">
             <div class="list">
                 <label class="item item-input">
-                    <span class="input-label" style="color:white">First Name</span><input type="email" ng-model="">
+                    <span class="input-label" style="color:white">First Name</span><input type="email" ng-model="userinfo.firstname">
                 </label>
                 <label class="item item-input">
-                    <span class="input-label" style="color:white">Last Name</span><input type="email" ng-model="">
+                    <span class="input-label" style="color:white">Last Name</span><input type="email" ng-model="userinfo.lastname">
                 </label>
                 <label class="item item-input">
                     <span class="input-label" style="color:white;">Email</span>
-                    <input type="email" ng-model="loginData.username">
+                    <input type="email" ng-model="userinfo.email">
                 </label>
                 <label class="item item-input">
-                    <span class="input-label" style="color:white;text-align:center;">Password</span><input type="password" ng-model="">
+                    <span class="input-label" style="color:white;text-align:center;">Password</span><input type="password" ng-model="userinfo.password">
                 </label>
                 <label class="item item-input">
-                    <ion-radio ng-model="choice" ng-value="Male">Male</ion-radio>
-                    <ion-radio ng-model="choice" ng-value="Female">Female</ion-radio>
+                    <ion-radio ng-model="userinfo.sex" ng-value="Male">Male</ion-radio>
+                    <ion-radio ng-model="userinfo.sex" ng-value="Female">Female</ion-radio>
                 </label>
                 <label class="item item-input">
-                    <span class="input-label">Date</span>
-                    <input type="date">
+                    <span class="input-label">Birthday</span>
+                    <input type="date" ng-model="userinfo.bday">
                 </label>
                 <br><p><small>By clicking create account you agree with our <a href="#">Terms of use</i></small></p>
                 <button class="button button-block button-positive" type="submit">Create account</button>

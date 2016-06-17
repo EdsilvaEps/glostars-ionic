@@ -26,6 +26,14 @@
     border-right: 40px;
 }
 
+.card-1{
+    background-color: #e6005c;
+    box-shadow: none;
+    
+        
+    
+}
+
 .logbutton {
     border: solid 1px white;
     background-color: transparent;

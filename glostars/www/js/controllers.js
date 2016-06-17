@@ -28,7 +28,7 @@ angular.module('starter.controllers', [])
   $scope.login = function() {
     $scope.modal.show();
   };
-
+/*
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
@@ -39,7 +39,11 @@ angular.module('starter.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
+  
+  */
 })
+
+
 
 .controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
@@ -55,6 +59,30 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
     //change this controller to 'UserCtrl' 
 })
+
+
+.controller('LoginCtrl', function($scope){
+    //controller to handle the login
+    $scope.loginData = {};
+    //TODO: encrypt data
+    $scope.doLogin = function() {
+        console.log('Doing login', $scope.loginData);
+        // Simulate a login delay. Remove this and replace with your login
+        // code if using a login system
+    }
+})
+
+.controller('SignUpCtrl', function($scope){
+    //get sign up information
+    //TODO: encrypt data
+    $scope.userinfo = {};
+    
+    $scope.createAcc = function(){
+        console.log('acc created', $scope.userinfo);
+        //sign up function here
+    }
+})
+
 
 .controller('HomeCtrl', ['$scope', function($scope){
     $scope.users = [{}]; //get this from a factory service

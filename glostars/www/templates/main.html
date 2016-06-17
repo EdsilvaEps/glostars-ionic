@@ -8,7 +8,7 @@
         </div>
     </ion-nav-buttons>
     <ion-content>
-        <div class="list card">
+        <div class="card list">
             <!-- TODO: make this div repeat for every picture available -->
             <div class="item item-avatar">
                 <img src="../img/0,5.jpg"> <!-- get image from user -->
@@ -22,10 +22,21 @@
                 <img src="../img/3.jpg">
                 <!-- TODO get image from user-->
             </div>
-            <p>
-                <a href="#" class="subdued">1 Like</a>
-                <a href="#" class="subdued">5 Comments</a>
-            </p>
+            <div class="row no-padding">
+                <div class="col">
+                    <button clear small danger>
+                        <i class="icon ion-android-share-alt"></i>
+                        Share
+                    </button>
+                     
+                </div>
+                <div class="col text-right">
+                    <button clear small danger>
+                        <i class="icon ion-chatbox-working"></i>
+                        Comment
+                    </button>
+                </div>
+            </div>
             
         </div>
         
