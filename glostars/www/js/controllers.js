@@ -62,14 +62,23 @@ angular.module('starter.controllers', [])
 
 
 .controller('LoginCtrl', function($scope){
-    //controller to handle the login
+    
+    $scope.options = {
+        loop: false,
+        speed: 400,
+    }
+    
+    
     $scope.loginData = {};
     //TODO: encrypt data
+    //TODO: the swipe screen has three views now, handle them here
     $scope.doLogin = function() {
         console.log('Doing login', $scope.loginData);
         // Simulate a login delay. Remove this and replace with your login
         // code if using a login system
     }
+    
+    
 })
 
 .controller('SignUpCtrl', function($scope){
