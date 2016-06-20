@@ -1,4 +1,5 @@
-angular.module('starter.controllers', [])
+angular.module('glostarsApp', [])
+.constant("baseURL", "http://localhost:3000/")
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
@@ -93,10 +94,27 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('HomeCtrl', ['$scope', function($scope){
-    $scope.users = [{}]; //get this from a factory service
+.controller('HomeCtrl', ['$scope','mainFactory', function($scope, mainFactory){
+    
+    $scope.message = "Loading...";
+    $scope.showFeed = false;
+    
+    //getting the list of all the users and all their data
+    //from mainFactory in services.js
+    mainFactory.getUsers().query(
+        function(response){
+            
+            $scope.users = response;
+            $scope.showFeed = true;
+        },
+        function(response){
+            $scope.message = "Error: " + response.status + " " + response.statusText;
+        });
+    //TODO: render all the pictures from all the users
+    //doesnt matter in what order at the main page
     //TODO: users are only the friends of the current user
-    //TODO: pictures should have date of uploading, show only the latest 
+    //TODO: implement friends on the json server
+    //TODO: pictures should have date of uploading, show only the latest, make date filter
     
 }])
 
