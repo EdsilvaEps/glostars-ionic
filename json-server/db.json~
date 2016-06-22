@@ -1,83 +1,90 @@
 {
-  "users":[
-     {
-	"id":0,
-	"name": "Amanda de Paula",
-	"image": "images/amanda.jpg",
-	"sex": "female",
-	"birthday":"12/12/1995",
-	"description":"computer engineering student at Federal University of AM, Brazil.",
-	"photos":[
-	  {
-	    "img":"images/roadmap-to-landscapes-finance.jpg",
-	    "caption":"time to go back home",
-  	    "rating":0,
-	    "date":"2015-02-13T17:57:28.556094Z",
-            "comments":[]
-	  },
-	  {
-	    "img":"images/rh.jpg",
-	    "caption":"last trip to Tallin",
-  	    "rating":0,
-	    "date":"2012-10-16T17:57:28.556094Z",
-            "comments":[]	
-	  }
-	]
-     },
-     {
-	"id":1,
-	"name": "Edson N Silva",
-	"image": "images/ed.jpg",
-	"sex": "male",
-	"birthday":"03/05/1995",
-	"description":"computer engineering student at Lappeenranta University of Tech, Finland.",
-	"photos":[
-	  {
-	    "img":"images/bbq.jpeg",
-	    "caption":"will miss you guys forever",
-  	    "rating":0,
-	    "date":"2011-12-02T17:57:28.556094Z",
-            "comments":[]
-	  },
-	  {
-	    "img":"images/v.jpg",
-	    "caption":"never stop learning",
-  	    "rating":0,
-	    "date":"2013-12-02T17:57:28.556094Z",
-            "comments":[]	
-	  }
-	]
-
-     },
-     {
-	"id":2,
-	"name": "Pauliina Junnikkala",
-	"image": "images/linna.jpg",
-	"sex": "female",
-	"birthday":"31/10/1989",
-	"description":"psychologist at Kempele, Oulu",
-	"photos":[
-	  {
-	    "img":"images/linnapic1.jpg",
-	    "caption":"eu sinto sua falta, i feel lack of you",
-  	    "rating":0,
-	    "date":"2011-20-02T17:57:28.556094Z",
-            "comments":[]
-	  },
-	  {
-	    "img":"images/v.jpg",
-	    "caption":"never stop learning",
-  	    "rating":0,
-	    "date":"2013-12-02T17:57:28.556094Z",
-            "comments":[]	
-	  }
-	]
-
-     }    
-
-
-   ]
-
-
-
+  "users": [
+    {
+      "id": 0,
+      "name": "Amanda de Paula",
+      "image": "images/amanda.jpg",
+      "sex": "female",
+      "birthday": "12/12/1995",
+      "description": "computer engineering student at Federal University of AM, Brazil."
+    },
+    {
+      "id": 1,
+      "name": "Edson N Silva",
+      "image": "images/ed.jpg",
+      "sex": "male",
+      "birthday": "03/05/1995",
+      "description": "computer engineering student at Lappeenranta University of Tech, Finland."
+    },
+    {
+      "id": 2,
+      "name": "Pauliina Junnikkala",
+      "image": "images/linna.jpg",
+      "sex": "female",
+      "birthday": "31/10/1989",
+      "description": "psychologist at Kempele, Oulu"
+    }
+  ],
+  "photos": [
+    {
+      "id": 0,
+      "userId": 0,
+      "author": "Amanda de Paula",
+      "img": "images/roadmap-to-landscapes-finance.jpg",
+      "caption": "time to go back home",
+      "rating": 0,
+      "date": "2015-02-13T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 1,
+      "userId": 0,
+      "author": "Amanda de Paula",
+      "img": "images/rh.jpg",
+      "caption": "last trip to Tallin",
+      "rating": 0,
+      "date": "2012-10-16T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "author": "Edson N Silva",
+      "img": "images/bbq.jpeg",
+      "caption": "will miss you guys forever",
+      "rating": 0,
+      "date": "2011-12-02T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "author": "Edson N Silva",
+      "img": "images/v.jpg",
+      "caption": "never stop learning",
+      "rating": 0,
+      "date": "2013-12-02T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 4,
+      "userId": 2,
+      "author": "Pauliina Junnikkala",
+      "img": "images/linnapic1.jpg",
+      "caption": "eu sinto sua falta, i feel lack of you",
+      "rating": 0,
+      "date": "2011-20-02T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 5,
+      "userId": 2,
+      "author": "Pauliina Junnikkala",
+      "img": "images/lands.jpg",
+      "caption": "moments",
+      "rating": 0,
+      "date": "2013-23-02T17:57:28.556094Z",
+      "comments": []
+    }
+  ]
 }

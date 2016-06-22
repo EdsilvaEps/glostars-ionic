@@ -1,40 +1,53 @@
 <ion-view>
+    <ion-nav-bar class=" home-bar">
+    </ion-nav-bar>
     <ion-nav-buttons side="right">
-        <div class="bar bar-header item-input-inset">
-            <label class="item-input-wrapper textbox-search">
-                <i class="icon ion-ios7-search placeholder-icon"></i>
-                <input type="search" placeholder="search">
-            </label>
+            <div class="bar bar-header item-input-inset" style="border-bottom:none;">
+                <label class="item-input-wrapper textbox-search">
+                    <i class="icon ion-ios7-search placeholder-icon"></i>
+                    <input type="search" placeholder="search">
+                </label>
+            </div>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="left">
+        <div class="bar bar-header item-input-inset" style="border-bottom:none;">
+              <img src="../img/Glostars_Logo-02_White_PNG.png" style="width:100px">
+  
         </div>
     </ion-nav-buttons>
+    
     <ion-content>
-        <div class="list card">
+        <div class="list card" ng-repeat="photo in photos">
             <!-- TODO: make this div repeat for every picture available -->
-            <div class="item item-avatar">
-                <img src="../img/0,5.jpg"> <!-- get image from user -->
+            <div class="item item-avatar" style="border-bottom:none">
+                <img ng-src="../img/0,5.jpg"> <!-- get image from user -->
                 <!-- TODO make factory service to get user data from server -->
-                <h3>{{user.name}}</h3>
+                <h3>{{photo.author}}</h3>
                 <!-- TODO get user name -->
-                <p>Something about this picture</p>
+                <p>{{photo.caption}}</p>
                 <!-- TODO get user comment -->
+                
+            </div>
+            <div class="col text-left">
+                <p style="color:#D1D0CE; padding-left:10px">5m ago</p>
+                <!-- filter photos by time -->
             </div>
             <div class="item item-image">
-                <img src="../img/3.jpg">
+                <img ng-src="{{baseURL+photo.image}}">
                 <!-- TODO get image from user-->
             </div>
             <div class="row no-padding">
-                <div class="col">
-                    <button clear small danger>
-                        <i class="icon ion-android-share-alt"></i>
-                        Share
-                    </button>
+                <div class="col" style="border-right:solid gray 1px">
+                    <i class="icon ion-thumbsup" style="padding-left:25px"> {{photo.rating}}</i><!-- TODO get number of rates -->
+                </div>
+                <div class="col" style="border-right:solid black 1px">
+                    <i class="icon ion-chatbox-working" style="padding-left:10px"> Comment</i> <!-- TODO Open comment page -->
+                        
                      
                 </div>
                 <div class="col text-right">
-                    <button clear small danger>
-                        <i class="icon ion-chatbox-working"></i>
-                        Comment
-                    </button>
+                    <i class="icon ion-android-share-alt" style="padding-right:25px"> Share</i> <!-- TODO share stuff -->
+                        
                 </div>
             </div>
             

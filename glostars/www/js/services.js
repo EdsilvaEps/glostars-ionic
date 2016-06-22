@@ -15,18 +15,23 @@
 // then run the karma file with:
 // sudo karma start karma.conf.js
 
-angular.module('glostarsApp')
+angular.module('starter.services',['ngResource'])
         .constant("baseURL", "http://localhost:3000/")
-        .service('mainFactory',['$resource', 'baseURL', function($resourse, baseURL){
+        .factory('mainFactory',['$resource', 'baseURL', function($resource, baseURL){
             
-            this.getUsers = function(){
                 
-                //this function returns all the data about the users currently in the database
-                return $resourse(baseURL+"users/:id", null,{'update':{method:'PUT'}});
-            };
+                //this function returns ALL the photos and data about them uploaded by users currently in the database
+                return $resource(baseURL+"photos/:id", null,{'update':{method:'PUT'}});
             
             
             
+        }])
+
+        .factory('usersFactory', ['$resource', 'baseURL', function($resource, baseURL){
+            
+            //this function returns ALL the users and data about them
+            return $resource(baseURL+"users/:id", null,{'update':{method:'PUT'}});
+              
         }])
 
 ;
