@@ -99,7 +99,7 @@ angular.module('starter.controllers', [])
     $scope.baseURL = baseURL;
     $scope.message = "Loading...";
     $scope.showFeed = false;
-    
+    $scope.users = [];
     
     //getting the list of all the users and all their data
     //from mainFactory in services.js
@@ -109,13 +109,44 @@ angular.module('starter.controllers', [])
             
             $scope.photos = response;
             $scope.showFeed = true;
+            
+            $scope.users = usersFactory.query(
+                function(response){
+                    
+                    $scope.users = response;
+                });
+            
+            
         },
         function(response){
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
     
     
-    //TODO: render all the pictures from all the users
+    
+    
+    /*
+    
+    $scope.getUser = function(userId){
+        
+        $scope.user = usersFactory.get({id:userId}).$promise.then(
+            function(response){
+                
+                $scope.user = response;
+            });
+        
+        $scope.users.push($scope.user);
+        
+        
+        console.log();
+    }
+    
+    
+    
+    */
+    
+    
+    //TODO: render all the pictures from all the users - DONE
     //doesnt matter in what order at the main page - DONE
     //TODO: users are only the friends of the current user
     //TODO: implement friends on the json server

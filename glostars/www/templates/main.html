@@ -20,7 +20,7 @@
         <div class="list card" ng-repeat="photo in photos">
             <!-- TODO: make this div repeat for every picture available -->
             <div class="item item-avatar" style="border-bottom:none">
-                <img ng-src="../img/0,5.jpg"> <!-- get image from user -->
+                <img ng-src="{{baseURL+users[photo.userId].image}}"> <!-- get image from user -->
                 <!-- TODO make factory service to get user data from server -->
                 <h3>{{photo.author}}</h3>
                 <!-- TODO get user name -->
