@@ -17,7 +17,7 @@
     </ion-nav-buttons>
     
     <ion-content>
-        <div class="list card" ng-repeat="photo in photos">
+        <div class="list card" ng-repeat="photo in photos | orderBy:'-date'">
             <!-- TODO: make this div repeat for every picture available -->
             <div class="item item-avatar" style="border-bottom:none">
                 <img ng-src="{{baseURL+users[photo.userId].image}}"> <!-- get image from user -->
@@ -29,7 +29,7 @@
                 
             </div>
             <div class="col text-left">
-                <p style="color:#D1D0CE; padding-left:10px">5m ago</p>
+                <p style="color:#D1D0CE; padding-left:10px">{{photo.date | date:'medium'}}</p>
                 <!-- filter photos by time -->
             </div>
             <div class="item item-image">
