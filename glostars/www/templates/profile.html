@@ -1,16 +1,55 @@
 <ion-view>
     <ion-nav-bar class="home-bar"></ion-nav-bar>
+    
     <ion-content>
-        <div class= "list" style="padding-top:15px">
+        <!-- profile picture and status -->
+        <div class= "list" style="padding-top:10px; border-bottom:solid 1px">
             <a class="item item-thumbnail-left" style="border:none">
                 <img src="../img/0,5.jpg" alt="example">
                 <h2><strong>Joanna Q. Public</strong></h2>
                 <p>Joanna's very own profile status</p>
                 <i class="icon ion-gear-b"></i>
                 
-            </a>
-            
+            </a>    
         </div>
+        <!-- switch views tab -->
+        <div class="button-bar button-block">
+            <a class="button" ng-click="select(1)" style="border:solid 1px"><i class="icon ion-images"></i></a>
+            <a class="button" ng-click="select(2)" style="border:solid 1px"><i class="icon ion-ribbon-b"></i></a>
+            <a class="button" ng-click="select(3)" style="border:solid 1px"><i class="icon ion-clipboard"></i></a>
+            <a class="button" ng-click="select(4)" style="border:solid 1px"><i class="icon ion-ios-people"> 0</i></a>
+        </div>
+        <!-- photos buttom (list view) --> 
+        <div class="list" ng-if="isSelected(1)">
+            <div class="card">
+                <div class="item item-avatar" style="border-bottom:none">
+                    <p>something</p>
+                </div>
+            
+                <div class="item item-image">
+                    <img src="../img/5.jpg">
+                </div>
+                <div class="row no-padding">
+                    <div class="col" style="border-right:solid gray 1px">
+                    <i class="icon ion-thumbsup" style="padding-left:25px"> 5 likes</i><!-- TODO get number of rates -->
+                    </div>
+                    <div class="col" style="border-right:solid black 1px">
+                    <i class="icon ion-chatbox-working" style="padding-left:10px"> Comment</i> <!-- TODO Open comment page -->
+                        
+                     
+                    </div>
+                    <div class="col text-right">
+                    <i class="icon ion-android-share-alt" style="padding-right:25px"> Share</i> <!-- TODO share stuff -->
+                        
+                    </div>
+                </div>
+            </div>
+        </div><!--/list -->
+               
+        
+        
+        
+    
         
     
         

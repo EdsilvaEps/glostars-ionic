@@ -125,32 +125,28 @@ angular.module('starter.controllers', [])
     
     
     
-    /*
-    
-    $scope.getUser = function(userId){
-        
-        $scope.user = usersFactory.get({id:userId}).$promise.then(
-            function(response){
-                
-                $scope.user = response;
-            });
-        
-        $scope.users.push($scope.user);
-        
-        
-        console.log();
-    }
-    
-    
-    
-    */
-    
-    
-    //TODO: render all the pictures from all the users - DONE
+    //TODO: render all the pictures from all the users
     //doesnt matter in what order at the main page - DONE
     //TODO: users are only the friends of the current user
     //TODO: implement friends on the json server
-    //TODO: pictures should have date of uploading, show only the latest, make date filter
+    //TODO: pictures should have date of uploading, show only the latest, make date filter - DONE (partial)
+    
+}])
+
+.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL',function($scope, mainFactory, userFactory, baseURL){
+    
+    $scope.baseURL = baseURL;
+    $scope.tab = 1;
+    
+    $scope.select = function(setTab){
+        $scope.tab = setTab;
+        
+    };
+    
+    $scope.isSelected = function(checkTab){
+        return ($scope.tab === checkTab);
+    }
+    
     
 }])
 
