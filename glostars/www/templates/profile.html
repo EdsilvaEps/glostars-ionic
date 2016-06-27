@@ -5,9 +5,9 @@
         <!-- profile picture and status -->
         <div class= "list" style="padding-top:10px; border-bottom:solid 1px">
             <a class="item item-thumbnail-left" style="border:none">
-                <img src="../img/0,5.jpg" alt="example">
-                <h2><strong>Joanna Q. Public</strong></h2>
-                <p>Joanna's very own profile status</p>
+                <img ng-src="{{baseURL+user.image}}" alt="{{user.name}}">
+                <h2><strong>{{user.name}}</strong></h2>
+                <p>{{user.description}}</p>
                 <i class="icon ion-gear-b"></i>
                 
             </a>    
@@ -21,17 +21,17 @@
         </div>
         <!-- photos buttom (list view) --> 
         <div class="list" ng-if="isSelected(1)">
-            <div class="card">
+            <div class="card" ng-repeat="photo in photos | filter:{userId:user.id}">
                 <div class="item item-avatar" style="border-bottom:none">
                     <p>something</p>
                 </div>
             
                 <div class="item item-image">
-                    <img src="../img/5.jpg">
+                    <img ng-src="{{baseURL+photo.image}}">
                 </div>
                 <div class="row no-padding">
                     <div class="col" style="border-right:solid gray 1px">
-                    <i class="icon ion-thumbsup" style="padding-left:25px"> 5 likes</i><!-- TODO get number of rates -->
+                    <i class="icon ion-thumbsup" style="padding-left:25px"> {{photo.rating}}</i><!-- TODO get number of rates -->
                     </div>
                     <div class="col" style="border-right:solid black 1px">
                     <i class="icon ion-chatbox-working" style="padding-left:10px"> Comment</i> <!-- TODO Open comment page -->
@@ -45,6 +45,17 @@
                 </div>
             </div>
         </div><!--/list -->
+        <div class="list" ng-if="isSelected(2)">
+            <p>Public pictures</p>
+        </div>
+        <div class="list" ng-if="isSelected(3)">
+            <p>List of notifications</p>
+        </div>
+        <div class="list" ng-if="isSelected(4)">
+            <p>List of friends</p>
+        </div>
+        
+        
                
         
         

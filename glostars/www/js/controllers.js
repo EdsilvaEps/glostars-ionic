@@ -137,6 +137,24 @@ angular.module('starter.controllers', [])
     
     $scope.baseURL = baseURL;
     $scope.tab = 1;
+    $scope.usrId = 0;
+    //$scope.photos = photos;
+    //$scope.users = users;
+    
+    $scope.user = userFactory.get({id:$scope.usrId});
+    
+    $scope.photos = mainFactory.query(
+        function(response){
+            
+            $scope.photos = response;
+            $scope.showFeed = true;
+            
+        },
+        function(response){
+            $scope.message = "Error: " + response.status + " " + response.statusText;
+        });
+    
+    
     
     $scope.select = function(setTab){
         $scope.tab = setTab;
@@ -145,9 +163,9 @@ angular.module('starter.controllers', [])
     
     $scope.isSelected = function(checkTab){
         return ($scope.tab === checkTab);
-    }
+    };
     
-    
+    //TODO: include params
 }])
 
 
