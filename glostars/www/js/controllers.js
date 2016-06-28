@@ -133,15 +133,14 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL',function($scope, mainFactory, userFactory, baseURL){
+.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal',function($scope, mainFactory, userFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal){
     
     $scope.baseURL = baseURL;
     $scope.tab = 1;
-    $scope.usrId = 0;
+    $scope.user = user;
     //$scope.photos = photos;
     //$scope.users = users;
     
-    $scope.user = userFactory.get({id:$scope.usrId});
     
     $scope.photos = mainFactory.query(
         function(response){
@@ -165,7 +164,19 @@ angular.module('starter.controllers', [])
         return ($scope.tab === checkTab);
     };
     
-    //TODO: include params
+    $scope.myGoBack = function(){
+        $ionicHistory.goBack();
+    };
+    
+    $ionicModal.fromTemplateUrl('templates/notifications.html',{
+        scope: $scope
+    }).then(function(modal){
+        $scope.modal = modal;
+    });
+    
+    //TODO: include params - DONE
+    //TODO: make modal for notifications - DONE
+    //TODO: make page for friends
 }])
 
 

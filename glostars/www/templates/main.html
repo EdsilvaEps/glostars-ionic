@@ -1,31 +1,34 @@
 <ion-view>
-    <ion-nav-bar class=" home-bar">
-    </ion-nav-bar>
-    <ion-nav-buttons side="right">
-            <div class="bar bar-header item-input-inset" style="border-bottom:none;">
-                <label class="item-input-wrapper textbox-search">
-                    <i class="icon ion-ios7-search placeholder-icon"></i>
-                    <input type="search" placeholder="search">
-                </label>
-            </div>
-    </ion-nav-buttons>
-    <ion-nav-buttons side="left">
-        <div class="bar bar-header item-input-inset" style="border-bottom:none;">
+    <ion-nav-bar class="home-bar">
+        <ion-nav-buttons side="left">
+            <div class="bar bar-header item-input-inset" style="border-bottom:none; ">
               <img src="../img/Glostars_Logo-02_White_PNG.png" style="width:100px">
   
-        </div>
-    </ion-nav-buttons>
+            </div>
+        </ion-nav-buttons>
+        <ion-nav-buttons side="right">
+            <div class="bar bar-header" style="border-bottom:none;">
+                <button class="button" style="background-color: transparent; height:45px; ">
+                    <i class="icon ion-ios-search-strong"></i>
+                    
+                </button>
+            </div>
+        </ion-nav-buttons>
+        
+    </ion-nav-bar>
+    
+     
     
     <ion-content>
         <div class="list card" ng-repeat="photo in photos | orderBy:'-date'">
             <!-- TODO: make this div repeat for every picture available -->
             <div class="item item-avatar" style="border-bottom:none">
-                <img ng-src="{{baseURL+users[photo.userId].image}}"> <!-- get image from user -->
-                <!-- TODO make factory service to get user data from server -->
-                <h3>{{photo.author}}</h3>
-                <!-- TODO get user name -->
+                
+                <img ui-sref="app.profile({id:photo.userId})" ng-src="{{baseURL+users[photo.userId].image}}">
+        
+                <a ui-sref="app.profile({id:photo.userId})"> 
+                <h3>{{photo.author}}</h3></a>
                 <p>{{photo.caption}}</p>
-                <!-- TODO get user comment -->
                 
             </div>
             <div class="col text-left">
@@ -62,10 +65,19 @@
             <i class="icon ion-home"></i>
         </a>
         <a class="tab-item">
+            <i class="icon ion-ribbon-b"></i>
+        </a>
+        <a class="tab-item">
             <i class="icon ion-camera"></i>
         </a>
         <a class="tab-item">
-            <i class="icon ion-ribbon-b"></i>
+            <i class="icon ion-android-mail"></i>
         </a>
-</div>
+        <a class="tab-item" style="padding-top:8px">
+            <i><img class="icon" style="height:28px" src="../img/Notifications_Black.png"></i>
+            
+        </a>
+        
+        
+    </div>
 </ion-view>

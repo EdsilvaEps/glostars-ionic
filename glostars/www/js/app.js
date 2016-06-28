@@ -47,11 +47,16 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
   })
   
   .state('app.profile', { //this will be changed later
-    url: '/profile',
+    url: '/profile/:id',
     views:{
       'menuContent':{
           templateUrl:'templates/profile.html',
-          controller: 'ProfileCtrl'
+          controller: 'ProfileCtrl',
+          resolve:{
+              user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
+                  return usersFactory.get({id:parseInt($stateParams.id, 10)});
+              }]
+          }
       }
     }
   })

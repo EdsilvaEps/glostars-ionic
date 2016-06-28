@@ -1,5 +1,14 @@
 <ion-view>
-    <ion-nav-bar class="home-bar"></ion-nav-bar>
+    <ion-nav-bar class="home-bar">
+        <ion-nav-buttons side="left">
+            <div class="bar bar-header" style="border-bottom:none;">
+                <button class="button" style="background-color: transparent; height:50px" ng-click="myGoBack()">
+                    <i class="icon ion-arrow-left-a"></i>
+                    
+                </button>
+            </div>
+        </ion-nav-buttons>
+    </ion-nav-bar>
     
     <ion-content>
         <!-- profile picture and status -->
@@ -16,7 +25,7 @@
         <div class="button-bar button-block">
             <a class="button" ng-click="select(1)" style="border:solid 1px"><i class="icon ion-images"></i></a>
             <a class="button" ng-click="select(2)" style="border:solid 1px"><i class="icon ion-ribbon-b"></i></a>
-            <a class="button" ng-click="select(3)" style="border:solid 1px"><i class="icon ion-clipboard"></i></a>
+            <a class="button" ng-click="modal.show()" style="border:solid 1px"><i class="icon ion-clipboard"></i></a>
             <a class="button" ng-click="select(4)" style="border:solid 1px"><i class="icon ion-ios-people"> 0</i></a>
         </div>
         <!-- photos buttom (list view) --> 
