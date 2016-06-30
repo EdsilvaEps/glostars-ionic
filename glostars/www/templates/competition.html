@@ -1,0 +1,29 @@
+<ion-view view-title="Competition">
+    <div class="tabs-top tabs-striped tabs-color-royal">
+        <ul class="tabs">
+            <li ng-class="{active:isSelected(1)}" class="tab-item"><a ng-click="select(1)">Gallery</a></li>
+            <li ng-class="{active:isSelected(2)}" class="tab-item"><a ng-click="select(2)">Prizes</a></li>
+        </ul>
+    </div>
+    <ion-content>
+            <!-- a new row is only created when there are  -->
+            <!-- enough pictures  -->
+            <div ng-if="isSelected(1)">
+            <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0" style="padding-top:60px">
+                <div class="col col-50 item " ng-if="$index+1 < pics.length">
+                    <img ng-src="{{baseURL+pics[$index].image}}" width="100%">    
+                </div>
+                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length">
+                    <img ng-src="{{baseURL+pics[$index+1].image}}">
+                </div>
+            </div>
+            </div>
+        
+        <div ng-if="isSelected(2)" style="padding-top:60px">
+            <p>Prizes</p>
+        </div>
+        
+        
+        
+    </ion-content>
+</ion-view>

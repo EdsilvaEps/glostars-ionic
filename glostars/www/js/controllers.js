@@ -179,6 +179,55 @@ angular.module('starter.controllers', [])
     //TODO: make page for friends
 }])
 
+.controller('CompetitionController',['$scope','mainFactory','images',  'baseURL', function($scope, mainFactory, images, baseURL){
+    
+    
+    
+    $scope.pics = [];
+    $scope.photos = [];
+    $scope.tab = 1;
+    var n;
+    
+    $scope.photos = mainFactory.query(
+        function(response){
+            
+            $scope.photos = response;
+            $scope.showFeed = true;
+            var n = $scope.photos.length;
+            
+            //filter the 'photos' array and make a new array
+            //only with photos listed "competition" in category
+            for(var i = 0; i < n; i++){
+                if($scope.photos[i].category === 'competition'){
+                    $scope.pics.push($scope.photos[i]);
+                
+                }    
+            }
+            
+            
+        },
+        function(response){
+            $scope.message = "Error: " + response.status + " " + response.statusText;
+        });
+    
+    $scope.check = function(){
+        console.log("pics filtered: " + $scope.pics.length);
+    };
+    
+
+    $scope.baseURL = baseURL;
+    
+    
+    $scope.select = function(setTab){
+        $scope.tab = setTab;
+    };
+    
+    $scope.isSelected = function(checkTab){
+        return ($scope.tab === checkTab);  
+    };
+    
+}])
+
 
 
 ;

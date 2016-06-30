@@ -3,7 +3,7 @@
     {
       "id": 0,
       "name": "Amanda de Paula",
-      "image": "images/amanda.jpeg",
+      "image": "images/amanda.jpg",
       "sex": "female",
       "birthday": "12/12/1995",
       "description": "computer engineering student at Federal University of AM, Brazil."
@@ -11,7 +11,7 @@
     {
       "id": 1,
       "name": "Edson N Silva",
-      "image": "images/ed.jpeg",
+      "image": "images/ed.jpg",
       "sex": "male",
       "birthday": "03/05/1995",
       "description": "computer engineering student at Lappeenranta University of Tech, Finland."
@@ -31,6 +31,7 @@
       "userId": 0,
       "author": "Amanda de Paula",
       "image": "images/roadmap-to-landscapes-finance.jpg",
+      "category": "public",
       "caption": "time to go back home",
       "rating": 0,
       "date": "2015-02-13T17:57:28.556094Z",
@@ -41,6 +42,7 @@
       "userId": 0,
       "author": "Amanda de Paula",
       "image": "images/rh.jpg",
+      "category": "public",
       "caption": "last trip to Tallin",
       "rating": 0,
       "date": "2012-10-16T17:57:28.556094Z",
@@ -51,6 +53,7 @@
       "userId": 1,
       "author": "Edson N Silva",
       "image": "images/bbq.jpeg",
+      "category": "public",
       "caption": "will miss you guys forever",
       "rating": 0,
       "date": "2011-12-02T17:57:28.556094Z",
@@ -61,6 +64,7 @@
       "userId": 1,
       "author": "Edson N Silva",
       "image": "images/v.jpg",
+      "category": "public",
       "caption": "never stop learning",
       "rating": 0,
       "date": "2013-12-02T17:57:28.556094Z",
@@ -71,6 +75,7 @@
       "userId": 2,
       "author": "Pauliina Junnikkala",
       "image": "images/linnapic1.jpg",
+      "category": "public",
       "caption": "eu sinto sua falta, i feel lack of you",
       "rating": 0,
       "date": "2011-20-02T17:57:28.556094Z",
@@ -81,9 +86,43 @@
       "userId": 2,
       "author": "Pauliina Junnikkala",
       "image": "images/lands.jpg",
+      "category": "public",
       "caption": "moments",
       "rating": 0,
       "date": "2013-23-02T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 6,
+      "userId": 0,
+      "author": "Amanda de Paula",
+      "image": "images/ufam.jpg",
+      "category": "competition",
+      "caption": "college patio",
+      "rating": 0,
+      "date": "2012-21-16T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 7,
+      "userId": 1,
+      "author": "Edson N Silva",
+      "image": "images/ice.jpg",
+      "category": "competition",
+      "caption": "A king in the north!",
+      "rating": 0,
+      "date": "2015-04-16T17:57:28.556094Z",
+      "comments": []
+    },
+    {
+      "id": 8,
+      "userId": 2,
+      "author": "Pauliina Junnikkala",
+      "image": "images/linna.jpg",
+      "category": "competition",
+      "caption": "day in the park",
+      "rating": 0,
+      "date": "2015-05-16T17:57:28.556094Z",
       "comments": []
     }
   ]

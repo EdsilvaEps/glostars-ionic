@@ -28,13 +28,14 @@
         
                 <a ui-sref="app.profile({id:photo.userId})"> 
                 <h3>{{photo.author}}</h3></a>
-                <p>{{photo.caption}}</p>
+                <p style="padding-top:10px">{{photo.caption}}</p>
                 
             </div>
             <div class="col text-left">
-                <p style="color:#D1D0CE; padding-left:10px">{{photo.date | date:'medium'}}</p>
+                <p style="color:#D1D0CE; padding-left:10px">{{photo.date | date:'medium'}}<span style="padding-left:90px"> <img src="../img/Public%20B.png" height="20px" ng-if="photo.category === 'public'"><img src="../img/Competition%20B.png" ng-if="photo.category === 'competition'" height="20px"> <img src="../img/Star_empty%20Ts.png" height="20px"> </span> </p>
                 <!-- filter photos by time -->
             </div>
+            
             <div class="item item-image">
                 <img ng-src="{{baseURL+photo.image}}">
                 <!-- TODO get image from user-->
@@ -64,7 +65,7 @@
         <a class="tab-item">
             <i class="icon ion-home"></i>
         </a>
-        <a class="tab-item">
+        <a class="tab-item" ui-sref="app.competition()">
             <i class="icon ion-ribbon-b"></i>
         </a>
         <a class="tab-item">

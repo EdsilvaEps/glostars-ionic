@@ -26,7 +26,10 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
     
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+  
+  $ionicConfigProvider.tabs.position('top');
+    
   $stateProvider
 
     .state('app', {
@@ -104,6 +107,20 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
       views: {
         'menuContent': {
           templateUrl: 'templates/browse.html'
+        }
+      }
+    })
+   .state('app.competition', {
+      url: '/competition',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/competition.html',
+          controller: 'CompetitionController',
+            resolve:{
+                images:['mainFactory', function(mainFactory){
+                    return mainFactory.query();
+                }]
+            }
         }
       }
     })
