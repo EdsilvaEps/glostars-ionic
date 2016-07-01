@@ -93,7 +93,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL', function($scope, mainFactory,usersFactory, baseURL){
+.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal', function($scope, mainFactory,usersFactory, baseURL,$ionicModal){
    
     
     $scope.baseURL = baseURL;
@@ -122,14 +122,34 @@ angular.module('starter.controllers', [])
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
     
+    //$scope.modal_n;
+    $ionicModal.fromTemplateUrl('templates/notifications.html',{
+        scope: $scope
+    }).then(function(modal){
+        $scope.modal = modal;
+    });
+    
+    $ionicModal.fromTemplateUrl('templates/comment.html',{
+        scope: $scope
+    }).then(function(modal){
+        $scope.comment = modal;
+    });
+    
+    $scope.openComment = function(id){
+        $scope.picture = $scope.photos[id];
+        $scope.comment.show();
+    }
+    
     
     
     
     //TODO: render all the pictures from all the users
     //doesnt matter in what order at the main page - DONE
-    //TODO: users are only the friends of the current user
-    //TODO: implement friends on the json server
+    //TODO: users are only the followers of the current user
+    //TODO: implement followers on the json server
     //TODO: pictures should have date of uploading, show only the latest, make date filter - DONE (partial)
+    //TODO: open comment modal for picture - DONE
+    //TODO: comment modal text area should not be email
     
 }])
 
@@ -168,6 +188,7 @@ angular.module('starter.controllers', [])
         $ionicHistory.goBack();
     };
     
+    //$scope.modal_n;
     $ionicModal.fromTemplateUrl('templates/notifications.html',{
         scope: $scope
     }).then(function(modal){
@@ -176,7 +197,7 @@ angular.module('starter.controllers', [])
     
     //TODO: include params - DONE
     //TODO: make modal for notifications - DONE
-    //TODO: make page for friends
+    //TODO: make page for friends - DONE (partially - make friends on the profile pg)
 }])
 
 .controller('CompetitionController',['$scope','mainFactory','images',  'baseURL', function($scope, mainFactory, images, baseURL){
@@ -227,6 +248,8 @@ angular.module('starter.controllers', [])
     };
     
 }])
+
+
 
 
 

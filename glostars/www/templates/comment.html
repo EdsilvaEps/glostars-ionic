@@ -1,0 +1,32 @@
+<ion-modal-view>
+    <ion-header-bar class="bar bar-header bar-positive">
+        <h1 class="title">{{picture.author}}'s picture   </h1>
+        <button class="button button-clear button-primary" ng-click="comment.hide()">Back</button>
+    </ion-header-bar>
+    <ion-content>
+        <div class="card">
+            <div class="item item-image">
+                <img ng-src="{{baseURL+picture.image}}"
+            </div>
+            <div class="list">
+                <a class="item item-avatar" ng-repeat="user in users">
+                    <img ng-src="{{baseURL+user.image}}">
+                    <h2 class="text-left">{{user.name}}</h2>
+                    <p class="text-left" style="padding-top:5px">Very nice this new awesome app</p>
+                    <p class="text-left"><small>schedule stuff</small></p>
+                </a>
+                
+            </div>
+            <div class="list">
+                <div class="item item-input-inset">
+                    <label class="item-input-wrapper">
+                        <input type="text" placeholder="write something">
+                    </label>
+                    <button class="button button-small">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-modal-view>

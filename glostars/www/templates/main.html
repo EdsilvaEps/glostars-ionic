@@ -44,7 +44,7 @@
                 <div class="col" style="border-right:solid gray 1px">
                     <i class="icon ion-thumbsup" style="padding-left:25px"> {{photo.rating}}</i><!-- TODO get number of rates -->
                 </div>
-                <div class="col" style="border-right:solid black 1px">
+                <div class="col" style="border-right:solid black 1px" ng-click="openComment(photo.id)">
                     <i class="icon ion-chatbox-working" style="padding-left:10px"> Comment</i> <!-- TODO Open comment page -->
                         
                      
@@ -74,7 +74,7 @@
         <a class="tab-item">
             <i class="icon ion-android-mail"></i>
         </a>
-        <a class="tab-item" style="padding-top:8px">
+        <a class="tab-item" style="padding-top:8px" ng-click="modal.show()">
             <i><img class="icon" style="height:28px" src="../img/Notifications_Black.png"></i>
             
         </a>
