@@ -93,7 +93,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal', function($scope, mainFactory,usersFactory, baseURL,$ionicModal){
+.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover){
    
     
     $scope.baseURL = baseURL;
@@ -140,6 +140,20 @@ angular.module('starter.controllers', [])
         $scope.comment.show();
     }
     
+    //popover config
+    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item">Camera</a><a class="item" ng-click="closePopover($event)" ui-sref="app.photoup()" >Gallery</a></div></ion-content></ion-popover-view>';
+    
+    $scope.popover = $ionicPopover.fromTemplate(template, {
+        scope: $scope
+    });
+
+    $scope.openPopover = function($event) {
+        $scope.popover.show($event);
+    };
+    
+    $scope.closePopover = function($event) {
+        $scope.popover.hide($event);
+    }
     
     
     
@@ -246,6 +260,60 @@ angular.module('starter.controllers', [])
     $scope.isSelected = function(checkTab){
         return ($scope.tab === checkTab);  
     };
+    
+}])
+
+.controller('PictureUploadCtrl',['$scope','$ionicPlatform', function($scope, $ionicPlatform){
+    
+    //IMAGE PICKER MISSING
+    
+    /* UNCOMMENT WHEN TESTING ON DEVICE FOR ENABLING CAMERA AND GALLERY FUNCTIONALITY
+     
+    $ionicPlatform.ready(function(){
+        $scope.galleryPicker = function(){
+            var options={
+                maximumImagesCount:1, // Max number of selected pics
+                width: 800,
+                height: 800,
+                quality: 100
+            };
+        
+        
+            $cordovaImagePicker.getPictures(options).then(function(results){
+                //Loop through acquired images
+                for(var i = 0; i < results.length; i++){
+                    console.log('Image URI: ' + results[i]);
+                }
+            }, function(error){
+                console.log('Error: ' + JSON.stringify(error));
+                //in case of error
+            });
+        };
+        
+        $scope.takePicture = function(){
+            
+        var options = {
+            quality: 100,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.CAMERA,
+            allowEdit: false,
+            encodingType: Camera.EncodingType.JPEG,
+            targetWidth: 100,
+            targetHeight: 100,
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: false
+        };
+            $cordovaCamera.getPicture(options).then(function(imageData) {
+        $scope.registration.imgSrc = "data:image/jpeg;base64," + imageData;
+        }, function(err) {
+            console.log(err);
+        });
+
+        };        
+        
+        
+    }); */
+    
     
 }])
 

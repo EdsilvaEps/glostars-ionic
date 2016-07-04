@@ -101,6 +101,16 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
       }
     }
   })
+  
+  .state('app.photoup', {
+    url: '/photoup',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/photoup.html',
+        controller: 'PictureUploadCtrl'
+      }
+    }
+  })
 
   .state('app.browse', {
       url: '/browse',

@@ -1,0 +1,56 @@
+<ion-view view-title="Photo Upload">
+    <ion-content>
+        <div class="card">
+            <div class="item item-image">
+                <img src="../img/0,5.jpg">
+            </div>
+        </div>
+        <div class="row no-padding">
+            <div class="col">
+                 <form style="padding-left:30px">
+                    <input type="radio" name="people" value="followers" checked> Followers  <input type="radio" name="people" value="public"> Public              <input type="radio" name="people" value="competition"> Competition<br><br>
+                    
+                </form>
+                <label class="item item-input" style="border:solid black 1px; padding-right:10px">
+                         <textarea placeholder=" description"></textarea>
+                </label>
+            </div>
+        </div>
+        <div class="item" style="border:none">
+            <h4><strong>Share to:</strong></h4>
+            <ul class="list">
+                <li class="item item-toggle" style="border:none">
+                    <i class="icon ion-social-facebook" style="font-size:30px">  </i> Facebook
+                    <label class="toggle toggle-positive">
+                    <input type="checkbox">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </li>
+                <li class="item item-toggle" style="border:none">
+                    <i class="icon ion-social-twitter" style="font-size:30px"> </i>Twitter
+                    <label class="toggle toggle-positive">
+                    <input type="checkbox">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </li>
+                <li class="item item-toggle" style="border:none">
+                    <i><img class="icon" style="height:30px" src="../img/vklogo.svg"> </i> Vkontakte
+                    <label class="toggle toggle-positive">
+                    <input type="checkbox">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </li>
+            </ul>
+            <button class="button button-full button-positive">
+                Post
+            </button>
+        </div>
+        
+    </ion-content>
+</ion-view>
