@@ -275,7 +275,8 @@ angular.module('starter.controllers', [])
                 maximumImagesCount:1, // Max number of selected pics
                 width: 800,
                 height: 800,
-                quality: 100
+                quality: 100<div ng-repeat="photo in photos">
+      </div>
             };
         
         
@@ -316,6 +317,77 @@ angular.module('starter.controllers', [])
     
     
 }])
+
+.controller('SearchCtrl',['$scope','baseURL', 'mainFactory','usersFactory', function($scope,baseURL,mainFactory, usersFactory){
+    
+    $scope.baseURL = baseURL;
+    $scope.searchBox;
+    $scope.tab = 1;
+    
+    
+    $scope.changeMe = function(){
+        $scope.tab = 2;
+        console.log("changed");
+    };
+    
+    $scope.names = [];
+    
+
+    $scope.photos = mainFactory.query(
+        function(response){
+            $scope.photos = response;
+            
+            
+        },
+        function(response){
+            //some error routine
+        });
+    
+    $scope.peoples = usersFactory.query(
+        function(response){
+            $scope.peoples = response;
+            //IMPLEMENT FACTORY FUNCTION TO GET ONLY NAMES AND ID'S
+            
+        },
+        function(){
+            //some error
+        });
+    
+    
+    
+    $scope.select = function(setTab){
+        $scope.tab = setTab;
+    };
+    
+    $scope.isSelected = function(checkTab){
+        return ($scope.tab === checkTab);  
+    };
+            
+    
+    
+    
+}])
+
+
+.filter('searchContacts', function(){
+  return function (items, query) {
+    var filtered = [];
+    var letterMatch = new RegExp(query, 'i');
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (query) {
+        if (letterMatch.test(item.name.substring(0, query.length))) {
+          filtered.push(item);
+          
+        }
+      } else {
+        filtered.push(item);
+      }
+    }
+      console.log(filtered[0]);
+    return filtered;
+  };
+});
 
 
 
