@@ -13,17 +13,17 @@
         </ion-nav-buttons>
         
     </ion-nav-bar>
-  <ion-content>
+  <ion-content class="has-header has-footer">
       <p style="padding:5px"></p>
       <!-- a new row is only created when there are  -->
       <!-- enough pictures  -->
       <div ng-if="isSelected(1)">
       <div class="row" ng-repeat="photo in photos" ng-if="$index % 2 === 0">
             <div class="col col-50 item " ng-if="$index+1 < photos.length">
-                <img ng-src="{{baseURL+photos[$index].image}}" width="100%">    
+                <img ng-src="{{baseURL+photos[$index].image}}" style="height:150px" ng-click="openComment(photo.id)">    
             </div>
-            <div class="col col-50 item item-image" ng-if="$index+1 < photos.length">
-                <img ng-src="{{baseURL+photos[$index+1].image}}">
+            <div class="col col-50 item item-image" ng-if="$index+1 < photos.length" ng-click="openComment(photo.id)">
+                <img ng-src="{{baseURL+photos[$index+1].image}}" style="height:150px">
             </div>
       </div>
       </div>

@@ -122,12 +122,6 @@ angular.module('starter.controllers', [])
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
     
-    //$scope.modal_n;
-    $ionicModal.fromTemplateUrl('templates/notifications.html',{
-        scope: $scope
-    }).then(function(modal){
-        $scope.modal = modal;
-    });
     
     $ionicModal.fromTemplateUrl('templates/comment.html',{
         scope: $scope
@@ -140,20 +134,7 @@ angular.module('starter.controllers', [])
         $scope.comment.show();
     }
     
-    //popover config
-    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item">Camera</a><a class="item" ng-click="closePopover($event)" ui-sref="app.photoup()" >Gallery</a></div></ion-content></ion-popover-view>';
     
-    $scope.popover = $ionicPopover.fromTemplate(template, {
-        scope: $scope
-    });
-
-    $scope.openPopover = function($event) {
-        $scope.popover.show($event);
-    };
-    
-    $scope.closePopover = function($event) {
-        $scope.popover.hide($event);
-    }
     
     
     
@@ -318,7 +299,7 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('SearchCtrl',['$scope','baseURL', 'mainFactory','usersFactory', function($scope,baseURL,mainFactory, usersFactory){
+.controller('SearchCtrl',['$scope','baseURL', 'mainFactory','usersFactory','$ionicModal', function($scope,baseURL,mainFactory, usersFactory,$ionicModal){
     
     $scope.baseURL = baseURL;
     $scope.searchBox;
@@ -362,8 +343,51 @@ angular.module('starter.controllers', [])
     $scope.isSelected = function(checkTab){
         return ($scope.tab === checkTab);  
     };
+    
+    $ionicModal.fromTemplateUrl('templates/comment.html',{
+        scope: $scope
+    }).then(function(modal){
+        $scope.comment = modal;
+    });
+    
+    $scope.openComment = function(id){
+        $scope.picture = $scope.photos[id];
+        $scope.comment.show();
+    }
             
     
+    
+    
+}])
+
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover',function($scope,$ionicModal,$ionicPopover){
+    
+    $ionicModal.fromTemplateUrl('templates/notifications.html',{
+        scope: $scope
+    }).then(function(modal){
+        $scope.modal = modal;
+    });
+    
+    
+    //popover config
+    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item">Camera</a><a class="item" ng-click="closePopover($event)" ui-sref="app.photoup()" >Gallery</a></div></ion-content></ion-popover-view>';
+    
+    $scope.popover = $ionicPopover.fromTemplate(template, {
+        scope: $scope
+    });
+
+    $scope.openPopover = function($event) {
+        $scope.popover.show($event);
+    };
+    
+    $scope.closePopover = function($event) {
+        $scope.popover.hide($event);
+    }
+    
+    $scope.mailBox = function(){
+        //something should happen when the letterbox is clicked
+        console.log("letterbox");
+    }
     
     
 }])

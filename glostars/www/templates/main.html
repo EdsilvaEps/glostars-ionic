@@ -19,7 +19,7 @@
     
      
     
-    <ion-content>
+    <ion-content class="has-footer">
         <div class="list card" ng-repeat="photo in photos | orderBy:'-date'">
             <!-- TODO: make this div repeat for every picture available -->
             <div class="item item-avatar" style="border-bottom:none">
@@ -61,24 +61,5 @@
         
         
     </ion-content>
-    <div class="tabs tabs-icon-only">
-        <a class="tab-item">
-            <i class="icon ion-home"></i>
-        </a>
-        <a class="tab-item" ui-sref="app.competition()">
-            <i class="icon ion-ribbon-b"></i>
-        </a>
-        <a class="tab-item" ng-click="openPopover($event)">
-            <i class="icon ion-camera"></i>
-        </a>
-        <a class="tab-item">
-            <i class="icon ion-android-mail"></i>
-        </a>
-        <a class="tab-item" style="padding-top:8px" ng-click="modal.show()">
-            <i><img class="icon" style="height:28px" src="../img/Notifications_Black.png"></i>
-            
-        </a>
-        
-        
-    </div>
+    
 </ion-view>

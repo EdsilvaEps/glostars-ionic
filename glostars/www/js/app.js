@@ -28,15 +28,22 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   
-  $ionicConfigProvider.tabs.position('top');
+  $ionicConfigProvider.tabs.position('bottom');
     
   $stateProvider
 
     .state('app', {
     url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
+    //abstract: true,
+    //templateUrl: 'templates/menu.html',
+    
+    //controller: 'AppCtrl'
+      views: {
+        'content@':{
+            templateUrl: 'templates/menu.html',
+            controller:'AppCtrl',
+        }
+    }
   })
   
   .state('app.login', {
@@ -52,7 +59,23 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
   .state('app.profile', { //this will be changed later
     url: '/profile/:id',
     views:{
-      'menuContent':{
+        'content@':{
+            templateUrl: 'templates/profile.html',
+            controller:'ProfileCtrl',
+            resolve:{
+              user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
+                  return usersFactory.get({id:parseInt($stateParams.id, 10)});
+              }]
+            }
+
+        },
+        'footer@':{
+            templateUrl:'templates/footer.html',
+            controller:'FooterCtrl',
+        }
+        
+        
+      /*'menuContent':{
           templateUrl:'templates/profile.html',
           controller: 'ProfileCtrl',
           resolve:{
@@ -60,7 +83,7 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
                   return usersFactory.get({id:parseInt($stateParams.id, 10)});
               }]
           }
-      }
+      } */
     }
   })
   
@@ -86,30 +109,42 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
   .state('app.home', {
     url: '/home',
     views:{
-      'menuContent':{
-          templateUrl:'templates/main.html',
-          controller:'HomeCtrl'
-      }
+        'content@':{
+            templateUrl: 'templates/main.html',
+            controller:'HomeCtrl',
+        },
+        'footer@':{
+            templateUrl:'templates/footer.html',
+            controller:'FooterCtrl',
+        }
     }
   })
 
   .state('app.search', {
     url: '/search',
     views: {
-      'menuContent': {
-        templateUrl: 'templates/search.html',
-        controller:'SearchCtrl',
-      }
+        'content@':{
+            templateUrl: 'templates/search.html',
+            controller:'SearchCtrl',
+        },
+        'footer@':{
+            templateUrl:'templates/footer.html',
+            controller:'FooterCtrl',
+        }
     }
   })
   
   .state('app.photoup', {
     url: '/photoup',
     views: {
-      'menuContent': {
-        templateUrl: 'templates/photoup.html',
-        controller: 'PictureUploadCtrl'
-      }
+        'content@':{
+            templateUrl: 'templates/photoup.html',
+            controller:'PictureUploadCtrl',
+        },
+        'footer@':{
+            templateUrl:'templates/footer.html',
+            controller:'FooterCtrl',
+        }
     }
   })
 
@@ -124,14 +159,18 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
    .state('app.competition', {
       url: '/competition',
       views: {
-        'menuContent': {
-          templateUrl: 'templates/competition.html',
-          controller: 'CompetitionController',
+        'content@':{
+            templateUrl: 'templates/competition.html',
+            controller:'CompetitionController',
             resolve:{
                 images:['mainFactory', function(mainFactory){
                     return mainFactory.query();
-                }]
+                }],
             }
+        },
+        'footer@':{
+            templateUrl:'templates/footer.html',
+            controller:'FooterCtrl',
         }
       }
     })
