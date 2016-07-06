@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 
   // Form data for the login modal
   $scope.loginData = {};
-
+  
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
@@ -61,7 +61,9 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl', function($scope){
+.controller('LoginCtrl',['$scope','authFactory', function($scope, authFactory){
+    
+
     
     $scope.options = {
         loop: false,
@@ -75,11 +77,21 @@ angular.module('starter.controllers', [])
     $scope.doLogin = function() {
         console.log('Doing login', $scope.loginData);
         // Simulate a login delay. Remove this and replace with your login
+        $scope.user = authFactory.getUserLogin().get({login:"edson@hotmail.com"}).$promise.then(
+        function(response){
+            $scope.user = response;
+            console.log("user: " + $scope.user.name + " found");
+        },
+        function(response){
+            console.log("login failed");
+        });
+        
+        
         // code if using a login system
     }
     
     
-})
+}])
 
 .controller('SignUpCtrl', function($scope){
     //get sign up information

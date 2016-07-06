@@ -34,6 +34,24 @@ angular.module('starter.services',['ngResource'])
               
         }])
 
+        .factory('authFactory', ['$resource', 'baseURL', function($resource, baseURL){
+            //factory created only for basic authentication
+            var user = {};
+            
+            user.getUserLogin = function(){
+                console.log("fetching user");
+                return $resource(baseURL+"users/:login");
+            };
+            
+            user.getUserPwd = function(){
+                return $resource(baseURL+"users/:password");
+            };
+            
+            return user;
+            
+            
+        }])
+
         .factory('$localStorage', ['$window', function($window) {
             return {
                 store: function(key, value) {

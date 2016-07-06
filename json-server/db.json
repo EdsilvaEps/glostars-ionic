@@ -4,6 +4,8 @@
       "id": 0,
       "name": "Amanda de Paula",
       "image": "images/amanda.jpg",
+      "login": "amanda@hotmail.com",
+      "password": "amanda",
       "sex": "female",
       "birthday": "12/12/1995",
       "description": "computer engineering student at Federal University of AM, Brazil."
@@ -12,6 +14,8 @@
       "id": 1,
       "name": "Edson N Silva",
       "image": "images/ed.jpg",
+      "login": "edson@hotmail.com",
+      "password": "edson",
       "sex": "male",
       "birthday": "03/05/1995",
       "description": "computer engineering student at Lappeenranta University of Tech, Finland."
@@ -20,6 +24,8 @@
       "id": 2,
       "name": "Pauliina Junnikkala",
       "image": "images/linna.jpg",
+      "login": "pauliina@hotmail.com",
+      "password": "pauliina",
       "sex": "female",
       "birthday": "31/10/1989",
       "description": "psychologist at Kempele, Oulu"

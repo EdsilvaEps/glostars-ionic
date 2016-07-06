@@ -3,6 +3,8 @@
         <ul class="tabs">
             <li ng-class="{active:isSelected(1)}" class="tab-item"><a ng-click="select(1)">Gallery</a></li>
             <li ng-class="{active:isSelected(2)}" class="tab-item"><a ng-click="select(2)">Prizes</a></li>
+            <li ng-class="{active:isSelected(3)}" class="tab-item"><a ng-click="select(3)">Tips</a></li>
+            <li ng-class="{active:isSelected(4)}" class="tab-item"><a ng-click="select(4)">Terms</a></li>
         </ul>
     </div>
     <ion-content class="has-footer has-header">
@@ -21,6 +23,59 @@
         
         <div ng-if="isSelected(2)" style="padding-top:60px">
             <p>Prizes</p>
+        </div>
+        
+        <div ng-if="isSelected(3)" style="padding-top:60px">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Photography tips</h3>
+                </div>
+                <div class="card-content">
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div ng-if="isSelected(4)" style="padding-top:60px">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Competition Terms</h3><br>
+                    <h4>PLEASE READ THESE TERMS AND CONDITIONS OF COMPETITION CAREFULLY. BY PARTICIPATING IN THE COMPETITION YOU AGREE TO BE BOUND BY THESE TERMS.</h4>
+                </div>
+                <div class="card-content">
+                    <ul>
+                        <li><p>To win prizes a user must complete his or her profile (i.e. Upload Profile Picture and fill in other requested information). Any picture submitted to win prizes will not be considered if the user has not provided the requested information to complete his or her profile. </p>
+                        </li>
+                        <li>
+                            <p>There is no limit on the number of picture that can be submitted in the competition but it should be within the limit of total number of pictures a user can have in his or her profile. </p>
+                        </li>
+                        <li>
+                            <p> Only one rating by a registered user will be considered, however a user can change the rating at any time </p>
+                            <p>Contents (i.e. currently the images) with identifiable watermarks (including any text or date embedded in the image) will not be considered for the competition. </p>
+                            
+                            <p>Any picture submitted by an international celebrity or a picture of an international celebrity submitted by himself or herself or by another user will not be considered for winning the prizes </p>
+                            <p> Users will be held liable for any dispute related to the originality and ownership of the picture </p>
+                            <p> Glostars rewarding mechanism aims to promote individuals’ photography skill; therefore, any downloaded picture (both free and purchased pictures) will not be considered for winning prizes in competition </p>
+                            <p> While uploading any picture please use your common sense </p>
+                            <p> If any user misuses the platform to win the competition by any mean, then all the pictures of that user will be disqualified from the competition for that term. </p>
+                            <p>Submission of pictures for May – Aug competition term ends on August 31st 2016 at midnight (23:59) Finland time. Rating period also ends on August 31st 2016 at midnight (23:59) Finland time. </p>
+                            <p> There will be one picture of the week prize starting from May 22 until August 21, 2016. First picture of the week will be selected among all the pictures submitted from May 01 – 22, 2016 </p>
+                            <p>All prizes must be claimed within one (1) week after announcement. It is preferred to collect it in person, other alternatives must be agreed with Glostars </p>
+                            <p>If sending the prize is not possible to the location of the winner, then Glostars reserves all the rights to take alternative decision </p>
+                            <p> The distribution of prize may take up to two (2) months depending on the location of the winner. </p>
+                            <p>One user can win only one (1) of the grand prizes (If one user wins more than one position for the final prizes then only the highest one will be considered), also (1) one of the picture of the week prizes and (1) one of the monthly prizes </p>
+                            <p> In order to claim any prize, you will have to proof your identity by providing valid document </p>
+                            <p> Glostars may use the winning picture for marketing purpose with your permission </p>
+                            <p> Individual picture of the winner must be sent to Glostars while claiming the prize, which will be used for marketing purpose </p>
+                            <p> Glostars current employees, sponsors of the prizes, investors and other individuals directly related with Glostars cannot win any of the prizes </p>
+                            <p> Overall, Glostars reserves all the rights to disqualify any picture which the company considers to be inappropriate. </p>
+                            
+                            
+                            
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
         
         
