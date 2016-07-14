@@ -17,6 +17,19 @@
 
 angular.module('starter.services',['ngResource'])
         .constant("baseURL", "http://localhost:3000/")
+        .constant('AUTH_EVENTS', {
+            loginSuccess: 'auth-login-success',
+            loginFailed: 'auth-login-failed',
+            logoutSuccess: 'auth-logout-success',
+            sessionTimeout: 'auth-session-timeout',
+            notAuthenticated: 'auth-not-authenticated',
+            notAuthorized: 'auth-not-authorized'
+        })
+        .constant('USER_ROLES', {
+            all: '*',
+            admin: 'admin',
+            user: 'user',
+        })
         .factory('mainFactory',['$resource', 'baseURL', function($resource, baseURL){
             
                 
@@ -34,23 +47,142 @@ angular.module('starter.services',['ngResource'])
               
         }])
 
-        .factory('authFactory', ['$resource', 'baseURL', function($resource, baseURL){
-            //factory created only for basic authentication
-            var user = {};
+
+        .service('Session', function(){
+            //The specifics of this object depends on your back-end implementation, this is a basic example
+            this.create = function (sessionId, userId, userRole){  
+                this.id = sessionId;
+                this.userId = userId;
+                this.userRole = userRole;
+            };
             
-            user.getUserLogin = function(){
+            this.destroy = function(){
+                this.id = null;
+                this.userId = null;
+                this.userRole = null;
+            }
+    
+    
+        })
+
+        
+        .factory('AuthService', ['$resource', 'baseURL', '$http','Session', function($resource, baseURL, $http, Session){
+            //authentication factory
+            var sessionId = "someSessionId"; //THIS WILL CHANGE
+            var mockRole = "admin";
+            var mockUserId = 2;
+            var mockCredentials = { //mock user
+                email: "pauliina@hotmail.com", 
+                password: "pauliina"
+            };
+            var authService = {};
+            
+            authService.login = function(credentials) {
+                
+               
                 console.log("fetching user");
-                return $resource(baseURL+"users/:login");
+                if(credentials.email === mockCredentials.email && credentials.password === mockCredentials.password){
+                    
+                     console.log("authenticated");
+                    
+                    //check for the mock credentials and fetch the mock user
+                    
+                    return $http.get(baseURL + "users/" + mockUserId).then(function(response){
+                        Session.create(sessionId, response.id, mockRole);
+                        console.log(" new user is " + JSON.stringify(response));
+                        return response;
+                    },
+                    function(response){
+                        console.log("login failed");
+                    });
+                    
+                    
+                   
+                    
+                    
+                    /*
+                    return fetch.get({id:mockUserId}).then(function(response){
+                        Session.create(sessionId, response.id, mockRole);
+                        console.log(" new user is " + response.name);
+                        return response;
+                    },
+                    function(response){
+                        console.log("login failed");
+                    });
+                    */
+                    
+                };
+                
             };
             
-            user.getUserPwd = function(){
-                return $resource(baseURL+"users/:password");
+            authService.getMockUser = function(){
+                return mockUserId;
+            }
+            
+            authService.isAuthenticated = function(){
+                //change this method to do something useful
+                return !!Session.userId;
             };
             
-            return user;
+            authService.isAuthorized = function(authorizedRoles){
+                if(!angular.isArray(authorizedRoles)){
+                    authorizedRoles = [authorizedRoles];
+                }
+                
+                return (authService.isAuthenticated() && authorizedRoles.indexOf(Session.userRole) !== -1);
+            };
+            
+            return authService;
             
             
         }])
+
+    
+        .factory('followersFac',['$resource', 'baseURL', function($resource, baseURL){
+            
+            var followers = [];
+            
+            
+            return followers;
+            
+        }])
+
+
+
+        /*
+        .config('$resourceProvider', function($resourceProvider){
+            $resourceProvider.defaults.stripTrailingSlashes = false;
+        
+        
+            $resourceProvider.interceptors.push([
+                '$injector',
+                function($injector){
+                    return $injector.get('AuthInterceptor');
+                }
+            ]);
+        })
+        /*
+        .factory('AuthInterceptor', function ($rootScope, $q,
+                                      AUTH_EVENTS) {
+            return {
+                responseError: function (response) { 
+                    $rootScope.$broadcast({
+                        401: AUTH_EVENTS.notAuthenticated,
+                        403: AUTH_EVENTS.notAuthorized,
+                        419: AUTH_EVENTS.sessionTimeout,
+                        440: AUTH_EVENTS.sessionTimeout
+                    }[response.status], response);
+                return $q.reject(response);
+                }
+            };
+        })
+
+        */
+        
+        
+
+
+        
 
         .factory('$localStorage', ['$window', function($window) {
             return {

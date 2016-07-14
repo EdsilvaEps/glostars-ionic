@@ -8,7 +8,14 @@
       "password": "amanda",
       "sex": "female",
       "birthday": "12/12/1995",
-      "description": "computer engineering student at Federal University of AM, Brazil."
+      "description": "computer engineering student at Federal University of AM, Brazil.",
+      "friends": [
+        {
+          "id": 1,
+          "name": "Edson N Silva",
+          "description": "computer engineering student at Lappeenranta University of Tech, Finland."
+        }
+      ]
     },
     {
       "id": 1,
@@ -18,7 +25,19 @@
       "password": "edson",
       "sex": "male",
       "birthday": "03/05/1995",
-      "description": "computer engineering student at Lappeenranta University of Tech, Finland."
+      "description": "computer engineering student at Lappeenranta University of Tech, Finland.",
+      "friends": [
+        {
+          "id": 0,
+          "name": "Amanda de Paula",
+          "description": "computer engineering student at Federal University of AM, Brazil."
+        },
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala",
+          "description": "psychologist at Kempele, Oulu"
+        }
+      ]
     },
     {
       "id": 2,
@@ -28,7 +47,14 @@
       "password": "pauliina",
       "sex": "female",
       "birthday": "31/10/1989",
-      "description": "psychologist at Kempele, Oulu"
+      "description": "psychologist at Kempele, Oulu",
+      "friends": [
+        {
+          "id": 0,
+          "name": "Amanda de Paula",
+          "description": "computer engineering student at Federal University of AM, Brazil."
+        }
+      ]
     }
   ],
   "photos": [

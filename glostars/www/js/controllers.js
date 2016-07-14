@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, USER_ROLES, $rootScope) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -11,36 +11,42 @@ angular.module('starter.controllers', [])
 
   // Form data for the login modal
   $scope.loginData = {};
+    
+  $scope.options = {
+      loop: false,
+      speed: 400,
+  };
+    
+
+
   
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
 
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
+  
+    
+    /*The ApplicationController is a container for a lot of global application logic, and an alternative to Angular’s run function. Since it’s at the root of the $scope tree, all other scopes will inherit from it (except isolate scopes). It’s a good place to define the currentUser object
+    */
+    
+  $rootScope.currentUser = null;
+  $scope.userRoles = USER_ROLES;
+  $scope.isAuthorized = AuthService.isAuthorized;
+ 
+  $scope.setCurrentUser = function (user) {
+    $rootScope.currentUser = user;
   };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-/*
-  // Perform the login action when the user submits the login form
+    
+  //TODO: encrypt data
+  //TODO: the swipe screen has three views now, handle them here
   $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
+      console.log('Doing login', $scope.loginData);
+      // Simulate a login delay. Remove this and replace with your login
+      // code if using a login system
+      $scope.user = AuthService.login($scope.loginData);
+      $scope.setCurrentUser($scope.user);
+      console.log("user is " + $scope.user.id);
+      
   };
-  
-  */
+    
+
 })
 
 
@@ -61,7 +67,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl',['$scope','authFactory', function($scope, authFactory){
+.controller('LoginCtrl',['$scope', function($scope){
     
 
     
@@ -77,15 +83,6 @@ angular.module('starter.controllers', [])
     $scope.doLogin = function() {
         console.log('Doing login', $scope.loginData);
         // Simulate a login delay. Remove this and replace with your login
-        $scope.user = authFactory.getUserLogin().get({login:"edson@hotmail.com"}).$promise.then(
-        function(response){
-            $scope.user = response;
-            console.log("user: " + $scope.user.name + " found");
-        },
-        function(response){
-            console.log("login failed");
-        });
-        
         
         // code if using a login system
     }
@@ -160,13 +157,65 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal',function($scope, mainFactory, userFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal){
+.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal','AuthService','followersFac' ,function($scope, mainFactory, usersFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal, AuthService, followersFac){
     
     $scope.baseURL = baseURL;
     $scope.tab = 1;
     $scope.user = user;
     //$scope.photos = photos;
-    //$scope.users = users;
+    $scope.users = [];
+    
+    //TODO: make my user return a full user object
+    //i can do nothing with just this id number
+    $scope.myUser = AuthService.getMockUser();
+    
+    $scope.isFollower = function(id){
+        //Please, get only one user from the users
+        //dont be a gluton
+        //others might want a piece of memory too
+        var i = 0; len = $scope.users[$scope.myUser].friends.length;
+        for(; i < len; i++){
+
+            if($scope.users[$scope.myUser].friends[i].id === id){
+                return true;
+            }
+        }
+        return false;
+        
+    };
+    
+    $scope.follow = function(i){
+        
+        //person to follow
+        var following = {
+            id: i,
+            name: $scope.users[i].name,
+            description: $scope.users[i].description
+        };
+        
+        //push person data into list of follow
+        $scope.users[$scope.myUser].friends.push(following);
+       
+        //issue update command to database
+        usersFactory.update({id:$scope.myUser},$scope.users[$scope.myUser]);
+       
+    };
+    
+    $scope.unfollow = function(id){
+        
+        //person to unfollow
+        var i = 0; len = $scope.users[$scope.myUser].friends.length;
+        for(; i < len; i++){
+
+            if($scope.users[$scope.myUser].friends[i].id === id){
+                //you're no worthy
+                $scope.users[$scope.myUser].friends.splice(i,1);
+                //done and done
+                usersFactory.update({id:$scope.myUser},$scope.users[$scope.myUser]);
+            }
+        }
+        
+    }
     
     
     $scope.photos = mainFactory.query(
@@ -174,6 +223,12 @@ angular.module('starter.controllers', [])
             
             $scope.photos = response;
             $scope.showFeed = true;
+            
+            $scope.users = usersFactory.query(
+                function(response){
+                    
+                    $scope.users = response;
+                });
             
         },
         function(response){
@@ -372,13 +427,15 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover',function($scope,$ionicModal,$ionicPopover){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService',function($scope,$ionicModal,$ionicPopover, AuthService){
     
     $ionicModal.fromTemplateUrl('templates/notifications.html',{
         scope: $scope
     }).then(function(modal){
         $scope.modal = modal;
     });
+    
+    $scope.userId = AuthService.getMockUser();
     
     
     //popover config
@@ -423,7 +480,8 @@ angular.module('starter.controllers', [])
       console.log(filtered[0]);
     return filtered;
   };
-});
+})
+
 
 
 

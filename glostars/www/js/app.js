@@ -26,6 +26,7 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
     
 })
 
+
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   
   $ionicConfigProvider.tabs.position('bottom');
@@ -51,7 +52,7 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
     views:{
       'menuContent':{
           templateUrl:'templates/login.html',
-          controller: 'LoginCtrl'
+          controller: 'AppCtrl',
       }
     }
   })

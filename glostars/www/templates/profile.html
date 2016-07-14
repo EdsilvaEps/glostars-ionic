@@ -17,7 +17,10 @@
                 <img ng-src="{{baseURL+user.image}}" alt="{{user.name}}">
                 <h2><strong>{{user.name}}</strong></h2>
                 <p>{{user.description}}</p>
-                <i class="icon ion-gear-b"></i>
+                <i ng-if="user.id == myUser" class="icon ion-gear-b"></i>
+                <button ng-if="!isFollower(user.id) && user.id != myUser" class="button button-small button-stable" ng-click= "follow(user.id)">Follow</button>
+                <button ng-if="isFollower(user.id) != 0 && user.id != myUser" class="button button-small button-positive" ng-click="unfollow(user.id)">Following</button>
+                
                 
             </a>    
         </div>
@@ -26,7 +29,7 @@
             <a class="button" ng-click="select(1)" style="border:solid 1px"><i class="icon ion-images"></i></a>
             <a class="button" style="border:solid 1px" ui-sref="app.competition()"><i class="icon ion-ribbon-b"></i></a>
             <a class="button" ng-click="modal.show()" style="border:solid 1px"><i class="icon ion-clipboard"></i></a>
-            <a class="button" ng-click="select(4)" style="border:solid 1px"><i class="icon ion-ios-people"> 0</i></a>
+            <a class="button" ng-click="select(4)" style="border:solid 1px"><i class="icon ion-ios-people"> {{user.friends.length}}</i></a>
         </div>
         <!-- photos buttom (list view) --> 
         <div class="list" ng-if="isSelected(1)">
@@ -60,8 +63,15 @@
         <div class="list" ng-if="isSelected(3)">
             <p>List of notifications</p>
         </div>
-        <div class="list" ng-if="isSelected(4)">
-            <p>List of friends</p>
+        <div class="list" ng-if="isSelected(4)" ng-repeat="friend in user.friends">
+            <a class="item item-avatar" ui-sref="app.profile({id:friend.id})">
+                <img ng-src="{{baseURL+users[friend.id].image}}">
+                <p style="padding:10px">{{friend.name}}</p>
+                <div ng-if="friend.id != myUser">
+                <button ng-if="!isFollower(friend.id)" class="button button-small button-stable" ng-click= "follow(friend.id)">Follow</button>
+                <button ng-if="isFollower(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id)">Following</button>
+                </div>
+            </a>
         </div>
         
         
