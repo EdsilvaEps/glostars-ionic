@@ -184,6 +184,17 @@ angular.module('starter.controllers', [])
         
     };
     
+    $scope.isFollowing = function(id){
+        var i = 0; len = $scope.users[id].friends.length;
+        for(; i < len; i++){
+
+            if($scope.users[id].friends[i].id === $scope.myUser){
+                return true;
+            }
+        }
+        return false;
+    };
+    
     $scope.follow = function(i){
         
         //person to follow
@@ -193,12 +204,22 @@ angular.module('starter.controllers', [])
             description: $scope.users[i].description
         };
         
+        var me = {
+            id: $scope.myUser,
+            name: $scope.users[$scope.myUser].name,
+            description: $scope.users[$scope.myUser].description
+        };
+        
         //push person data into list of follow
         $scope.users[$scope.myUser].friends.push(following);
-       
         //issue update command to database
         usersFactory.update({id:$scope.myUser},$scope.users[$scope.myUser]);
        
+        //add myself into that person's follower list
+        $scope.users[i].followers.push(me);
+        
+        //issue server command again
+        usersFactory.update({id:i}, $scope.users[i])
     };
     
     $scope.unfollow = function(id){

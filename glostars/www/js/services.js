@@ -138,9 +138,29 @@ angular.module('starter.services',['ngResource'])
         }])
 
     
-        .factory('followersFac',['$resource', 'baseURL', function($resource, baseURL){
+        .factory('notifyService',['$resource','$cordovaLocalNotification','$cordovaToast', function($cordovaLocalNotification,$cordovaToast){
             
-            var followers = [];
+            var notify = {};
+            
+            notify.notifyUser = function(message, userPicture, contentPicture){
+                $ionicPlatform.ready(function(){
+                    $cordovaLocalNotification.schedule({
+                        id:1,
+                        title: "Glostars",
+                        text: message,
+                        data: {
+                            contentPicture
+                        }
+                    }).then(function(){
+                        console.log("notification sent");
+                    },
+                        function(){
+                        console.log("notification not sent");
+                    });
+                });
+                
+            };
+            
             
             
             return followers;
