@@ -102,16 +102,17 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover){
+.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService){
    
     
     $scope.baseURL = baseURL;
     $scope.message = "Loading...";
     $scope.showFeed = false;
     $scope.users = [];
+    $scope.animIN;
+    $scope.animOUT = false;
+    $scope.myUser = AuthService.getMockUser();
     
-    //getting the list of all the users and all their data
-    //from mainFactory in services.js
     
     $scope.photos = mainFactory.query(
         function(response){
@@ -144,6 +145,69 @@ angular.module('starter.controllers', [])
     }
     
     
+    $scope.dejaAime = function(photoId, id){
+        //function to check if user has already rated the picture
+        var i = 0; len = $scope.photos[photoId].raters.length;
+        for(; i < len; i++){
+
+            if($scope.photos[photoId].raters[i].id === id){
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    $scope.rateAnimation = function(photoId){
+        
+        $scope.animIN = photoId;
+        
+        $timeout(function anim(){
+            $scope.animIN = null;
+        }, 500);
+        
+    };
+    
+    
+    $scope.rate = function(photoId, id, name){
+        //this function takes the photo id, the id of the rater
+        //and his name and add this info into the photo object
+        console.log("rated");
+
+        var rater = {
+            id: id,
+            name: name
+        };
+        
+        if(!$scope.dejaAime(photoId, id)){
+            
+            $scope.photos[photoId].rating += 1;
+            
+            $scope.photos[photoId].raters.push(rater);
+
+            mainFactory.update({id:photoId},$scope.photos[photoId]);
+        
+            $scope.rateAnimation(photoId);
+            
+        } else {
+            
+            $scope.photos[photoId].rating -= 1;
+            
+            var i = 0; len = $scope.photos[photoId].raters.length;
+            for(; i < len; i++){
+
+                if($scope.photos[photoId].raters[i].id === id){
+                    
+                    $scope.photos[photoId].raters.splice(i,1);
+                                                                    mainFactory.update({id:photoId},$scope.photos[photoId]);
+                }
+            }
+        }
+        
+        
+    };
+    
+    
+    
     
     
     
@@ -157,7 +221,7 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal','AuthService','followersFac' ,function($scope, mainFactory, usersFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal, AuthService, followersFac){
+.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal','AuthService' ,function($scope, mainFactory, usersFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal, AuthService){
     
     $scope.baseURL = baseURL;
     $scope.tab = 1;

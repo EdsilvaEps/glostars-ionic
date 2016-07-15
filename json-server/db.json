@@ -96,7 +96,13 @@
       "image": "images/roadmap-to-landscapes-finance.jpg",
       "category": "public",
       "caption": "time to go back home",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2015-02-13T17:57:28.556094Z",
       "comments": []
     },
@@ -107,7 +113,13 @@
       "image": "images/rh.jpg",
       "category": "public",
       "caption": "last trip to Tallin",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2012-10-16T17:57:28.556094Z",
       "comments": []
     },
@@ -119,6 +131,7 @@
       "category": "public",
       "caption": "will miss you guys forever",
       "rating": 0,
+      "raters": [],
       "date": "2011-12-02T17:57:28.556094Z",
       "comments": []
     },
@@ -129,7 +142,13 @@
       "image": "images/v.jpg",
       "category": "public",
       "caption": "never stop learning",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2013-12-02T17:57:28.556094Z",
       "comments": []
     },
@@ -141,6 +160,7 @@
       "category": "public",
       "caption": "eu sinto sua falta, i feel lack of you",
       "rating": 0,
+      "raters": [],
       "date": "2011-20-02T17:57:28.556094Z",
       "comments": []
     },
@@ -151,7 +171,13 @@
       "image": "images/lands.jpg",
       "category": "public",
       "caption": "moments",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2013-23-02T17:57:28.556094Z",
       "comments": []
     },
@@ -162,7 +188,13 @@
       "image": "images/ufam.jpg",
       "category": "competition",
       "caption": "college patio",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2012-21-16T17:57:28.556094Z",
       "comments": []
     },
@@ -173,7 +205,13 @@
       "image": "images/ice.jpg",
       "category": "competition",
       "caption": "A king in the north!",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2015-04-16T17:57:28.556094Z",
       "comments": []
     },
@@ -184,7 +222,13 @@
       "image": "images/linnapic1.jpg",
       "category": "competition",
       "caption": "day in the park",
-      "rating": 0,
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2015-05-16T17:57:28.556094Z",
       "comments": []
     }

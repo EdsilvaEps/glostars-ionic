@@ -137,7 +137,8 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
-    
+        /*
+
         .factory('notifyService',['$resource','$cordovaLocalNotification','$cordovaToast', function($cordovaLocalNotification,$cordovaToast){
             
             var notify = {};
@@ -168,7 +169,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
-
+        */
         /*
         .config('$resourceProvider', function($resourceProvider){
             $resourceProvider.defaults.stripTrailingSlashes = false;
