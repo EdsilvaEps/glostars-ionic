@@ -96,6 +96,20 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
       }
   })
   
+  .state('app.settings',{
+      url: '/settings',
+      views:{
+          'content@':{
+              templateUrl: 'templates/settings.html',
+              controller:'',
+          },
+          'footer@':{
+              templateUrl:'templates/footer.html',
+              controller:'FooterCtrl',
+          }
+      }
+  })
+  
   .state('app.signup', {
     url: '/signup',
     views:{
