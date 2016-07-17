@@ -1,0 +1,92 @@
+<ion-view>
+    <ion-nav-bar class="home-bar">
+        <ion-nav-buttons side="left">
+            <div class="bar bar-header" style="border-bottom:none;">
+                <button class="button" style="background-color: transparent; height:50px" ng-click="">
+                    <i class="icon ion-arrow-left-a"></i>
+                    
+                </button>
+            </div>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content class="has-footer has-header">
+        <div class="row" style="padding-top:20px">
+            <div class="col col-100">
+                <a style="border:none">
+                    <img ng-src="{{baseURL + user.image}}" class="img-responsive" style="height:120px;width=auto">
+                    <span><button class="button button-stable" style="border: 1px solid black">Change Image</button></span>
+                </a>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">First Name</span><br>
+                    <input type="text" placeholder="{{user.name}}">
+                </label>
+                 <label class="item item-input">
+                     <span class="input-label">Last Name</span><br>
+                     <input type="text" placeholder="{{user.name}}">
+                </label>
+                 <label class="item item-input">
+                     <span class="input-label">About me</span><br>
+                     <input type="text" placeholder="Maximum 160 characters">
+                </label>
+                <label class="item item-input">
+                     <span class="input-label">Interests</span><br>
+                     <input type="text" placeholder="Maximum 160 characters">
+                </label>
+                <br>
+                <h4 style="padding-left:10px">Current Location:</h4>
+                <label class="item item-input">
+                     <span class="input-label">City</span><br>
+                     <input type="text">
+                </label>
+                <br>
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Country
+                    </div>
+                    <select>
+                        <option>Russia</option>
+                        <option selected>Finland</option>
+                        <option>USA</option>
+                    </select>
+                </label>
+                <br>
+                <h4 style="padding-left:10px">Originally From:</h4>
+                <label class="item item-input">
+                     <span class="input-label">City</span><br>
+                     <input type="text">
+                </label>
+                <br>
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Country
+                    </div>
+                    <select>
+                        <option>Russia</option>
+                        <option selected>Finland</option>
+                        <option>USA</option>
+                    </select>
+                </label>
+                <br>
+                <label class="item item-input">
+                     <span class="input-label">Ocupation</span><br>
+                     <input type="text">
+                </label>
+                <br>
+                <div class="button-bar">
+                    <button class="button button-balanced" style="border:1px solid black">Save</button>
+                    <button class="button button-stable" style="border:1px solid black">Cancel</button>
+                </div>
+                <br>
+                <hr>
+                <h4 style="padding-left:10px">Settings</h4>
+            </div>
+            
+        </div>
+        
+    </ion-content>
+</ion-view>

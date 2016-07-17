@@ -102,7 +102,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService){
+.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','$ionicPopover', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService,$ionicPopover){
    
     
     $scope.baseURL = baseURL;
@@ -112,6 +112,25 @@ angular.module('starter.controllers', [])
     $scope.animIN;
     $scope.animOUT = false;
     $scope.myUser = AuthService.getMockUser();
+    
+    var template = '<ion-popover-view style="height:180px"><ion-content><div class="list"><a class="item"><i class="icon ion-social-facebook"> Facebook</i></a><a class="item"><i class="icon ion-social-twitter"> Twitter</i></a><a class="item"><img src="../img/vklogo.svg" style="height:20px"> Vkontakte</a></div></ion-content></ion-popover-view>';
+    
+    
+    
+    /*
+    <ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item">Camera</a><a class="item" ng-click="closePopover($event)" ui-sref="app.photoup()" >Gallery</a></div></ion-content></ion-popover-view>*/
+    
+    $scope.popover = $ionicPopover.fromTemplate(template, {
+        scope: $scope
+    });
+
+    $scope.openPopover = function($event) {
+        $scope.popover.show($event);
+    };
+    
+    $scope.closePopover = function($event) {
+        $scope.popover.hide($event);
+    };
     
     
     $scope.photos = mainFactory.query(
@@ -221,6 +240,11 @@ angular.module('starter.controllers', [])
     
 }])
 
+.controller('EditCtrl',['$scope','baseURL','$stateParams', 'user', function($scope, baseURL, $stateParams, user){
+    $scope.baseURL = baseURL;
+    $scope.user = user;
+}])
+
 .controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal','AuthService' ,function($scope, mainFactory, usersFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal, AuthService){
     
     $scope.baseURL = baseURL;
@@ -229,11 +253,25 @@ angular.module('starter.controllers', [])
     //$scope.photos = photos;
     $scope.users = [];
     
+    
+    $scope.numOfUserPics = function(id){
+        var i = 0; len = $scope.photos.length; y =0;
+        for(; i < len; i++){
+            if($scope.photos[i].userId === id)
+                y += 1;
+        }
+        return y
+    };
+    
+    
+    
     //TODO: make my user return a full user object
     //i can do nothing with just this id number
     $scope.myUser = AuthService.getMockUser();
     
     $scope.isFollower = function(id){
+        //this functions check i am following the id user
+        
         //Please, get only one user from the users
         //dont be a gluton
         //others might want a piece of memory too

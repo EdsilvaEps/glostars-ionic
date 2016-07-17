@@ -52,9 +52,9 @@
           "description": "psychologist at Kempele, Oulu"
         },
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala",
-          "description": "psychologist at Kempele, Oulu"
+          "id": 0,
+          "name": "Amanda de Paula",
+          "description": "computer engineering student at Federal University of AM, Brazil."
         }
       ]
     },
@@ -159,8 +159,13 @@
       "image": "images/linnapic1.jpg",
       "category": "public",
       "caption": "eu sinto sua falta, i feel lack of you",
-      "rating": 0,
-      "raters": [],
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2,
+          "name": "Pauliina Junnikkala"
+        }
+      ],
       "date": "2011-20-02T17:57:28.556094Z",
       "comments": []
     },

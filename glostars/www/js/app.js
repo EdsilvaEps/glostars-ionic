@@ -74,18 +74,26 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
             templateUrl:'templates/footer.html',
             controller:'FooterCtrl',
         }
-        
-        
-      /*'menuContent':{
-          templateUrl:'templates/profile.html',
-          controller: 'ProfileCtrl',
-          resolve:{
+    }
+  })
+  
+  .state('app.edit', {
+      url: '/edit/:id',
+      views:{
+          'content@':{
+              templateUrl: 'templates/edit.html',
+              controller:'EditCtrl',
+              resolve:{
               user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
                   return usersFactory.get({id:parseInt($stateParams.id, 10)});
-              }]
+                    }]
+              }
+          },
+          'footer@':{
+              templateUrl:'templates/footer.html',
+              controller:'FooterCtrl',
           }
-      } */
-    }
+      }
   })
   
   .state('app.signup', {
