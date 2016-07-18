@@ -18,7 +18,7 @@ angular.module('starter.controllers', [])
   };
     
 
-
+  $scope.userId = AuthService.getMockUser();
   
 
   
@@ -60,6 +60,14 @@ angular.module('starter.controllers', [])
     { title: 'Rap', id: 5 },
     { title: 'Cowbell', id: 6 }
   ];
+})
+
+.controller('HeaderCtrl', function($scope,$ionicSideMenuDelegate){
+    //header controller
+    $scope.toggleLeft = function() {
+        $ionicSideMenuDelegate.toggleLeft();
+    };
+    
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
@@ -240,9 +248,13 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('EditCtrl',['$scope','baseURL','$stateParams', 'user', function($scope, baseURL, $stateParams, user){
+.controller('EditCtrl',['$scope','baseURL','$stateParams', 'user','$ionicHistory', function($scope, baseURL, $stateParams, user, $ionicHistory){
     $scope.baseURL = baseURL;
     $scope.user = user;
+    
+    $scope.myGoBack = function(){
+        $ionicHistory.goBack();
+    };
 }])
 
 .controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal','AuthService' ,function($scope, mainFactory, usersFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal, AuthService){
@@ -585,6 +597,8 @@ angular.module('starter.controllers', [])
 }])
 
 
+
+
 .filter('searchContacts', function(){
   return function (items, query) {
     var filtered = [];
@@ -605,8 +619,17 @@ angular.module('starter.controllers', [])
   };
 })
 
-
-
+/*<div class="row">
+                    <div class="col">
+                        <i class="icon ion-navicon-round" style="font-size:20px"></i>
+                    </div>
+                    <div class="col col-offset-33">
+                        <img src="../img/Glostars_Logo-02_White_PNG.png" style="width:100px;">
+                    </div>
+                    <div class="col col-offset-50">
+                        <i class="icon ion-ios-search-strong" style="font-size:20px"></i>   
+                    </div>
+                </div>*/
 
 
 

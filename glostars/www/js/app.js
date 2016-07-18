@@ -29,19 +29,29 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   
-  $ionicConfigProvider.tabs.position('bottom');
+  //$ionicConfigProvider.tabs.position('bottom');
     
   $stateProvider
 
     .state('app', {
     url: '/app',
-    //abstract: true,
+    abstract: true,
     //templateUrl: 'templates/menu.html',
     
     //controller: 'AppCtrl'
       views: {
         'content@':{
             templateUrl: 'templates/menu.html',
+            controller:'AppCtrl',
+        }
+    }
+  })
+  
+  .state('app.sidemenu',{
+      url:'/sidemenu',
+      views: {
+        'content@':{
+            templateUrl: 'templates/sidemenu.html',
             controller:'AppCtrl',
         }
     }
@@ -60,7 +70,7 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
   .state('app.profile', { //this will be changed later
     url: '/profile/:id',
     views:{
-        'content@':{
+        'menuContent':{
             templateUrl: 'templates/profile.html',
             controller:'ProfileCtrl',
             resolve:{
@@ -132,7 +142,7 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
   .state('app.home', {
     url: '/home',
     views:{
-        'content@':{
+        'menuContent':{
             templateUrl: 'templates/main.html',
             controller:'HomeCtrl',
         },
@@ -182,7 +192,11 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
    .state('app.competition', {
       url: '/competition',
       views: {
-        'content@':{
+        'header@':{
+            templateUrl:'templates/header.html',
+            controller:'HeaderCtrl',
+        },
+        'menuContent':{
             templateUrl: 'templates/competition.html',
             controller:'CompetitionController',
             resolve:{
@@ -217,5 +231,5 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/login');
 });
