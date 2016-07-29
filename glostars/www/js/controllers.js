@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, USER_ROLES, $rootScope) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, USER_ROLES, $rootScope, $ionicPlatform, $cordovaCamera) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -125,6 +125,12 @@ angular.module('starter.controllers', [])
     $scope.myUser = AuthService.getMockUser();
     
     var template = '<ion-popover-view style="height:180px"><ion-content><div class="list"><a class="item"><i class="icon ion-social-facebook"> Facebook</i></a><a class="item"><i class="icon ion-social-twitter"> Twitter</i></a><a class="item"><img src="../img/vklogo.svg" style="height:20px"> Vkontakte</a></div></ion-content></ion-popover-view>';
+    
+    
+
+    
+    
+    
     
     
     
@@ -426,12 +432,23 @@ angular.module('starter.controllers', [])
         
     }
     
+    $scope.pics = []; //this be the own user's pics
+    
     
     $scope.photos = mainFactory.query(
         function(response){
             
             $scope.photos = response;
             $scope.showFeed = true;
+            var n = $scope.photos.length;
+            
+            for(var i = 0; i < n; i++){
+                if($scope.photos[i].userId === $scope.user.id){
+                    $scope.pics.push($scope.photos[i]);
+                
+                }    
+            }
+            
             
             $scope.users = usersFactory.query(
                 function(response){
@@ -520,12 +537,12 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('PictureUploadCtrl',['$scope','$ionicPlatform', function($scope, $ionicPlatform){
+.controller('PictureUploadCtrl',['$scope','$ionicPlatform','$cordovaImagePicker', function($scope, $ionicPlatform, $cordovaImagePicker){
     
     //IMAGE PICKER MISSING
     
-    /* UNCOMMENT WHEN TESTING ON DEVICE FOR ENABLING CAMERA AND GALLERY FUNCTIONALITY
-     
+    // UNCOMMENT WHEN TESTING ON DEVICE FOR ENABLING CAMERA AND GALLERY FUNCTIONALITY
+     /*
     $ionicPlatform.ready(function(){
         $scope.galleryPicker = function(){
             var options={
@@ -537,17 +554,19 @@ angular.module('starter.controllers', [])
             };
         
         
-            $cordovaImagePicker.getPictures(options).then(function(results){
-                //Loop through acquired images
-                for(var i = 0; i < results.length; i++){
-                    console.log('Image URI: ' + results[i]);
-                }
-            }, function(error){
-                console.log('Error: ' + JSON.stringify(error));
-                //in case of error
-            });
+            $cordovaImagePicker.getPictures(options).then(
+                function(results){
+                    //Loop through acquired images
+                    for(var i = 0; i < results.length; i++){
+                        console.log('Image URI: ' + results[i]);
+                    }
+                }, function(error){
+                    console.log('Error: ' + JSON.stringify(error));
+                    //in case of error
+                });
         };
         
+        /*
         $scope.takePicture = function(){
             
         var options = {
@@ -636,7 +655,7 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL','$ionicPlatform','$cordovaCamera','$cordovaImagePicker',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
     
     
     $scope.baseURL = baseURL;
@@ -660,7 +679,7 @@ angular.module('starter.controllers', [])
     
     
     //popover config
-    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item">Camera</a><a class="item" ng-click="closePopover($event)" ui-sref="app.photoup()" >Gallery</a></div></ion-content></ion-popover-view>';
+    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item">Camera</a><a class="item" ng-click="galleryPicker()" ng-click="galleryPicker()" >Gallery</a></div></ion-content></ion-popover-view>';
     
     $scope.popover = $ionicPopover.fromTemplate(template, {
         scope: $scope
@@ -679,6 +698,59 @@ angular.module('starter.controllers', [])
         console.log("letterbox");
     }
     
+    
+    //--------------- gallery picture uploading -----------------//
+    
+    /*
+    $ionicPlatform.ready(function() {
+        var options = {
+            quality: 50,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.CAMERA,
+            allowEdit: true,
+            encodingType: Camera.EncodingType.JPEG,
+            targetWidth: 100,
+            targetHeight: 100,
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: false
+        };
+         $scope.takePicture = function() {
+            $cordovaCamera.getPicture(options).then(function(imageData) {
+                $scope.registration = "data:image/jpeg;base64," + imageData;
+            }, function(err) {
+                console.log(err);
+            });
+
+
+        };
+        
+        var optgallery={
+                maximumImagesCount:1, // Max number of selected pics
+                width: 800,
+                height: 800,
+                quality: 100
+            };
+        
+        $scope.galleryPicker = function(){
+            
+            $cordovaImagePicker.getPictures(optgallery).then(
+                function(results){
+                    //Loop through acquired images
+                    for(var i = 0; i < results.length; i++){
+                        console.log('Image URI: ' + results[i]);
+                    }
+                }, function(error){
+                    console.log('Error: ' + JSON.stringify(error));
+                    //in case of error
+                });
+        };
+        
+    });
+    
+    */
+    
+    
+    //------------------------------------------------------------//
     
 }])
 

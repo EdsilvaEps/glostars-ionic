@@ -257,12 +257,8 @@
       "image": "images/lut_winter_walk.JPG",
       "category": "competition",
       "caption": "walking on LUT",
-      "rating": 1,
-      "raters": [
-        {
-          "id": 2
-        }
-      ],
+      "rating": 0,
+      "raters": [],
       "date": "2015-05-16T17:57:28.556094Z",
       "comments": [
         {
@@ -272,6 +268,22 @@
           "userId": 2,
           "comment": "test comment",
           "date": "2016-07-29T08:11:00.285Z"
+        },
+        {
+          "id": 2,
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
+          "userId": 2,
+          "comment": "test comment 2",
+          "date": "2016-07-29T13:36:42.266Z"
+        },
+        {
+          "id": 3,
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
+          "userId": 2,
+          "comment": "test comment 3",
+          "date": "2016-07-29T13:38:10.137Z"
         }
       ]
     }

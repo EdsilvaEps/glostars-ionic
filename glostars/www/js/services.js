@@ -15,6 +15,10 @@
 // then run the karma file with:
 // sudo karma start karma.conf.js
 
+//when using SUDO to run android builds on ionic
+//add the suffix -E as in "sudo -E run android"
+//to keep the environment variables' permission
+
 angular.module('starter.services',['ngResource'])
         .constant("baseURL", "http://localhost:3000/")
         .constant('AUTH_EVENTS', {

@@ -23,31 +23,24 @@
             <a class="button" style="box-shadow: 2px 2px 2px #888888;" ng-if="user.id === myUser" ng-click="select(4)"><p>Following {{user.friends.length}}</p></a>
         </div>
         <!-- photos buttom (list view) --> 
-        <div class="list" ng-if="isSelected(1)">
-            <div class="card" ng-repeat="photo in photos | filter:{userId:user.id}">
-                <div class="item item-avatar" style="border-bottom:none">
-                    <p>something</p>
+        <div ng-if="isSelected(1)">
+            <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0">
+                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length">
+                    <img ng-src="{{baseURL + pics[$index].image}}">
                 </div>
-            
-                <div class="item item-image">
-                    <img ng-src="{{baseURL+photo.image}}">
+                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length">
+                    <img ng-src="{{baseURL+pics[$index+1].image}}" ->
                 </div>
-                <div class="row no-padding">
-                    <div class="col" style="border-right:solid gray 1px">
-                    <i class="icon ion-thumbsup" style="padding-left:25px"> {{photo.rating}}</i><!-- TODO get number of rates -->
-                    </div>
-                    <div class="col" style="border-right:solid black 1px">
-                    <i class="icon ion-chatbox-working" style="padding-left:10px"> Comment</i> <!-- TODO Open comment page -->
-                        
-                     
-                    </div>
-                    <div class="col text-right">
-                    <i class="icon ion-android-share-alt" style="padding-right:25px"> Share</i> <!-- TODO share stuff -->
-                        
-                    </div>
+                
+            </div>
+            <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 != 0">
+                <div class="col col-50 item item-image">
+                    <img ng-src="{{baseURL+pics[pics.length-1].image}}" width="100%">
                 </div>
             </div>
-        </div><!--/list -->
+        </div>
+            
+            
         <div class="list" ng-if="isSelected(2)">
             <p>Public pictures</p>
         </div>
