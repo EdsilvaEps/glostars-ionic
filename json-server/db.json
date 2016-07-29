@@ -2,7 +2,8 @@
   "users": [
     {
       "id": 0,
-      "name": "Amanda de Paula",
+      "firstName": "Amanda",
+      "lastName": "de Paula",
       "image": "images/amanda.jpg",
       "login": "amanda@hotmail.com",
       "password": "amanda",
@@ -12,21 +13,24 @@
       "friends": [
         {
           "id": 1,
-          "name": "Edson N Silva",
+          "firstName": "Edson",
+          "lastName": "N Silva",
           "description": "computer engineering student at Lappeenranta University of Tech, Finland."
         }
       ],
       "followers": [
         {
           "id": 1,
-          "name": "Edson N Silva",
+          "firstName": "Edson",
+          "lastName": "N Silva",
           "description": "computer engineering student at Lappeenranta University of Tech, Finland."
         }
       ]
     },
     {
       "id": 1,
-      "name": "Edson N Silva",
+      "firstName": "Edson",
+      "lastName": "N Silva",
       "image": "images/ed.jpg",
       "login": "edson@hotmail.com",
       "password": "edson",
@@ -36,56 +40,70 @@
       "friends": [
         {
           "id": 0,
-          "name": "Amanda de Paula",
+          "firstName": "Amanda",
+          "lastName": "de Paula",
           "description": "computer engineering student at Federal University of AM, Brazil."
         },
         {
           "id": 2,
-          "name": "Pauliina Junnikkala",
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
           "description": "psychologist at Kempele, Oulu"
         }
       ],
       "followers": [
         {
           "id": 2,
-          "name": "Pauliina Junnikkala",
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
           "description": "psychologist at Kempele, Oulu"
         },
         {
           "id": 0,
-          "name": "Amanda de Paula",
+          "firstName": "Amanda",
+          "lastName": "de Paula",
           "description": "computer engineering student at Federal University of AM, Brazil."
         }
       ]
     },
     {
       "id": 2,
-      "name": "Pauliina Junnikkala",
+      "firstName": "Pauliina",
+      "lastName": "Junnikkala",
       "image": "images/linna.jpg",
       "login": "pauliina@hotmail.com",
       "password": "pauliina",
       "sex": "female",
       "birthday": "31/10/1989",
-      "description": "psychologist at Kempele, Oulu",
+      "description": "psychologist at Kempele, in Oulu",
       "friends": [
         {
           "id": 0,
-          "name": "Amanda de Paula",
+          "firstName": "Amanda",
+          "lastName": "de Paula",
           "description": "computer engineering student at Federal University of AM, Brazil."
         },
         {
           "id": 1,
-          "name": "Edson N Silva",
+          "firstName": "Edson",
+          "lastName": "N Silva",
           "description": "computer engineering student at Lappeenranta University of Tech, Finland."
         }
       ],
       "followers": [
         {
           "id": 1,
-          "name": "Edson N Silva",
+          "firstName": "Edson",
+          "lastName": "N Silva",
           "description": "computer engineering student at Lappeenranta University of Tech, Finland."
         }
-      ]
+      ],
+      "interests": "reading, photographing and reading people's minds with my psychic powers",
+      "currentcity": "Oulu",
+      "currentCountry": "Finland",
+      "originalcity": "Ylikimiinki",
+      "originalCountry": "Finland",
+      "ocupation": "Psychologist"
     }
   ],
   "photos": [
@@ -99,12 +117,20 @@
       "rating": 1,
       "raters": [
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
+          "id": 2
         }
       ],
       "date": "2015-02-13T17:57:28.556094Z",
-      "comments": []
+      "comments": [
+        {
+          "id": 1,
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
+          "userId": 2,
+          "comment": "test comment",
+          "date": "2016-07-29T08:11:23.087Z"
+        }
+      ]
     },
     {
       "id": 1,
@@ -116,8 +142,7 @@
       "rating": 1,
       "raters": [
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
+          "id": 2
         }
       ],
       "date": "2012-10-16T17:57:28.556094Z",
@@ -130,8 +155,12 @@
       "image": "images/bbq.jpeg",
       "category": "public",
       "caption": "will miss you guys forever",
-      "rating": 0,
-      "raters": [],
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2
+        }
+      ],
       "date": "2011-12-02T17:57:28.556094Z",
       "comments": []
     },
@@ -145,8 +174,7 @@
       "rating": 1,
       "raters": [
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
+          "id": 2
         }
       ],
       "date": "2013-12-02T17:57:28.556094Z",
@@ -156,16 +184,11 @@
       "id": 4,
       "userId": 2,
       "author": "Pauliina Junnikkala",
-      "image": "images/linnapic1.jpg",
+      "image": "images/lut_winter_walk.JPG",
       "category": "public",
-      "caption": "eu sinto sua falta, i feel lack of you",
-      "rating": 1,
-      "raters": [
-        {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
-        }
-      ],
+      "caption": "LUT winter walk",
+      "rating": 0,
+      "raters": [],
       "date": "2011-20-02T17:57:28.556094Z",
       "comments": []
     },
@@ -179,8 +202,7 @@
       "rating": 1,
       "raters": [
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
+          "id": 2
         }
       ],
       "date": "2013-23-02T17:57:28.556094Z",
@@ -213,29 +235,45 @@
       "rating": 1,
       "raters": [
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
+          "id": 2
         }
       ],
       "date": "2015-04-16T17:57:28.556094Z",
-      "comments": []
+      "comments": [
+        {
+          "id": 1,
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
+          "userId": 2,
+          "comment": "test comment",
+          "date": "2016-07-29T08:11:15.831Z"
+        }
+      ]
     },
     {
       "id": 8,
       "userId": 2,
       "author": "Pauliina Junnikkala",
-      "image": "images/linnapic1.jpg",
+      "image": "images/lut_winter_walk.JPG",
       "category": "competition",
-      "caption": "day in the park",
+      "caption": "walking on LUT",
       "rating": 1,
       "raters": [
         {
-          "id": 2,
-          "name": "Pauliina Junnikkala"
+          "id": 2
         }
       ],
       "date": "2015-05-16T17:57:28.556094Z",
-      "comments": []
+      "comments": [
+        {
+          "id": 2,
+          "firstName": "Pauliina",
+          "lastName": "Junnikkala",
+          "userId": 2,
+          "comment": "test comment",
+          "date": "2016-07-29T08:11:00.285Z"
+        }
+      ]
     }
   ]
 }

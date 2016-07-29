@@ -32,7 +32,7 @@
           <div class="list">
               <a class="item item-avatar" ng-repeat="person in peoples | searchContacts:search" ui-sref="app.profile({id:person.id})">
                   <img ng-src="{{baseURL+person.image}}">
-                  <h2>{{person.name}}</h2>
+                  <h2>{{person.firstName}} {{person.lastName}}</h2>
                   <p>{{person.description}}</p>
               </a>
           </div>

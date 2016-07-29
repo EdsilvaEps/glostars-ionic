@@ -4,26 +4,32 @@
         <button class="button button-clear button-primary" ng-click="comment.hide()">Back</button>
     </ion-header-bar>
     <ion-content>
-        <div class="card">
-            <div class="list">
-                <a class="item item-avatar" ng-repeat="user in users">
-                    <img ng-src="{{baseURL+user.image}}">
-                    <h2 class="text-left">{{user.name}}</h2>
-                    <p class="text-left" style="padding-top:5px">Very nice this new awesome app</p>
-                    <p class="text-left"><small>schedule stuff</small></p>
+        <div class="card" style="box-shadow:none;">
+            <div class="list" >
+
+                <a class="item item-avatar"  ng-repeat="com in picture.comments | orderBy:'-date'" ui-sref="app.profile({id:com.userId})" ng-click="comment.hide()" >
+                    
+                    <img ng-src="{{baseURL+users[com.userId].image}}" ><span style="position:absolute;top:0;right:10px;" ng-if="com.userId == myUser" ng-click="deleteComment(picture.id, com.id)"><i class="icon ion-close-round"></i></span> 
+                    <h2 class="text-left" ui-sref="app.profile({id:com.userId})">{{com.firstName}} {{com.lastName}}     </h2>
+                    <p class="text-left" style="padding-top:5px">{{com.comment}}</p>
+                    <br>
+                   <p style="color:#D1D0CE;"> {{com.date | date:'medium'}}</p>
                 </a>
-                
-            </div>
-            <div class="list">
-                <div class="item item-input-inset">
-                    <label class="item-input-wrapper">
-                        <input type="text" placeholder="write something">
-                    </label>
-                    <button class="button button-small">
-                        Send
-                    </button>
-                </div>
             </div>
         </div>
+        
+        
     </ion-content>
+    <ion-footer-bar>
+            <form style="bottom:0;left:0;position:relative" name="commentForm" ng-submit="submitComment(picture.id)" novalidate>
+                 <label class="item item-input inline">
+                    <textarea placeholder="Comments" ng-model="commentData.comment" required></textarea>
+                     
+                </label>
+                <button class="button button-small button-positive" type="reset" ng-click="submitComment(picture.id)" style="bottom:0;right:0">
+                    Send
+                </button>
+               
+            </form>
+    </ion-footer-bar>
 </ion-modal-view>

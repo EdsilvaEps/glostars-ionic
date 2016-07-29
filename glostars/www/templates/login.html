@@ -1,5 +1,5 @@
-<ion-view>
-  <ion-content scroll="false">
+<ion-view >
+    <ion-content scroll="false" has-footer="false">
       <ion-slides options="options" slider="data.slider">
           <ion-slide-page class="logbackground pad">
               <div class="card card-1">
@@ -10,12 +10,12 @@
               <form ng-submit="doLogin()" class="logbackground">
                 <div class="list">
                     <label class="item item-input">
-                        <span class="input-label" style="color:white;">Email</span>
+                        <span class="input-label" style="color:white;">Email:</span>
                         <p style="padding:20px"></p> <input type="email" ng-model="loginData.email">
                     </label>
                     <label class="item item-input">
-                        <span class="input-label" style="color:white;text-align:center;">Password</span>
-                        <input type="password" ng-model="loginData.password">
+                        <span class="input-label" style="color:white;text-align:center;">Password: </span>
+                        <p style="padding:20px"></p><input type="password" ng-model="loginData.password">
                     </label>
                     <label class="item" style="background:transparent; border:none;">
                     <button class="button logbutton" type="submit" ui-sref="app.home()">Log in</button>
@@ -26,7 +26,7 @@
               <h3 style="color:white;">Sign in</h3>
           </ion-slide-page>
           <!-- promo page slide -->
-          <ion-slide-page>
+          <ion-slide-page hide-nav-bar="true">
               <div class="card">
                 <div class="item item-image " style="height:170px">
                     <img src="../img/IMG_4253.jpg">
@@ -46,7 +46,7 @@
             </div>
           </ion-slide-page>
           <!-- sign up page slide -->
-          <ion-slide-page class="signupbackground pad">
+          <ion-slide-page class="signupbackground pad" hide-nav-bar="true">
               <div class="row">
                 <h3>Sign up</h3>
               </div>

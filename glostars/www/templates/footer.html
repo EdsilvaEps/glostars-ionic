@@ -1,20 +1,20 @@
 <div class="tabs tabs-icon-only">
-        <a class="tab-item" ui-sref="app.home">
-            <i class="icon ion-home"></i>
+        <a class="tab-item" style="padding-top:8px" ui-sref="app.home">
+            <i><img style="height:28px" src="../img/Greyhouse%20M.png"></i>
         </a>
         <a class="tab-item" style="padding-top:8px" ui-sref="app.competition()">
-            <i><img style="height:28px" src="../img/Competition%20B.png"></i>
+            <i><img style="height:30px" src="../img/Competition%20B.png"></i>
         </a>
-        <a class="tab-item" ng-click="openPopover($event)">
-            <i class="icon ion-camera"></i>
-        </a>
-        <a class="tab-item" ng-click="mailBox()">
-            <i class="icon ion-android-mail"></i>
+        <a class="tab-item" style="padding-top:8px" ng-click="openPopover($event)">
+            <i><img style="height:33px" src="../img/Lens%20big.png"></i>
         </a>
         <a class="tab-item" style="padding-top:8px" ng-click="modal.show()">
-            <i><img class="icon" style="height:28px" src="../img/Notifications_Black.png"></i>
+            <i><img class="icon" style="height:28px" src="../img/Greyman%20M.png"></i>
             
         </a>
-        
-        
+    <div>
+        <a class="item item-avatar" style="background:transparent;border:none" ui-sref="app.profile({id:userId})">
+            <img ng-src="{{baseURL+users[userId].image}}" style="top:5px;height:38px">
+        </a>
+    </div>
 </div>

@@ -75,8 +75,10 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl',['$scope', function($scope){
+.controller('LoginCtrl',['$scope','$state', function($scope,$state){
     
+    $scope.$state = $state;
+    console.log($scope.$state.current.name);
 
     
     $scope.options = {
@@ -97,6 +99,7 @@ angular.module('starter.controllers', [])
     
     
 }])
+
 
 .controller('SignUpCtrl', function($scope){
     //get sign up information
@@ -159,6 +162,9 @@ angular.module('starter.controllers', [])
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
     
+    //---------- comments -------------//
+    
+    $scope.commentData = {};
     
     $ionicModal.fromTemplateUrl('templates/comment.html',{
         scope: $scope
@@ -170,6 +176,48 @@ angular.module('starter.controllers', [])
         $scope.picture = $scope.photos[id];
         $scope.comment.show();
     }
+    
+    $scope.submitComment = function(id){
+        if($scope.commentData.comment != ''){
+            
+            var commentVar = {
+                id: $scope.photos[id].comments.length + 1,
+                firstName: $scope.users[$scope.userId].firstName,
+                lastName: $scope.users[$scope.userId].lastName,
+                userId: $scope.userId,
+                comment: $scope.commentData.comment,
+                date: new Date().toISOString()
+            };
+            
+            $scope.photos[id].comments.push(commentVar);
+            
+            mainFactory.update({id:id},$scope.photos[id]);
+            
+            //$scope.commentForm.$setPristine();
+            
+            $scope.commentData.comment = "";
+            
+            
+        }
+        
+    };
+    
+    $scope.deleteComment = function(photoid, commentid){
+        
+        var i = 0; len = $scope.photos[photoid].comments.length;
+        for(; i < len; i++){
+
+            if($scope.photos[photoid].comments[i].id === commentid){
+                $scope.photos[photoid].comments.splice(i,1);
+            mainFactory.update({id:photoid},$scope.photos[photoid]);
+            }
+        }
+        
+        
+    };
+    
+
+    //---------- comments -------------//
     
     
     $scope.dejaAime = function(photoId, id){
@@ -248,9 +296,35 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('EditCtrl',['$scope','baseURL','$stateParams', 'user','$ionicHistory', function($scope, baseURL, $stateParams, user, $ionicHistory){
+.controller('EditCtrl',['$scope','baseURL','$stateParams', 'user','$ionicHistory','usersFactory','$ionicPopup','$location', function($scope, baseURL, $stateParams, user, $ionicHistory, usersFactory,$ionicPopup, $location){
     $scope.baseURL = baseURL;
     $scope.user = user;
+    
+    $scope.save = function(){
+       
+         if(!($scope.user.firstName === '')&& !($scope.user.lastName === '')){
+             
+             
+             
+            var savedPopup = $ionicPopup.confirm({
+                title: 'Confirm change',
+                template: 'Are you sure you want edit your profile?'
+            });
+            
+            savedPopup.then(function(res) {
+                if (res) {
+                    
+ usersFactory.update({id:$scope.user.id},$scope.user);
+                    var changeView = function(){
+                        $location.path('app.profile({id:user.id})');
+                    };   
+                }    
+            });
+         }
+        
+    };
+    
+    //$scope.save()
     
     $scope.myGoBack = function(){
         $ionicHistory.goBack();
@@ -562,7 +636,18 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService',function($scope,$ionicModal,$ionicPopover, AuthService){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL){
+    
+    
+    $scope.baseURL = baseURL;
+    $scope.$state = $state;
+    console.log($scope.$state.current.name);
+    
+    $scope.users = usersFactory.query(
+        function(res){
+            $scope.users = res;
+            
+        });
     
     $ionicModal.fromTemplateUrl('templates/notifications.html',{
         scope: $scope
@@ -571,6 +656,7 @@ angular.module('starter.controllers', [])
     });
     
     $scope.userId = AuthService.getMockUser();
+    console.log($scope.userId);
     
     
     //popover config

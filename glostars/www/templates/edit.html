@@ -22,64 +22,64 @@
         <div class="row">
             <div class="list">
                 <label class="item item-input">
-                    <span class="input-label">First Name</span><br>
-                    <input type="text" placeholder="{{user.name}}">
+                    <span class="input-label">First Name: </span><br>
+                    <input type="text" ng-model="user.firstName">
                 </label>
                  <label class="item item-input">
-                     <span class="input-label">Last Name</span><br>
-                     <input type="text" placeholder="{{user.name}}">
+                     <span class="input-label">Last Name: </span><br>
+                     <input type="text" ng-model="user.lastName">
                 </label>
                  <label class="item item-input">
                      <span class="input-label">About me</span><br>
-                     <input type="text" placeholder="Maximum 160 characters">
+                     <input type="text" ng-model="user.description">
                 </label>
                 <label class="item item-input">
                      <span class="input-label">Interests</span><br>
-                     <input type="text" placeholder="Maximum 160 characters">
+                     <input type="text" ng-model="user.interests">
                 </label>
                 <br>
                 <h4 style="padding-left:10px">Current Location:</h4>
                 <label class="item item-input">
                      <span class="input-label">City</span><br>
-                     <input type="text">
+                     <input type="text" ng-model="user.currentcity">
                 </label>
                 <br>
                 <label class="item item-input item-select">
                     <div class="input-label">
                         Country
                     </div>
-                    <select>
-                        <option>Russia</option>
-                        <option selected>Finland</option>
-                        <option>USA</option>
+                    <select ng-model="user.currentCountry">
+                        <option value="Russia">Russia</option>
+                        <option value="Finland" selected>Finland</option>
+                        <option value="USA">USA</option>
                     </select>
                 </label>
                 <br>
                 <h4 style="padding-left:10px">Originally From:</h4>
                 <label class="item item-input">
                      <span class="input-label">City</span><br>
-                     <input type="text">
+                     <input type="text" ng-model="user.originalcity">
                 </label>
                 <br>
                 <label class="item item-input item-select">
                     <div class="input-label">
                         Country
                     </div>
-                    <select>
-                        <option>Russia</option>
-                        <option selected>Finland</option>
-                        <option>USA</option>
+                    <select ng-model="user.originalCountry">
+                        <option value="Russia">Russia</option>
+                        <option value="Finland" selected>Finland</option>
+                        <option value="USA">USA</option>
                     </select>
                 </label>
                 <br>
                 <label class="item item-input">
                      <span class="input-label">Ocupation</span><br>
-                     <input type="text">
+                     <input type="text" ng-model="user.ocupation">
                 </label>
                 <br>
                 <div class="button-bar">
-                    <button class="button button-balanced" style="border:1px solid black">Save</button>
-                    <button class="button button-stable" style="border:1px solid black">Cancel</button>
+                    <button class="button button-balanced" style="border:1px solid black" ng-click="save()">Save</button>
+                    <button class="button button-stable" style="border:1px solid black" ui-sref="app.profile({id:user.id})">Cancel</button>
                 </div>
                 <br>
                 <hr>

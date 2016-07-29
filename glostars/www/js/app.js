@@ -60,9 +60,9 @@ angular.module('starter', ['ionic','starter.controllers', 'starter.services'])
   .state('app.login', {
     url: '/login',
     views:{
-      'menuContent':{
+      'content@':{
           templateUrl:'templates/login.html',
-          controller: 'AppCtrl',
+          controller: 'LoginCtrl',
       }
     }
   })
