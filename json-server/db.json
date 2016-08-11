@@ -75,7 +75,7 @@
       "password": "pauliina",
       "sex": "female",
       "birthday": "31/10/1989",
-      "description": "psychologist at Kempele, in Oulu",
+      "description": "psychologist in Kempele",
       "friends": [
         {
           "id": 0,
@@ -187,8 +187,12 @@
       "image": "images/lut_winter_walk.JPG",
       "category": "public",
       "caption": "LUT winter walk",
-      "rating": 0,
-      "raters": [],
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2
+        }
+      ],
       "date": "2011-20-02T17:57:28.556094Z",
       "comments": []
     },
@@ -257,8 +261,12 @@
       "image": "images/lut_winter_walk.JPG",
       "category": "competition",
       "caption": "walking on LUT",
-      "rating": 0,
-      "raters": [],
+      "rating": 1,
+      "raters": [
+        {
+          "id": 2
+        }
+      ],
       "date": "2015-05-16T17:57:28.556094Z",
       "comments": [
         {

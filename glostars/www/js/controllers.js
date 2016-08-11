@@ -75,11 +75,11 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl',['$scope','$state', function($scope,$state){
+.controller('LoginCtrl',['$scope','$state','AuthService','$http', function($scope,$state,AuthService,$http){
     
     $scope.$state = $state;
     console.log($scope.$state.current.name);
-
+    $scope.token = null;
     
     $scope.options = {
         loop: false,
@@ -91,6 +91,9 @@ angular.module('starter.controllers', [])
     //TODO: encrypt data
     //TODO: the swipe screen has three views now, handle them here
     $scope.doLogin = function() {
+        
+        
+        $scope.token = AuthService.login($scope.loginData);
         console.log('Doing login', $scope.loginData);
         // Simulate a login delay. Remove this and replace with your login
         
@@ -125,11 +128,6 @@ angular.module('starter.controllers', [])
     $scope.myUser = AuthService.getMockUser();
     
     var template = '<ion-popover-view style="height:180px"><ion-content><div class="list"><a class="item"><i class="icon ion-social-facebook"> Facebook</i></a><a class="item"><i class="icon ion-social-twitter"> Twitter</i></a><a class="item"><img src="../img/vklogo.svg" style="height:20px"> Vkontakte</a></div></ion-content></ion-popover-view>';
-    
-    
-
-    
-    
     
     
     
@@ -488,7 +486,7 @@ angular.module('starter.controllers', [])
     //TODO: make page for friends - DONE (partially - make friends on the profile pg)
 }])
 
-.controller('CompetitionController',['$scope','mainFactory','images',  'baseURL', function($scope, mainFactory, images, baseURL){
+.controller('CompetitionController',['$scope','mainFactory','images',  'baseURL','competitionFactory', function($scope, mainFactory, images, baseURL, competitionFactory){
     
     
     
@@ -497,6 +495,16 @@ angular.module('starter.controllers', [])
     $scope.tab = 1;
     var n;
     
+    $scope.photos = competitionFactory.get({id: 12}, function(res){
+        $scope.photos = res;
+        console.log($scope.photos);
+    },
+    function(res){
+        console.log(res);
+        console.log("not loaded");
+    });
+    
+    /*
     $scope.photos = mainFactory.query(
         function(response){
             
@@ -518,6 +526,7 @@ angular.module('starter.controllers', [])
         function(response){
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
+    */
     
     $scope.check = function(){
         console.log("pics filtered: " + $scope.pics.length);
@@ -655,6 +664,35 @@ angular.module('starter.controllers', [])
     
 }])
 
+.controller('FeedViewCtrl', ['$scope', 'baseURL', 'AuthService', 'usersFactory', 'mainFactory', '$stateParams', 'picsFactory', function($scope, baseURL, AuthService, usersFactory, mainFactory, $stateParams, picsFactory){
+    
+    $scope.baseURL = baseURL;
+    
+    $scope.tView = $stateParams.category;
+    
+    $scope.pics = function(){
+        
+        var picList
+        if($scope.tView === 'competition'){
+            
+            picList = picsFactory.getCompetitionPics();
+            return picList;
+        } 
+        else if($scope.tView === 'userProfile'){
+            
+            picList = picsFactory.getUserPictures($stateParams.id);
+            return picList;
+        }
+    };
+    
+    
+    
+    
+    
+    
+    
+}])
+
 .controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL','$ionicPlatform','$cordovaCamera','$cordovaImagePicker',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
     
     
@@ -753,6 +791,7 @@ angular.module('starter.controllers', [])
     //------------------------------------------------------------//
     
 }])
+
 
 
 

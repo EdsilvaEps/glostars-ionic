@@ -29,5 +29,7 @@
     "cordova-plugin-camera",
     "cordova-plugin-image-picker"
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    "android"
+  ]
 }

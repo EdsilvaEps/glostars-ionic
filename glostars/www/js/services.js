@@ -20,7 +20,8 @@
 //to keep the environment variables' permission
 
 angular.module('starter.services',['ngResource'])
-        .constant("baseURL", "http://localhost:3000/")
+        //.constant("baseURL", "http://localhost:3000/")
+        .constant("baseURL", "http://www.glostars.com/")
         .constant('AUTH_EVENTS', {
             loginSuccess: 'auth-login-success',
             loginFailed: 'auth-login-failed',
@@ -44,11 +45,53 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
+        .factory('competitionFactory', ['$resource', 'baseURL', function($resource, baseURL){
+            
+            
+            //this function returns the competition photos (TEST)
+            return $resource(baseURL+"/api/images/competition/:id");
+            
+        }])
+
         .factory('usersFactory', ['$resource', 'baseURL', function($resource, baseURL){
             
             //this function returns ALL the users and data about them
             return $resource(baseURL+"users/:id", null,{'update':{method:'PUT'}});
               
+        }])
+
+        .factory('picsFactory', ['mainFactory', 'baseURL', function(mainFactory, baseURL){
+            var pics = [];
+            
+            pics.getUserPictures = function(id){
+                pics = mainFactory.query(
+                    function(res){
+                        
+                        for(var i = res.length; i < 0; i++){
+                            if(res[i].userId === id){
+                                pics.push(res[i]);
+                            }
+                        }
+                        
+                    });
+            };
+            
+            pics.getCompetitionPics = function(){
+                pics = mainFactory.query(
+                    function(res){
+                        
+                        for(var i = res.length; i < 0; i++){
+                            if(res[i].category === 'competition'){
+                                pics.push(res[i]);
+                            }
+                        }
+                        
+                    });
+            };
+            
+            
+            
+            
         }])
 
 
@@ -81,9 +124,42 @@ angular.module('starter.services',['ngResource'])
             };
             var authService = {};
             
+            
+            
             authService.login = function(credentials) {
                 
-               
+                var loginData = {
+                    grant_type: credentials.password,
+                    password: credentials.password,
+                    username: credentials.email
+                    
+                };
+            
+                var config = {
+                    headers : {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                    }
+                };
+                
+                console.log("check");
+                $http.post(baseURL+'Token', loginData, config)
+                    .success(function(data, status, headers, config){
+                        return data;
+                        console.log(data);
+                        console.log("logged");
+                        
+                    })
+                    .error(function(data, status, header, config){
+                        console.log("ERROR");
+                        console.log("data: "+ data +" status:"+ 
+                                   header + " config: " + config);
+                        
+                        return null;
+                    });
+                };
+                
+                
+                /*
                 console.log("fetching user");
                 if(credentials.email === mockCredentials.email && credentials.password === mockCredentials.password){
                     
@@ -115,9 +191,9 @@ angular.module('starter.services',['ngResource'])
                     });
                     */
                     
-                };
+                //};
                 
-            };
+            //};
             
             authService.getMockUser = function(){
                 return mockUserId;

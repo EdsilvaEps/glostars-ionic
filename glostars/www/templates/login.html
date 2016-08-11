@@ -18,7 +18,7 @@
                         <p style="padding:20px"></p><input type="password" ng-model="loginData.password">
                     </label>
                     <label class="item" style="background:transparent; border:none;">
-                    <button class="button logbutton" type="submit" ui-sref="app.home()">Log in</button>
+                    <button class="button logbutton" type="submit"  ng-click="doLogin()">Log in</button> <!-- ui-sref="app.home()" -->
                     </label>
                     <p>Forgot your password?</p>
                 </div>

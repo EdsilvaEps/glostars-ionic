@@ -211,12 +211,12 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
         }
       }
     })
-    .state('app.playlists', {
-      url: '/playlists',
+    .state('app.feedView', {
+      url: '/feedView',
       views: {
         'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
+          templateUrl: 'templates/feedView.html',
+          controller: 'FeedViewCtrl'
         }
       }
     })
