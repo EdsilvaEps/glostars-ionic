@@ -12,7 +12,7 @@
             <!-- enough pictures  -->
             <div ng-if="isSelected(1)">
             <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0" style="padding-top:60px">
-                <div class="col col-50 item" ng-if="$index+1 < pics.length">
+                <div class="col col-50 item" ng-if="$index+1 < pics.length" ui-sref="app.feedView({category:'competition'})">
                     <img ng-src="{{baseURL+pics[$index].image}}" width="100%">    
                 </div>
                 <div class="col col-50 item" ng-if="$index+1 < pics.length">

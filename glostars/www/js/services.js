@@ -45,11 +45,42 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
-        .factory('competitionFactory', ['$resource', 'baseURL', function($resource, baseURL){
+        .factory('competitionFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+            
+            var pics = [];
+            
+            pics.getCompetitionPics = function(){
+                
+                var config = {
+                    "headers" : {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer WBCQGgAJ2f6J9RD6xCRp5Jy8uU0AiKW30qPsiACZM0Ih7gruXl5OLIpCmV_fQ2TVmos1ZnJevanjt48K1VjzpWDfoymRa_jGdX27bfDaIOA2KbcLPfy0hDTqJXGaY-RPty_3SVICXSQvOb2CRMzwZc8OWYzS8uIE1O2k4zG59RKuAqDpE5Ra34pvzjiJsgDnVDIJjqWZK84rgQgQEqt89SFHKJvHeFE7D5wft5csb5tmOCbkf8GUMUf7pUhDfRZoJaAFmzkgPv-Twq0baCCzphAZ-g2_2OahisGzDBjQH6jOdB5fc2C5drMjV1s9NcFwie3ws-5bxwOpGzShje0Y__I4DyJvwu_7psTJYYTDxN6-3TdObI2n59usqFbdgagsy7fc4esTBxv_Eok_BkrwfhSwFs69OMxR8_GzDzO4a3xC0N9pNrU98nJul-FbvpqVCfCuyYQmR05SRePmP16qNYiCzmesp4KaOfzWedc4LetgRfzOpJ9k-arBZuOczZ5Ox5OFjiCKm9YWBlMvgBP0fs4urV_1xfE4pLS3JTCb_NFWOlWaobYdhbSkRxq2B9ivsmJ0q7YYQfBZDM8aNUK16ecz-k6JSvV1S9yx6vKHXOY'
+                    }
+                };
+                
+                $http.get(baseURL+'api/images/competition/12', config)
+                    .success(function(response){
+                    
+                        console.log(response);
+                        return response;
+                    })
+                    .error(function(data, status, header, config){
+                        console.log("ERROR");
+                        console.log("data: "+ data +" status:"+ 
+                                   header + " config: " + config);
+                        
+                        return null;
+                    });
+                
+                
+            };
+            
+            return pics;
+            
             
             
             //this function returns the competition photos (TEST)
-            return $resource(baseURL+"/api/images/competition/:id");
+            //return $resource(baseURL+"/api/images/competition/:id");
             
         }])
 
@@ -65,11 +96,13 @@ angular.module('starter.services',['ngResource'])
             
             pics.getUserPictures = function(id){
                 pics = mainFactory.query(
+                    
                     function(res){
-                        
-                        for(var i = res.length; i < 0; i++){
-                            if(res[i].userId === id){
-                                pics.push(res[i]);
+                        var list = res;
+            
+                        for(var i = list.length; i < 0; i++){
+                            if(list[i].userId === id){
+                                pics.push(list[i]);
                             }
                         }
                         
@@ -80,14 +113,18 @@ angular.module('starter.services',['ngResource'])
                 pics = mainFactory.query(
                     function(res){
                         
-                        for(var i = res.length; i < 0; i++){
-                            if(res[i].category === 'competition'){
-                                pics.push(res[i]);
+                        var list = res;
+                        
+                        for(var i = list.length; i < 0; i++){
+                            if(list[i].category === 'competition'){
+                                pics.push(list[i]);
                             }
                         }
                         
                     });
             };
+            
+            return pics;
             
             
             
@@ -113,10 +150,10 @@ angular.module('starter.services',['ngResource'])
         })
 
         
-        .factory('AuthService', ['$resource', 'baseURL', '$http','Session', function($resource, baseURL, $http, Session){
+        .factory('AuthService', ['$resource', 'baseURL', '$http','Session',  function($resource, baseURL, $http, Session){
             //authentication factory
-            var sessionId = "someSessionId"; //THIS WILL CHANGE
-            var mockRole = "admin";
+            var mockToken = 'WBCQGgAJ2f6J9RD6xCRp5Jy8uU0AiKW30qPsiACZM0Ih7gruXl5OLIpCmV_fQ2TVmos1ZnJevanjt48K1VjzpWDfoymRa_jGdX27bfDaIOA2KbcLPfy0hDTqJXGaY-RPty_3SVICXSQvOb2CRMzwZc8OWYzS8uIE1O2k4zG59RKuAqDpE5Ra34pvzjiJsgDnVDIJjqWZK84rgQgQEqt89SFHKJvHeFE7D5wft5csb5tmOCbkf8GUMUf7pUhDfRZoJaAFmzkgPv-Twq0baCCzphAZ-g2_2OahisGzDBjQH6jOdB5fc2C5drMjV1s9NcFwie3ws-5bxwOpGzShje0Y__I4DyJvwu_7psTJYYTDxN6-3TdObI2n59usqFbdgagsy7fc4esTBxv_Eok_BkrwfhSwFs69OMxR8_GzDzO4a3xC0N9pNrU98nJul-FbvpqVCfCuyYQmR05SRePmP16qNYiCzmesp4KaOfzWedc4LetgRfzOpJ9k-arBZuOczZ5Ox5OFjiCKm9YWBlMvgBP0fs4urV_1xfE4pLS3JTCb_NFWOlWaobYdhbSkRxq2B9ivsmJ0q7YYQfBZDM8aNUK16ecz-k6JSvV1S9yx6vKHXOY';
+            
             var mockUserId = 2;
             var mockCredentials = { //mock user
                 email: "pauliina@hotmail.com", 
@@ -124,12 +161,27 @@ angular.module('starter.services',['ngResource'])
             };
             var authService = {};
             
+            var userAuth = {
+                access_token: null,
+                token_type: null,
+                expires_in: 0,
+                username: null,
+                issued: null,
+                expires: null
+                
+            };
             
+            var loginData = {
+                grant_type:'',
+                password: null,
+                username: null
+            };
             
+            // login routines
             authService.login = function(credentials) {
                 
-                var loginData = {
-                    grant_type: credentials.password,
+                loginData = {
+                    grant_type: 'password',
                     password: credentials.password,
                     username: credentials.email
                     
@@ -141,12 +193,32 @@ angular.module('starter.services',['ngResource'])
                     }
                 };
                 
-                console.log("check");
-                $http.post(baseURL+'Token', loginData, config)
-                    .success(function(data, status, headers, config){
-                        return data;
-                        console.log(data);
-                        console.log("logged");
+                $http.defaults.headers.post["Content-Type"] = 'application/x-www-form-urlencoded; charset=UTF-8';
+                
+                console.log("check: ");
+                console.log(config.headers);
+                console.log("path: " + baseURL+'Token');
+                console.log(loginData);
+                
+                //baseURL+'Token'
+                
+                $http.post('http://www.glostars.com/Token', loginData, config)
+                .then(function(response){
+                    console.log(response);
+                    console.log('logged');
+                    return response;  
+                })
+                .catch(function(response){
+                    console.error('some error', response.status, response.data);
+                })
+                .finally(function(){
+                    console.log("finally something arrived");
+                });
+                
+                    /*
+                    .success(function(response){
+                        
+                        
                         
                     })
                     .error(function(data, status, header, config){
@@ -156,53 +228,48 @@ angular.module('starter.services',['ngResource'])
                         
                         return null;
                     });
-                };
+                */
                 
                 
-                /*
-                console.log("fetching user");
-                if(credentials.email === mockCredentials.email && credentials.password === mockCredentials.password){
-                    
-                     console.log("authenticated");
-                    
-                    //check for the mock credentials and fetch the mock user
-                    
-                    return $http.get(baseURL + "users/" + mockUserId).then(function(response){
-                        Session.create(sessionId, response.id, mockRole);
-                        console.log(" new user is " + JSON.stringify(response));
-                        return response;
-                    },
-                    function(response){
-                        console.log("login failed");
-                    });
-                    
-                    
-                   
-                    
-                    
-                    /*
-                    return fetch.get({id:mockUserId}).then(function(response){
-                        Session.create(sessionId, response.id, mockRole);
-                        console.log(" new user is " + response.name);
-                        return response;
-                    },
-                    function(response){
-                        console.log("login failed");
-                    });
-                    */
-                    
-                //};
+            };
                 
-            //};
+                
+               
+            
+            authService.getAuthentication = function(){
+                return userAuth.access_token;
+            };
+            
+            authService.getTokenType = function(){
+                return userAuth.token_type;
+            };
+        
+            
+            authService.getUsername = function(){
+                return userAuth.username;
+            };
+            
+            authService.getExpireDate = function(){
+                return userAuth.expires;
+            };
+            
+            
+            
+            authService.isAuthenticated = function(){
+                if(userAuth.access_token !== null){
+                    if(userAuth.username === loginData.username){
+                        return true;
+                    }
+                }
+                
+                return false;
+            };
             
             authService.getMockUser = function(){
                 return mockUserId;
-            }
-            
-            authService.isAuthenticated = function(){
-                //change this method to do something useful
-                return !!Session.userId;
             };
+            
+            
             
             authService.isAuthorized = function(authorizedRoles){
                 if(!angular.isArray(authorizedRoles)){
@@ -217,72 +284,115 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
-        /*
 
-        .factory('notifyService',['$resource','$cordovaLocalNotification','$cordovaToast', function($cordovaLocalNotification,$cordovaToast){
+        .factory('RegisterService', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
             
-            var notify = {};
-            
-            notify.notifyUser = function(message, userPicture, contentPicture){
-                $ionicPlatform.ready(function(){
-                    $cordovaLocalNotification.schedule({
-                        id:1,
-                        title: "Glostars",
-                        text: message,
-                        data: {
-                            contentPicture
-                        }
-                    }).then(function(){
-                        console.log("notification sent");
-                    },
-                        function(){
-                        console.log("notification not sent");
-                    });
-                });
+            var registerData = {
+                UserName: null,
+                Email: null,
+                Name: null, 
+                BirthdayYear: 0000,
+                BirthdayMonth: 00,
+                BirthdayDay: 00,
+                Gender: null,
+                LastName: null,
+                Password: null
                 
             };
             
+            var register = {};
             
+            register.createAccount = function(username, email, name, bdayy, bdaym, bdayd, gender, lastname, pwd){
+                
+                registerData = {
+                    UserName: username,
+                    Email: email, 
+                    Name: name, 
+                    BirthdayYear: bdayy,
+                    BirthdayMonth: bdaym,
+                    BirthdayDay: bdayd,
+                    Gender: gender,
+                    LastName: lastname,
+                    Password: pwd
+                };
+                
+                
+                var config = {
+                    headers : {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                    }
+                };
+                
+                
+                $http.post(baseURL+'api/account/register', registerData, config)
+                    .success(function(response){
+                    
+                        console.log(response);
+                        return response;
+                    })
+                    .error(function(data, status, header, config){
+                        console.log("ERROR");
+                        console.log("data: "+ data +" status:"+ 
+                                   header + " config: " + config);
+                        
+                        return null;
+                    });
+                
+            };
             
-            return followers;
+            return register;
             
         }])
-
-
-        */
-        /*
-        .config('$resourceProvider', function($resourceProvider){
-            $resourceProvider.defaults.stripTrailingSlashes = false;
-        
-        
-            $resourceProvider.interceptors.push([
-                '$injector',
-                function($injector){
-                    return $injector.get('AuthInterceptor');
-                }
-            ]);
-        })
-        /*
-        .factory('AuthInterceptor', function ($rootScope, $q,
-                                      AUTH_EVENTS) {
-            return {
-                responseError: function (response) { 
-                    $rootScope.$broadcast({
-                        401: AUTH_EVENTS.notAuthenticated,
-                        403: AUTH_EVENTS.notAuthorized,
-                        419: AUTH_EVENTS.sessionTimeout,
-                        440: AUTH_EVENTS.sessionTimeout
-                    }[response.status], response);
-                return $q.reject(response);
-                }
+       
+        .factory('UploadFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+            
+            var uploadData = {
+                Description: null,
+                IsCompeting: false,
+                Privacy: null,
+                ImageDataUri: null
             };
-        })
-
-        */
-        
-        
-
-
+            
+            var upload;
+            
+            upload.UploadPicture = function(description, isCompeting, privacy, imgUri){
+                uploadData = {
+                    Description: description,
+                    IsCompeting: isCompeting,
+                    Privacy: privacy,
+                    ImageDataUri: imgUri
+                };
+                
+                
+                var config = {
+                    headers : {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                    }
+                };
+                
+                $http.post(baseURL+'api/images/upload', uploadData, config)
+                    .success(function(response){
+                    
+                        console.log(response);
+                        return response;
+                    })
+                    .error(function(data, status, header, config){
+                        console.log("ERROR");
+                        console.log("data: "+ data +" status:"+ 
+                                   header + " config: " + config);
+                        
+                        return null;
+                    });
+                
+                
+                
+            };
+            
+            return upload;
+            
+            
+            
+        }])
         
 
         .factory('$localStorage', ['$window', function($window) {

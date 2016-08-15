@@ -1,8 +1,7 @@
 <ion-view>
     <ion-content class="has-footer has-header">
-        
-        <div class="list card" ng-repeat="photo in pics | orderBy:'-date'">
-            
+        <div class="list card" ng-repeat="photo in pics">
+            <p>page</p>
             <div class="item item-avatar" style="border-bottom:none">
                 
                 <img ui-sref="app.profile({id:photo.userId})" ng-src="{{baseURL+users[photo.userId].image}}">

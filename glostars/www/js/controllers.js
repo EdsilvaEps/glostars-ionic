@@ -92,9 +92,9 @@ angular.module('starter.controllers', [])
     //TODO: the swipe screen has three views now, handle them here
     $scope.doLogin = function() {
         
-        
         $scope.token = AuthService.login($scope.loginData);
-        console.log('Doing login', $scope.loginData);
+        
+        console.log('Doing login');
         // Simulate a login delay. Remove this and replace with your login
         
         // code if using a login system
@@ -495,14 +495,8 @@ angular.module('starter.controllers', [])
     $scope.tab = 1;
     var n;
     
-    $scope.photos = competitionFactory.get({id: 12}, function(res){
-        $scope.photos = res;
-        console.log($scope.photos);
-    },
-    function(res){
-        console.log(res);
-        console.log("not loaded");
-    });
+    
+    $scope.photos = competitionFactory.getCompetitionPics();
     
     /*
     $scope.photos = mainFactory.query(
@@ -526,8 +520,8 @@ angular.module('starter.controllers', [])
         function(response){
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
-    */
     
+    */
     $scope.check = function(){
         console.log("pics filtered: " + $scope.pics.length);
     };
@@ -664,24 +658,70 @@ angular.module('starter.controllers', [])
     
 }])
 
-.controller('FeedViewCtrl', ['$scope', 'baseURL', 'AuthService', 'usersFactory', 'mainFactory', '$stateParams', 'picsFactory', function($scope, baseURL, AuthService, usersFactory, mainFactory, $stateParams, picsFactory){
+.controller('FeedViewCtrl', ['$scope', 'baseURL', 'AuthService', 'usersFactory', 'mainFactory', '$stateParams', function($scope, baseURL, AuthService, usersFactory, mainFactory, $stateParams){
     
     $scope.baseURL = baseURL;
     
-    $scope.tView = $stateParams.category;
+    $scope.tView = 'competition';
+    //$scope.tView = $stateParams.category;
     
-    $scope.pics = function(){
+    $scope.pics = [];
+    $scope.getPics = function(){
+        console.log("message");
         
-        var picList
+        var picList;
         if($scope.tView === 'competition'){
             
-            picList = picsFactory.getCompetitionPics();
-            return picList;
+            console.log('competition');
+            picList = mainFactory.query(
+                function(response){
+            
+                    picList = response;
+                    $scope.showFeed = true;
+                    var n = picList.length;
+            
+                    //filter the 'photos' array and make a new array
+                    //only with photos listed "competition" in category
+                    for(var i = 0; i < n; i++){
+                        if(picList[i].category === 'competition'){
+                            $scope.pics.push(picList[i]);
+                
+                        }    
+                    };
+            
+            
+                },
+                function(response){
+                    var message = "Error: " + response.status + " " + response.statusText;
+                    console.log(message);
+                });
+    
         } 
         else if($scope.tView === 'userProfile'){
             
-            picList = picsFactory.getUserPictures($stateParams.id);
-            return picList;
+            console.log('userProfile');
+            picList = mainFactory.query(
+                function(response){
+            
+                    picList = response;
+                    $scope.showFeed = true;
+                    var n = picList.length;
+            
+                    //filter the 'photos' array and make a new array
+                    //only with photos listed "competition" in category
+                    for(var i = 0; i < n; i++){
+                        if(picList[i].userId === $stateParams.id){
+                            $scope.pics.push(picList[i]);
+                
+                        }    
+                    };
+            
+            
+                },
+                function(response){
+                    var message = "Error: " + response.status + " " + response.statusText;
+                    console.log(message);
+                });
         }
     };
     
