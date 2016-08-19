@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngResource'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, USER_ROLES, $rootScope, $ionicPlatform, $cordovaCamera) {
 
@@ -16,51 +16,31 @@ angular.module('starter.controllers', [])
       loop: false,
       speed: 400,
   };
-    
-
-  $scope.userId = AuthService.getMockUser();
-  
+      
 
   
     
     /*The ApplicationController is a container for a lot of global application logic, and an alternative to Angular’s run function. Since it’s at the root of the $scope tree, all other scopes will inherit from it (except isolate scopes). It’s a good place to define the currentUser object
     */
-    
-  $rootScope.currentUser = null;
-  $scope.userRoles = USER_ROLES;
-  $scope.isAuthorized = AuthService.isAuthorized;
+
  
-  $scope.setCurrentUser = function (user) {
-    $rootScope.currentUser = user;
-  };
     
   //TODO: encrypt data
   //TODO: the swipe screen has three views now, handle them here
   $scope.doLogin = function() {
       console.log('Doing login', $scope.loginData);
-      // Simulate a login delay. Remove this and replace with your login
-      // code if using a login system
-      $scope.user = AuthService.login($scope.loginData);
-      $scope.setCurrentUser($scope.user);
-      console.log("user is " + $scope.user.id);
+      
+      var auth = AuthService.login($scope.loginData);
+      console.log(auth);
+      //$scope.isAuthorized = AuthService.isAuthenticated();
+      
+      
       
   };
     
 
 })
 
-
-
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-})
 
 .controller('HeaderCtrl', function($scope,$ionicSideMenuDelegate){
     //header controller
@@ -75,7 +55,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl',['$scope','$state','AuthService','$http', function($scope,$state,AuthService,$http){
+.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', function($scope,$state,AuthService,$http,$resource){
     
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -92,7 +72,14 @@ angular.module('starter.controllers', [])
     //TODO: the swipe screen has three views now, handle them here
     $scope.doLogin = function() {
         
+       
+        
+        
+        
+        
+        
         $scope.token = AuthService.login($scope.loginData);
+        console.log($scope.token);
         
         console.log('Doing login');
         // Simulate a login delay. Remove this and replace with your login

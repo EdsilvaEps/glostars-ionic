@@ -22,6 +22,7 @@
 angular.module('starter.services',['ngResource'])
         //.constant("baseURL", "http://localhost:3000/")
         .constant("baseURL", "http://www.glostars.com/")
+        //.constant("baseURL", "http://localhost:8100/api")
         .constant('AUTH_EVENTS', {
             loginSuccess: 'auth-login-success',
             loginFailed: 'auth-login-failed',
@@ -152,8 +153,7 @@ angular.module('starter.services',['ngResource'])
         
         .factory('AuthService', ['$resource', 'baseURL', '$http','Session',  function($resource, baseURL, $http, Session){
             //authentication factory
-            var mockToken = 'WBCQGgAJ2f6J9RD6xCRp5Jy8uU0AiKW30qPsiACZM0Ih7gruXl5OLIpCmV_fQ2TVmos1ZnJevanjt48K1VjzpWDfoymRa_jGdX27bfDaIOA2KbcLPfy0hDTqJXGaY-RPty_3SVICXSQvOb2CRMzwZc8OWYzS8uIE1O2k4zG59RKuAqDpE5Ra34pvzjiJsgDnVDIJjqWZK84rgQgQEqt89SFHKJvHeFE7D5wft5csb5tmOCbkf8GUMUf7pUhDfRZoJaAFmzkgPv-Twq0baCCzphAZ-g2_2OahisGzDBjQH6jOdB5fc2C5drMjV1s9NcFwie3ws-5bxwOpGzShje0Y__I4DyJvwu_7psTJYYTDxN6-3TdObI2n59usqFbdgagsy7fc4esTBxv_Eok_BkrwfhSwFs69OMxR8_GzDzO4a3xC0N9pNrU98nJul-FbvpqVCfCuyYQmR05SRePmP16qNYiCzmesp4KaOfzWedc4LetgRfzOpJ9k-arBZuOczZ5Ox5OFjiCKm9YWBlMvgBP0fs4urV_1xfE4pLS3JTCb_NFWOlWaobYdhbSkRxq2B9ivsmJ0q7YYQfBZDM8aNUK16ecz-k6JSvV1S9yx6vKHXOY';
-            
+          
             var mockUserId = 2;
             var mockCredentials = { //mock user
                 email: "pauliina@hotmail.com", 
@@ -180,56 +180,57 @@ angular.module('starter.services',['ngResource'])
             // login routines
             authService.login = function(credentials) {
                 
+                //formatting the form data into server parameters
                 loginData = {
-                    grant_type: 'password',
+                    grant_type: "password",
                     password: credentials.password,
                     username: credentials.email
                     
                 };
             
-                var config = {
-                    headers : {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                    }
-                };
+           
                 
-                $http.defaults.headers.post["Content-Type"] = 'application/x-www-form-urlencoded; charset=UTF-8';
                 
-                console.log("check: ");
-                console.log(config.headers);
-                console.log("path: " + baseURL+'Token');
-                console.log(loginData);
-                
-                //baseURL+'Token'
-                
-                $http.post('http://www.glostars.com/Token', loginData, config)
-                .then(function(response){
-                    console.log(response);
-                    console.log('logged');
-                    return response;  
-                })
-                .catch(function(response){
-                    console.error('some error', response.status, response.data);
-                })
-                .finally(function(){
-                    console.log("finally something arrived");
+                $http({
+                    method:'POST',
+                    url: "http://www.glostars.com/Token",
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    
+                    //Transforming data into x-www-form-urlencode type 
+                    transformRequest: function(obj) {
+                        var str = [];
+                        for(var p in obj)
+                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                        return str.join("&");
+                    },
+                    data: loginData
+                    
+                }).then(function successCallback(response){
+                        console.log("SUCCESS!");
+                        res = response.data;
+                    
+                        userAuth = {
+                            access_token: res.access_token,
+                            token_type: res.token_type,
+                            expires_in: res.expires_in,
+                            username: res.userName,
+                            issued: res.issued,
+                            expires: res.expires
+                        };
+                    
+                        console.log(res);
+                        return true;
+                }, function errorCallback(response){
+                        console.log("ERROR!");
+                        //res = response.data;
+                        console.log(res);
+                        return false;
                 });
+              
                 
-                    /*
-                    .success(function(response){
-                        
-                        
-                        
-                    })
-                    .error(function(data, status, header, config){
-                        console.log("ERROR");
-                        console.log("data: "+ data +" status:"+ 
-                                   header + " config: " + config);
-                        
-                        return null;
-                    });
-                */
-                
+               
+                    
+                                
                 
             };
                 
@@ -258,25 +259,12 @@ angular.module('starter.services',['ngResource'])
             authService.isAuthenticated = function(){
                 if(userAuth.access_token !== null){
                     if(userAuth.username === loginData.username){
+                        console.log("we are good to go");
                         return true;
                     }
                 }
-                
+                console.log("we are NOT good to go");
                 return false;
-            };
-            
-            authService.getMockUser = function(){
-                return mockUserId;
-            };
-            
-            
-            
-            authService.isAuthorized = function(authorizedRoles){
-                if(!angular.isArray(authorizedRoles)){
-                    authorizedRoles = [authorizedRoles];
-                }
-                
-                return (authService.isAuthenticated() && authorizedRoles.indexOf(Session.userRole) !== -1);
             };
             
             return authService;
