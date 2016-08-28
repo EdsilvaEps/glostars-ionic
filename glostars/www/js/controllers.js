@@ -29,10 +29,9 @@ angular.module('starter.controllers', ['ngResource'])
   //TODO: the swipe screen has three views now, handle them here
   $scope.doLogin = function() {
       console.log('Doing login', $scope.loginData);
-      
       var auth = AuthService.login($scope.loginData);
       console.log(auth);
-      //$scope.isAuthorized = AuthService.isAuthenticated();
+      
       
       
       
@@ -55,7 +54,7 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', function($scope,$state,AuthService,$http,$resource){
+.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', 'RegisterService', function($scope,$state,AuthService,$http,$resource,RegisterService){
     
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -76,16 +75,39 @@ angular.module('starter.controllers', ['ngResource'])
         
         
         
+       AuthService.login($scope.loginData).then(function success(response){
+            if(AuthService.isAuthenticated()){
+                console.log('changing view');
+                $state.go('app.home');
+            }
+        }, function failure(res){
+            console.log('error');
+        });
         
-        
-        $scope.token = AuthService.login($scope.loginData);
         console.log($scope.token);
         
         console.log('Doing login');
-        // Simulate a login delay. Remove this and replace with your login
+    };
+    
+    
+    $scope.userinfo = {};
+    
+    $scope.createAcc = function(){
+        console.log($scope.userinfo);
         
-        // code if using a login system
-    }
+        RegisterService.createAccount($scope.userinfo.email, $scope.userinfo.email, $scope.userinfo.firstname, $scope.userinfo.bday.getFullYear(), $scope.userinfo.bday.getMonth()+1, $scope.userinfo.bday.getDate(), $scope.userinfo.sex, $scope.userinfo.lastname, $scope.userinfo.password).then(function success(response){
+            
+            $scope.loginData = {email: $scope.userinfo.email, password: $scope.userinfo.password};
+            
+            $scope.doLogin();
+            
+        }, function failure(res){
+           
+            console.log("user already exists");
+        });
+        
+    };
+    
     
     
 }])
@@ -103,7 +125,7 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','$ionicPopover', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService,$ionicPopover){
+.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','$ionicPopover','usersFactory','picsFactory', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService,$ionicPopover, usersFactory, picsFactory){
    
     
     $scope.baseURL = baseURL;
@@ -112,7 +134,28 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.users = [];
     $scope.animIN;
     $scope.animOUT = false;
-    $scope.myUser = AuthService.getMockUser();
+    
+    
+    //-------------- getting my user data ----------------------//
+    $scope.myUsername = AuthService.getUsername();
+    $scope.myToken = AuthService.getAuthentication();
+    
+    usersFactory.searchUser($scope.myUsername, $scope.myToken)
+        .then(function success(res){
+        
+            $scope.myUser = usersFactory.getUser();
+            console.log('my user is');
+            console.log($scope.myUser);
+        
+            
+            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
+            //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
+    });
+    
+    
+    //----------------------------------------------------------//
+    
+    
     
     var template = '<ion-popover-view style="height:180px"><ion-content><div class="list"><a class="item"><i class="icon ion-social-facebook"> Facebook</i></a><a class="item"><i class="icon ion-social-twitter"> Twitter</i></a><a class="item"><img src="../img/vklogo.svg" style="height:20px"> Vkontakte</a></div></ion-content></ion-popover-view>';
     
@@ -135,6 +178,8 @@ angular.module('starter.controllers', ['ngResource'])
     };
     
     
+    
+    /*
     $scope.photos = mainFactory.query(
         function(response){
             
@@ -152,7 +197,7 @@ angular.module('starter.controllers', ['ngResource'])
         function(response){
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
-    
+    */
     //---------- comments -------------//
     
     $scope.commentData = {};
@@ -726,21 +771,21 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.baseURL = baseURL;
     $scope.$state = $state;
     console.log($scope.$state.current.name);
-    
+    /*
     $scope.users = usersFactory.query(
         function(res){
             $scope.users = res;
             
         });
-    
+    */
     $ionicModal.fromTemplateUrl('templates/notifications.html',{
         scope: $scope
     }).then(function(modal){
         $scope.modal = modal;
     });
     
-    $scope.userId = AuthService.getMockUser();
-    console.log($scope.userId);
+    //$scope.userId = AuthService.getMockUser();
+    //console.log($scope.userId);
     
     
     //popover config

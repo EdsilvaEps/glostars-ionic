@@ -85,46 +85,133 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
-        .factory('usersFactory', ['$resource', 'baseURL', function($resource, baseURL){
+
+        .factory('myUser', ['$resource', 'baseURL', function($resource, baseURL){
             
-            //this function returns ALL the users and data about them
-            return $resource(baseURL+"users/:id", null,{'update':{method:'PUT'}});
+            var myUser = {
+                name: '',
+                email: null,
+                profilePicUrl: null,
+                userId: null
+            };
+            
+        }])
+
+        .factory('usersFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+            
+            var user = {
+                name: '',
+                email: null,
+                profilePicUrl: null,
+                userId: null
+            };
+            
+            
+            var usersCache = [];
+            var userFac = {};
+            var res;
+            
+            userFac.searchUser = function(email, token){
+                return $http({
+                    method:'GET',
+                    url: baseURL+"api/account/userinfo/?userEmail="+email,
+                    headers:{
+                        'Auth':'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function successCallback(response){
+                    
+                    //getting specic user data
+                    console.log('USER RETRIEVED');
+                    res = response.data.resultPayload;
+                    
+                    user = {
+                        name: res.name,
+                        email: res.email,
+                        profilePicUrl: res.profilePicURL,
+                        userId: res.userId
+                    };
+                    console.log(user);
+                    
+                    //pushing user data into stack of cached users
+                    usersCache.push(user);
+                    
+                }, function errorCallback(response){
+                    console.log('ERROR RETRIEVING USER');
+                    console.log(response);
+                });
+            };
+            
+            
+            userFac.getUser = function(){
+                return user;
+            };
+         
+            
+            userFac.getUserStack = function(){
+                return usersCache;
+            };
+            
+            
+            return userFac;
+            
+            
+            
               
         }])
 
-        .factory('picsFactory', ['mainFactory', 'baseURL', function(mainFactory, baseURL){
+        .factory('picsFactory', ['baseURL', '$http', function(baseURL, $http){
             var pics = [];
+            var userPics = {};
             
-            pics.getUserPictures = function(id){
-                pics = mainFactory.query(
+            pics.getUserPictures = function(id, count, token){
+                console.log('GETTING USER PICS');
+                
+                var config = {
+                    headers:{
+                        'Auth':'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                }
+                
+                $http.get(baseURL+'api/images/user/' + id + '/' + count, config)
+                    .then(function successCallback(response){
                     
-                    function(res){
-                        var list = res;
-            
-                        for(var i = list.length; i < 0; i++){
-                            if(list[i].userId === id){
-                                pics.push(list[i]);
-                            }
-                        }
-                        
+                    console.log('PICS RETRIEVED');
+                    //res = response.data.resultPayload;
+                    
+                    
+                    
+                    }, function errorCallback(response){
+                        console.log('ERROR RETRIEVING PICS');
+                        console.log(response);
                     });
+                
+                
             };
             
-            pics.getCompetitionPics = function(){
-                pics = mainFactory.query(
-                    function(res){
-                        
-                        var list = res;
-                        
-                        for(var i = list.length; i < 0; i++){
-                            if(list[i].category === 'competition'){
-                                pics.push(list[i]);
-                            }
-                        }
-                        
-                    });
+            /*
+            pics.getCompetitionPics = function(id, count, token){
+                pics.getUserPictures(id, count, token);
+                return userPics.competitionPictures;
             };
             
+            pics.getMutualFollowerPics = function(id, count, token){
+                //pics.getUserPictures(id, count, token);
+                return userPics.mutualFollowerPictures;
+            };
+            
+            pics.publicPictures = function(id, count, token){
+                pics.getUserPictures(id, count, token);
+                return userPics.publicPictures;
+            };
+            
+            pics.getAllUserPics = function(id, count, token){
+                pics.getUserPictures(id, count, token);
+                return userPics;
+            };
+            
+            */
             return pics;
             
             
@@ -132,33 +219,11 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
-
-        .service('Session', function(){
-            //The specifics of this object depends on your back-end implementation, this is a basic example
-            this.create = function (sessionId, userId, userRole){  
-                this.id = sessionId;
-                this.userId = userId;
-                this.userRole = userRole;
-            };
-            
-            this.destroy = function(){
-                this.id = null;
-                this.userId = null;
-                this.userRole = null;
-            }
-    
-    
-        })
-
         
-        .factory('AuthService', ['$resource', 'baseURL', '$http','Session',  function($resource, baseURL, $http, Session){
+        .factory('AuthService', ['$resource', 'baseURL', '$http',  function($resource, baseURL, $http){
             //authentication factory
           
-            var mockUserId = 2;
-            var mockCredentials = { //mock user
-                email: "pauliina@hotmail.com", 
-                password: "pauliina"
-            };
+           
             var authService = {};
             
             var userAuth = {
@@ -188,10 +253,10 @@ angular.module('starter.services',['ngResource'])
                     
                 };
             
-           
+                var res;
                 
                 
-                $http({
+                return $http({
                     method:'POST',
                     url: "http://www.glostars.com/Token",
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -218,24 +283,21 @@ angular.module('starter.services',['ngResource'])
                             expires: res.expires
                         };
                     
+                        //return authService.isAuthenticated();
+                    
                         console.log(res);
-                        return true;
                 }, function errorCallback(response){
                         console.log("ERROR!");
                         //res = response.data;
                         console.log(res);
-                        return false;
+                        //return authService.isAuthenticated();
                 });
               
-                
-               
-                    
                                 
                 
             };
                 
-                
-               
+                      
             
             authService.getAuthentication = function(){
                 return userAuth.access_token;
@@ -249,6 +311,7 @@ angular.module('starter.services',['ngResource'])
             authService.getUsername = function(){
                 return userAuth.username;
             };
+            
             
             authService.getExpireDate = function(){
                 return userAuth.expires;
@@ -292,7 +355,8 @@ angular.module('starter.services',['ngResource'])
             
             register.createAccount = function(username, email, name, bdayy, bdaym, bdayd, gender, lastname, pwd){
                 
-                registerData = {
+               registerData = {
+                    
                     UserName: username,
                     Email: email, 
                     Name: name, 
@@ -302,29 +366,28 @@ angular.module('starter.services',['ngResource'])
                     Gender: gender,
                     LastName: lastname,
                     Password: pwd
-                };
-                
-                
-                var config = {
-                    headers : {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                    }
-                };
-                
-                
-                $http.post(baseURL+'api/account/register', registerData, config)
-                    .success(function(response){
                     
+                };
+                
+                var dataParsed = JSON.stringify(registerData);
+                console.log(dataParsed);
+                
+                return $http({
+                    method:'POST',
+                    url: baseURL+'api/account/register',
+                    data: registerData
+                    
+                }).then(function successCallback(response){
+                         console.log('SUCCESSFULLY REGISTERED');
+                         console.log(response.message);
+                        //return response;
+                    
+                }, function errorCallback(response){
+                        console.log("ERROR!");
+                        //res = response.data;
                         console.log(response);
-                        return response;
-                    })
-                    .error(function(data, status, header, config){
-                        console.log("ERROR");
-                        console.log("data: "+ data +" status:"+ 
-                                   header + " config: " + config);
-                        
-                        return null;
-                    });
+                });
+              
                 
             };
             
