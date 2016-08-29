@@ -136,6 +136,9 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.animOUT = false;
     
     
+    
+    
+    
     //-------------- getting my user data ----------------------//
     $scope.myUsername = AuthService.getUsername();
     $scope.myToken = AuthService.getAuthentication();
@@ -148,8 +151,15 @@ angular.module('starter.controllers', ['ngResource'])
             console.log($scope.myUser);
         
             
-            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
+            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken).then(function success(res){
+                console.log('retrieved in controller');
+                console.log(res);
+            }, function fail(res){
+                consol.log('not retrieved in controller');
+            })
             //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
+    }, function fail(res){
+            console.log(res);
     });
     
     
@@ -765,19 +775,25 @@ angular.module('starter.controllers', ['ngResource'])
     
 }])
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL','$ionicPlatform','$cordovaCamera','$cordovaImagePicker',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
     
+    // inject the services below:
+    //,'$ionicPlatform','$cordovaCamera','$cordovaImagePicker'
     
     $scope.baseURL = baseURL;
     $scope.$state = $state;
     console.log($scope.$state.current.name);
-    /*
-    $scope.users = usersFactory.query(
-        function(res){
-            $scope.users = res;
-            
-        });
-    */
+    
+    var myUserToken = AuthService.getAuthentication();
+    var myUsername = AuthService.getUsername();
+    
+    usersFactory.searchUser(myUserToken, myUsername).then(function success(res){
+        $scope.myUser = usersFactory.getUser();
+    });
+    
+    
+    
+    
     $ionicModal.fromTemplateUrl('templates/notifications.html',{
         scope: $scope
     }).then(function(modal){

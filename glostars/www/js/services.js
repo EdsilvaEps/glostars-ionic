@@ -122,19 +122,23 @@ angular.module('starter.services',['ngResource'])
                 }).then(function successCallback(response){
                     
                     //getting specic user data
-                    console.log('USER RETRIEVED');
-                    res = response.data.resultPayload;
+                    if(user.email === null){
+                        console.log('USER RETRIEVED');
+                        res = response.data.resultPayload;
                     
-                    user = {
-                        name: res.name,
-                        email: res.email,
-                        profilePicUrl: res.profilePicURL,
-                        userId: res.userId
-                    };
-                    console.log(user);
+                        user = {
+                            name: res.name,
+                            email: res.email,
+                            profilePicUrl: res.profilePicURL,
+                            userId: res.userId
+                        };
+                        console.log(user);
                     
-                    //pushing user data into stack of cached users
-                    usersCache.push(user);
+                        //pushing user data into stack of cached users
+                        usersCache.push(user);
+                        
+                    }
+                    
                     
                 }, function errorCallback(response){
                     console.log('ERROR RETRIEVING USER');
@@ -163,29 +167,35 @@ angular.module('starter.services',['ngResource'])
         .factory('picsFactory', ['baseURL', '$http', function(baseURL, $http){
             var pics = [];
             var userPics = {};
+            var intoken = null;
             
             pics.getUserPictures = function(id, count, token){
                 console.log('GETTING USER PICS');
                 
-                var config = {
-                    headers:{
-                        'Auth':'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    }
-                }
-                
-                $http.get(baseURL+'api/images/user/' + id + '/' + count, config)
-                    .then(function successCallback(response){
+                if(intoken !== token){
+                    intoken = token;
                     
-                    console.log('PICS RETRIEVED');
-                    //res = response.data.resultPayload;
-                    
-                    
-                    
+                    return $http({
+                        method:'GET',
+                        url:"http://www.glostars.com/api/images/user/246c96bd-8bc4-402c-be1b-ded5f2b4ee87/2",
+                        //url: "http://www.glostars.com/api/images/user/" + id + "/" + count,
+                        headers:{
+                            'Auth':'Bearer ' + token,
+                            'Content-Type': 'application/json'
+                        }
+                        
+                    }).then(function successCallback(response){
+                        
+                        console.log('Pics Retrieved');
+                        
                     }, function errorCallback(response){
-                        console.log('ERROR RETRIEVING PICS');
+                        console.log('Error retrieving pics');
                         console.log(response);
                     });
+                
+                
+                }
+
                 
                 
             };
@@ -254,46 +264,47 @@ angular.module('starter.services',['ngResource'])
                 };
             
                 var res;
+                if(userAuth.access_token === null){
                 
-                
-                return $http({
-                    method:'POST',
-                    url: "http://www.glostars.com/Token",
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        return $http({
+                            method:'POST',
+                        url: 'http://www.glostars.com/Token',
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     
-                    //Transforming data into x-www-form-urlencode type 
-                    transformRequest: function(obj) {
-                        var str = [];
-                        for(var p in obj)
-                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                        return str.join("&");
-                    },
-                    data: loginData
+                            //Transforming data into x-www-form-urlencode type 
+                            transformRequest: function(obj) {
+                                var str = [];
+                                for(var p in obj)
+                                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                                return str.join("&");
+                            },
+                            data: loginData
                     
-                }).then(function successCallback(response){
-                        console.log("SUCCESS!");
-                        res = response.data;
+                        }).then(function successCallback(response){
+                            console.log("SUCCESS!");
+                            res = response.data;
                     
-                        userAuth = {
-                            access_token: res.access_token,
-                            token_type: res.token_type,
-                            expires_in: res.expires_in,
-                            username: res.userName,
-                            issued: res.issued,
-                            expires: res.expires
-                        };
+                            userAuth = {
+                                access_token: res.access_token,
+                                token_type: res.token_type,
+                                expires_in: res.expires_in,
+                                username: res.userName,
+                                issued: res.issued,
+                                expires: res.expires
+                            };
                     
-                        //return authService.isAuthenticated();
+                            //return authService.isAuthenticated();
                     
-                        console.log(res);
-                }, function errorCallback(response){
-                        console.log("ERROR!");
-                        //res = response.data;
-                        console.log(res);
-                        //return authService.isAuthenticated();
-                });
+                            console.log(res);
+                        }, function errorCallback(response){
+                            console.log("ERROR!");
+                            //res = response.data;
+                            console.log(response);
+                            //return authService.isAuthenticated();
+                        });
               
-                                
+            } 
+                
                 
             };
                 
@@ -369,8 +380,7 @@ angular.module('starter.services',['ngResource'])
                     
                 };
                 
-                var dataParsed = JSON.stringify(registerData);
-                console.log(dataParsed);
+                
                 
                 return $http({
                     method:'POST',
