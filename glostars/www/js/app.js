@@ -30,6 +30,9 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   
   //$ionicConfigProvider.tabs.position('bottom');
+  //var appID = 1072850062751811;
+  //var version = "v2.0";
+  //$cordovaFacebookProvider.browserInit(appID, version);
     
   $stateProvider
 

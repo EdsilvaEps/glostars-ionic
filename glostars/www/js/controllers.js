@@ -54,12 +54,14 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', 'RegisterService', function($scope,$state,AuthService,$http,$resource,RegisterService){
+.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', 'RegisterService', '$q', '$ionicLoading', function($scope,$state,AuthService,$http,$resource,RegisterService, $q,$ionicLoading){
+    
+   
     
     $scope.$state = $state;
     console.log($scope.$state.current.name);
     $scope.token = null;
-    
+
     $scope.options = {
         loop: false,
         speed: 400,
@@ -69,10 +71,10 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.loginData = {};
     //TODO: encrypt data
     //TODO: the swipe screen has three views now, handle them here
+
     $scope.doLogin = function() {
         
        
-        
         
         
        AuthService.login($scope.loginData).then(function success(response){
@@ -108,6 +110,9 @@ angular.module('starter.controllers', ['ngResource'])
         
     };
     
+    
+    //------------------------- fb sign up --------------//
+    //$scope.fbSign = RegisterService.facebookSignIn();
     
     
 }])
@@ -150,19 +155,15 @@ angular.module('starter.controllers', ['ngResource'])
             console.log('my user is');
             console.log($scope.myUser);
         
+            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
             
-            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken).then(function success(res){
-                console.log('retrieved in controller');
-                console.log(res);
-            }, function fail(res){
-                consol.log('not retrieved in controller');
-            })
             //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
     }, function fail(res){
             console.log(res);
     });
     
     
+            
     //----------------------------------------------------------//
     
     
@@ -538,14 +539,15 @@ angular.module('starter.controllers', ['ngResource'])
     var n;
     
     
-    $scope.photos = competitionFactory.getCompetitionPics();
+    $scope.photos = competitionFactory.getCompetitionPics().get({id: 9});
+    //console.log($scope.photos);
     
     /*
     $scope.photos = mainFactory.query(
         function(response){
             
             $scope.photos = response;
-            $scope.showFeed = true;
+            $scope.showFeed gete;
             var n = $scope.photos.length;
             
             //filter the 'photos' array and make a new array
@@ -775,7 +777,7 @@ angular.module('starter.controllers', ['ngResource'])
     
 }])
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL','NotificationService',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL, NotificationService,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
     
     // inject the services below:
     //,'$ionicPlatform','$cordovaCamera','$cordovaImagePicker'
@@ -786,10 +788,13 @@ angular.module('starter.controllers', ['ngResource'])
     
     var myUserToken = AuthService.getAuthentication();
     var myUsername = AuthService.getUsername();
+    var notifications = [];
     
     usersFactory.searchUser(myUserToken, myUsername).then(function success(res){
         $scope.myUser = usersFactory.getUser();
+        notifications = NotificationService.getNotifications($scope.myUser.userId);
     });
+    
     
     
     

@@ -51,7 +51,7 @@ angular.module('starter.services',['ngResource'])
             var pics = [];
             
             pics.getCompetitionPics = function(){
-                
+                /*
                 var config = {
                     "headers" : {
                         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ angular.module('starter.services',['ngResource'])
                     }
                 };
                 
-                $http.get(baseURL+'api/images/competition/12', config)
+                $http.get(baseURL+'/images/competition/12', config)
                     .success(function(response){
                     
                         console.log(response);
@@ -72,7 +72,9 @@ angular.module('starter.services',['ngResource'])
                         
                         return null;
                     });
+                */
                 
+                return $resource(baseURL+'/images/competition/:id');
                 
             };
             
@@ -164,7 +166,7 @@ angular.module('starter.services',['ngResource'])
               
         }])
 
-        .factory('picsFactory', ['baseURL', '$http', function(baseURL, $http){
+        .factory('picsFactory', ['baseURL', '$http', '$ionicLoading', function(baseURL, $http, $ionicLoading){
             var pics = [];
             var userPics = {};
             var intoken = null;
@@ -172,29 +174,38 @@ angular.module('starter.services',['ngResource'])
             pics.getUserPictures = function(id, count, token){
                 console.log('GETTING USER PICS');
                 
-                if(intoken !== token){
-                    intoken = token;
-                    
-                    return $http({
+              //  if(intoken !== token){
+                   // intoken = token;
+                
+                $ionicLoading.show({
+                            template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+                        });
+                
+                
+                    pics = $http({
                         method:'GET',
-                        url:"http://www.glostars.com/api/images/user/246c96bd-8bc4-402c-be1b-ded5f2b4ee87/2",
-                        //url: "http://www.glostars.com/api/images/user/" + id + "/" + count,
+                        url: baseURL + "api/images/user/" + id + "/" + count,
                         headers:{
-                            'Auth':'Bearer ' + token,
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
                         }
+                       
                         
                     }).then(function successCallback(response){
                         
+                        $ionicLoading.hide();
                         console.log('Pics Retrieved');
+                        console.log(response);
+                        return response;
                         
                     }, function errorCallback(response){
+                        $ionicLoading.hide();
                         console.log('Error retrieving pics');
                         console.log(response);
+                        return null;
                     });
                 
-                
-                }
+               // }
 
                 
                 
@@ -230,7 +241,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
         
-        .factory('AuthService', ['$resource', 'baseURL', '$http',  function($resource, baseURL, $http){
+        .factory('AuthService', ['$resource', 'baseURL', '$http', '$ionicLoading', '$ionicPopup', function($resource, baseURL, $http, $ionicLoading, $ionicPopup){
             //authentication factory
           
            
@@ -266,6 +277,10 @@ angular.module('starter.services',['ngResource'])
                 var res;
                 if(userAuth.access_token === null){
                 
+                        $ionicLoading.show({
+                            template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+                        });
+                        
                         return $http({
                             method:'POST',
                         url: 'http://www.glostars.com/Token',
@@ -282,6 +297,9 @@ angular.module('starter.services',['ngResource'])
                     
                         }).then(function successCallback(response){
                             console.log("SUCCESS!");
+                            
+                            $ionicLoading.hide();
+                            
                             res = response.data;
                     
                             userAuth = {
@@ -297,9 +315,25 @@ angular.module('starter.services',['ngResource'])
                     
                             console.log(res);
                         }, function errorCallback(response){
+                            
+                            $ionicLoading.hide();
+                            
                             console.log("ERROR!");
-                            //res = response.data;
-                            console.log(response);
+                            if(response.status === 400){
+                                
+                                var alertPopup = $ionicPopup.alert({
+                                    title: 'Login failed',
+                                    template: 'Login or password incorrect'
+                                });
+                            } else {
+                                
+                                var alerPopup = $ionicPopup.alert({
+                                    title: 'Login failed',
+                                    template: 'servers currently unavailable'
+                                });
+                            }
+                            
+                            console.log(response.status);
                             //return authService.isAuthenticated();
                         });
               
@@ -347,7 +381,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
-        .factory('RegisterService', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+        .factory('RegisterService', ['$resource', 'baseURL', '$http', '$q', '$cordovaFacebook', '$ionicPopup',  function($resource, baseURL, $http, $q, $cordovaFacebook, $ionicPopup){
             
             var registerData = {
                 UserName: null,
@@ -363,8 +397,12 @@ angular.module('starter.services',['ngResource'])
             };
             
             var register = {};
-            
+          
             register.createAccount = function(username, email, name, bdayy, bdaym, bdayd, gender, lastname, pwd){
+                
+               $ionicLoading.show({
+                            template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+                        });        
                 
                registerData = {
                     
@@ -388,11 +426,15 @@ angular.module('starter.services',['ngResource'])
                     data: registerData
                     
                 }).then(function successCallback(response){
+                        $ionicLoading.hide();
+                    
                          console.log('SUCCESSFULLY REGISTERED');
                          console.log(response.message);
                         //return response;
                     
                 }, function errorCallback(response){
+                        $ionicLoading.hide();
+                        
                         console.log("ERROR!");
                         //res = response.data;
                         console.log(response);
@@ -400,6 +442,8 @@ angular.module('starter.services',['ngResource'])
               
                 
             };
+            
+            
             
             return register;
             
@@ -455,6 +499,38 @@ angular.module('starter.services',['ngResource'])
             
         }])
         
+
+        //service for notifications
+        .factory('NotificationService', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+            
+            var notifications = [];
+            
+            notifications.getNotifications = function(userId){
+                
+                $http.get(baseURL + 'api/notifications/user/'+ userId)
+                    .then(function successCallback(response){
+                    
+                         console.log('NOTICATIONS SEIZED');
+                         console.log(response.message);
+                         console.log(response.resultPayload);
+                    
+                         notifications = response.resultPayload;
+                        //return response;
+                    
+                    }, function errorCallback(response){
+                        
+                        console.log("ERROR IN NOTIFICATION SERVICE!");
+                        //res = response.data;
+                        console.log(response);
+                });
+                
+                return notifications;
+            };
+            
+            
+            return notifications;
+            
+        }])
 
         .factory('$localStorage', ['$window', function($window) {
             return {
