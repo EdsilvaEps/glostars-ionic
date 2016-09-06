@@ -778,10 +778,7 @@ angular.module('starter.controllers', ['ngResource'])
 }])
 
 .controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL','NotificationService',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL, NotificationService,$ionicPlatform,$cordovaCamera,$cordovaImagePicker){
-    
-    // inject the services below:
-    //,'$ionicPlatform','$cordovaCamera','$cordovaImagePicker'
-    
+        
     $scope.baseURL = baseURL;
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -795,6 +792,25 @@ angular.module('starter.controllers', ['ngResource'])
         notifications = NotificationService.getNotifications($scope.myUser.userId);
     });
     
+    $scope.notifyingUsers = [];
+    
+    /*
+    var getNotificationUsers = function(){
+        for(i = 0; i < notifications.activityNotifications.length){
+            userFactory.search(myUserToken)
+        }
+        
+    }
+    */
+    
+    $scope.select = function(setTab){
+        $scope.tab = setTab;
+        
+    };
+    
+    $scope.isSelected = function(checkTab){
+        return ($scope.tab === checkTab);
+    };
     
     
     

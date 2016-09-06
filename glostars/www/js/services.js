@@ -532,6 +532,8 @@ angular.module('starter.services',['ngResource'])
             
         }])
 
+
+
         .factory('$localStorage', ['$window', function($window) {
             return {
                 store: function(key, value) {

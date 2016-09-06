@@ -5,6 +5,30 @@
     </ion-header-bar>
     <ion-content class="padding">
         <div class="list">
+            <!-- switch views tab  -->
+            <div class="button-bar botton-block">
+                <a class="button" style="border:solid 1px grey; padding-top:5px;font-size:18px; height:55px" ng-click="select(1)"><p>Notifications</p></a>
+                <a class="button" style="border:solid 1px grey; padding-top:5px;font-size:18px; background-color:#ccccb3; height:55px" ng-click="select(2)"><p>New Followers</p></a>
+            </div>
+            <div ng-if="isSelected(1)">
+                
+                <div class="list" repeat="notification in notifications.activityNotifications">
+                    <a class="item item-avatar" ui-sref=""><!-- send to picture -->
+                        <img ng-src=""><!-- person's profile pic -->
+                        <h4>"person" starred your picture</h4>
+                        <p>{notification.description}</p>
+                    </a>
+                </div>
+            </div>
+            <div ng-if="isSelected(2)">
+                <div class="list" repeat="">
+                    <a class="item item-avatar" ui-sref=""><!-- send to person's profil -->
+                        <img ng-src=""><!-- person's profile pic -->
+                        <h4>"person" started following you</h4>
+                        <p>timestamp</p>
+                    </a>
+                </div>
+            </div>
             <p>you don't have notifications</p>
         </div>
     </ion-content>
