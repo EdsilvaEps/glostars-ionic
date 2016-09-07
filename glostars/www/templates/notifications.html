@@ -1,5 +1,5 @@
 <ion-modal-view>
-    <ion-header-bar class="bar bar-header bar-positive">
+    <ion-header-bar class="bar bar-header bar-positive" on-drag-down="modal.hide()">
         <h1 class="title">Notifications</h1>
         <button class="button button-clear button-primary" ng-click="modal.hide()">Back</button>
     </ion-header-bar>
@@ -7,12 +7,12 @@
         <div class="list">
             <!-- switch views tab  -->
             <div class="button-bar botton-block">
-                <a class="button" style="border:solid 1px grey; padding-top:5px;font-size:18px; height:55px" ng-click="select(1)"><p>Notifications</p></a>
-                <a class="button" style="border:solid 1px grey; padding-top:5px;font-size:18px; background-color:#ccccb3; height:55px" ng-click="select(2)"><p>New Followers</p></a>
+                <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(1)]" ng-click="select(1)" style="padding-top:5px"><p>Notifications</p></a>
+                <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(2)]" style="padding-top:5px" ng-click="select(2)"><p>New Followers</p></a>
             </div>
+            <br>
             <div ng-if="isSelected(1)">
-                
-                <div class="list" repeat="notification in notifications.activityNotifications">
+                <div class="list" repeat="notification in notifications.activityNotifications" ng-ini="">
                     <a class="item item-avatar" ui-sref=""><!-- send to picture -->
                         <img ng-src=""><!-- person's profile pic -->
                         <h4>"person" starred your picture</h4>

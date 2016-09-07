@@ -840,15 +840,10 @@ angular.module('starter.controllers', ['ngResource'])
         $scope.popover.hide($event);
     }
     
-    $scope.mailBox = function(){
-        //something should happen when the letterbox is clicked
-        console.log("letterbox");
-    }
-    
     
     //--------------- gallery picture uploading -----------------//
-    
     /*
+    
     $ionicPlatform.ready(function() {
         var options = {
             quality: 50,
@@ -893,8 +888,8 @@ angular.module('starter.controllers', ['ngResource'])
         };
         
     });
-    
     */
+    
     
     
     //------------------------------------------------------------//

@@ -120,7 +120,8 @@ angular.module('starter.services',['ngResource'])
                     headers:{
                         'Auth':'Bearer ' + token,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    unique:true
                 }).then(function successCallback(response){
                     
                     //getting specic user data
@@ -188,7 +189,8 @@ angular.module('starter.services',['ngResource'])
                         headers:{
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + token
-                        }
+                        },
+                        unique:true
                        
                         
                     }).then(function successCallback(response){
@@ -241,7 +243,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
         
-        .factory('AuthService', ['$resource', 'baseURL', '$http', '$ionicLoading', '$ionicPopup', function($resource, baseURL, $http, $ionicLoading, $ionicPopup){
+        .factory('AuthService', ['$resource', 'baseURL', '$http', '$ionicLoading', '$ionicPopup','$cordovaNetwork', function($resource, baseURL, $http, $ionicLoading, $ionicPopup ){
             //authentication factory
           
            
@@ -293,7 +295,8 @@ angular.module('starter.services',['ngResource'])
                                     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                                 return str.join("&");
                             },
-                            data: loginData
+                            data: loginData,
+                            unique: true
                     
                         }).then(function successCallback(response){
                             console.log("SUCCESS!");
@@ -323,13 +326,13 @@ angular.module('starter.services',['ngResource'])
                                 
                                 var alertPopup = $ionicPopup.alert({
                                     title: 'Login failed',
-                                    template: 'Login or password incorrect'
+                                    template: 'Login or password incorrect. Response: '+ response.status 
                                 });
                             } else {
                                 
                                 var alerPopup = $ionicPopup.alert({
                                     title: 'Login failed',
-                                    template: 'servers currently unavailable'
+                                    template: 'servers currently unavailable: ' + response.status 
                                 });
                             }
                             
@@ -423,7 +426,8 @@ angular.module('starter.services',['ngResource'])
                 return $http({
                     method:'POST',
                     url: baseURL+'api/account/register',
-                    data: registerData
+                    data: registerData,
+                    unique:true
                     
                 }).then(function successCallback(response){
                         $ionicLoading.hide();

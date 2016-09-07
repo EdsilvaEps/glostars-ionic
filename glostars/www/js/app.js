@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $ionicPopup) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -19,6 +19,16 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+    
+    if(window.Connection){
+        if(navigator.connection.type == Connection.NONE){
+            $ionicPopup.confirm({
+                title: "No connection",
+                content: "The device is not connected to the internet."
+            });
+        }
+    }
+      
   });
     
     
@@ -78,6 +88,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
             controller:'ProfileCtrl',
             resolve:{
               user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
+                  
                   return usersFactory.get({id:parseInt($stateParams.id, 10)});
               }]
             }

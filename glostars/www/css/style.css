@@ -49,6 +49,21 @@
     
 }
 
+.buttonGrey {
+    border:solid 1px grey;
+    padding-top:5px;
+    font-size:18px;
+    background-color:#ccccb3;
+    height:55px;
+}
+
+.buttonWhite {
+    border:solid 1px grey;
+    padding-top:5px;
+    font-size:18px;
+    height:55px;
+}
+
 .centerPad{
     padding-left: 40px;
     padding-right: 40px;
