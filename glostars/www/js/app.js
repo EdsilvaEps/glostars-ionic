@@ -125,7 +125,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
       views:{
           'content@':{
               templateUrl: 'templates/settings.html',
-              controller:'',
+              controller:'SettingsCtrl',
           },
           'footer@':{
               templateUrl:'templates/footer.html',

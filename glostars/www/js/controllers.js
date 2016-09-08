@@ -54,9 +54,8 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', 'RegisterService', '$q', '$ionicLoading', function($scope,$state,AuthService,$http,$resource,RegisterService, $q,$ionicLoading){
+.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', 'RegisterService', '$q', '$ionicLoading', '$localStorage', function($scope,$state,AuthService,$http,$resource,RegisterService, $q, $ionicLoading, $localStorage){
     
-   
     
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -69,27 +68,37 @@ angular.module('starter.controllers', ['ngResource'])
     
     
     $scope.loginData = {};
+    var token = $localStorage.getObject('userToken', null);
+    var username = $localStorage.getObject('userName', null);
     //TODO: encrypt data
     //TODO: the swipe screen has three views now, handle them here
 
-    $scope.doLogin = function() {
+    $scope.fastLogin = function() {
         
-       
+       if(token !== null && username != null){
+           $state.go('app.home');
+       } 
         
+    };
+    
+    $scope.doLogin = function(){
         
-       AuthService.login($scope.loginData).then(function success(response){
+        AuthService.login($scope.loginData).then(function success(response){
             if(AuthService.isAuthenticated()){
+                
+                token = AuthService.getAuthentication();
+                var username = AuthService.getUsername();
+                   
+                $localStorage.storeObject('userToken', token);
+                $localStorage.storeObject('userName', username);
                 console.log('changing view');
                 $state.go('app.home');
             }
         }, function failure(res){
-            console.log('error');
+             console.log('error');
         });
         
-        console.log($scope.token);
-        
-        console.log('Doing login');
-    };
+    }
     
     
     $scope.userinfo = {};
@@ -118,19 +127,19 @@ angular.module('starter.controllers', ['ngResource'])
 }])
 
 
-.controller('SignUpCtrl', function($scope){
-    //get sign up information
-    //TODO: encrypt data
-    $scope.userinfo = {};
-    
-    $scope.createAcc = function(){
-        console.log('acc created', $scope.userinfo);
-        //sign up function here
-    }
+.controller('SettingsCtrl', function($scope, $localStorage, $state){
+    $scope.logOut = function(){
+        
+        $localStorage.removeItem('userToken');
+        $localStorage.removeItem('userName');
+        $state.go('app.login');
+        
+    };
+   
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','$ionicPopover','usersFactory','picsFactory', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService,$ionicPopover, usersFactory, picsFactory){
+.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','$ionicPopover','usersFactory','picsFactory','$localStorage', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService,$ionicPopover, usersFactory, picsFactory, $localStorage){
    
     
     $scope.baseURL = baseURL;
@@ -145,7 +154,7 @@ angular.module('starter.controllers', ['ngResource'])
     
     
     //-------------- getting my user data ----------------------//
-    $scope.myUsername = AuthService.getUsername();
+    $scope.myUsername = $localStorage.getObject('userName', null);
     $scope.myToken = AuthService.getAuthentication();
     
     usersFactory.searchUser($scope.myUsername, $scope.myToken)
@@ -782,6 +791,7 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.baseURL = baseURL;
     $scope.$state = $state;
     console.log($scope.$state.current.name);
+    //$state.go($state.current,{}, {reload:true});
     
     var myUserToken = AuthService.getAuthentication();
     var myUsername = AuthService.getUsername();
@@ -789,7 +799,9 @@ angular.module('starter.controllers', ['ngResource'])
     
     usersFactory.searchUser(myUserToken, myUsername).then(function success(res){
         $scope.myUser = usersFactory.getUser();
+//        /$scope.$apply();
         notifications = NotificationService.getNotifications($scope.myUser.userId);
+        
     });
     
     $scope.notifyingUsers = [];
@@ -802,6 +814,8 @@ angular.module('starter.controllers', ['ngResource'])
         
     }
     */
+    
+    $scope.tab = 1;
     
     $scope.select = function(setTab){
         $scope.tab = setTab;
@@ -842,8 +856,8 @@ angular.module('starter.controllers', ['ngResource'])
     
     
     //--------------- gallery picture uploading -----------------//
-    /*
     
+    /*
     $ionicPlatform.ready(function() {
         var options = {
             quality: 50,
@@ -888,10 +902,9 @@ angular.module('starter.controllers', ['ngResource'])
         };
         
     });
+    
+    
     */
-    
-    
-    
     //------------------------------------------------------------//
     
 }])

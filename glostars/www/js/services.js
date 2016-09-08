@@ -539,6 +539,7 @@ angular.module('starter.services',['ngResource'])
 
 
         .factory('$localStorage', ['$window', function($window) {
+            
             return {
                 store: function(key, value) {
                     $window.localStorage[key] = value;
@@ -552,10 +553,9 @@ angular.module('starter.services',['ngResource'])
                 getObject: function(key,defaultValue) {
                     return JSON.parse($window.localStorage[key] || defaultValue);
                 },
-                removeObject: function(key, value){
-                    $window.localStorage[key].removeItem(value);
+                removeItem: function(key){
+                    $window.localStorage.removeItem(key);
                 }
-                
             }
         }])
 
