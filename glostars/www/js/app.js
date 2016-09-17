@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services'])
 
 .run(function($ionicPlatform, $ionicPopup) {
   $ionicPlatform.ready(function() {
@@ -19,7 +19,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-    
+
     if(window.Connection){
         if(navigator.connection.type == Connection.NONE){
             $ionicPopup.confirm({
@@ -28,29 +28,29 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
             });
         }
     }
-      
+
   });
-    
-    
-    
-    
+
+
+
+
 })
 
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
-  
+
   //$ionicConfigProvider.tabs.position('bottom');
   //var appID = 1072850062751811;
   //var version = "v2.0";
   //$cordovaFacebookProvider.browserInit(appID, version);
-    
+
   $stateProvider
 
     .state('app', {
     url: '/app',
     abstract: true,
     //templateUrl: 'templates/menu.html',
-    
+
     //controller: 'AppCtrl'
       views: {
         'content@':{
@@ -59,7 +59,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
         }
     }
   })
-  
+
   .state('app.sidemenu',{
       url:'/sidemenu',
       views: {
@@ -69,7 +69,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
         }
     }
   })
-  
+
   .state('app.login', {
     url: '/login',
     views:{
@@ -79,7 +79,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
       }
     }
   })
-  
+
   .state('app.profile', { //this will be changed later
     url: '/profile/:id',
     views:{
@@ -88,7 +88,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
             controller:'ProfileCtrl',
             resolve:{
               user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
-                  
+
                   return usersFactory.get({id:parseInt($stateParams.id, 10)});
               }]
             }
@@ -100,7 +100,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
         }
     }
   })
-  
+
   .state('app.edit', {
       url: '/edit/:id',
       views:{
@@ -119,7 +119,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
           }
       }
   })
-  
+
   .state('app.settings',{
       url: '/settings',
       views:{
@@ -133,7 +133,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
           }
       }
   })
-  
+
   .state('app.signup', {
     url: '/signup',
     views:{
@@ -143,7 +143,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
       }
     }
   })
-  
+
   .state('app.promo', {
     url: '/promo',
     views:{
@@ -152,7 +152,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
       }
     }
   })
-  
+
   .state('app.home', {
     url: '/home',
     views:{
@@ -180,7 +180,7 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
         }
     }
   })
-  
+
   .state('app.photoup', {
     url: '/photoup',
     views: {
@@ -191,6 +191,16 @@ angular.module('starter', ['ionic','ngCordova','starter.controllers', 'starter.s
         'footer@':{
             templateUrl:'templates/footer.html',
             controller:'FooterCtrl',
+        }
+    }
+  })
+
+  .state('app.picture', {
+    url: '/picture',
+    views: {
+        'content@':{
+            templateUrl: 'templates/picture.html',
+            controller:'PictureUploadCtrl',
         }
     }
   })
