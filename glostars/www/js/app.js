@@ -85,13 +85,23 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
     views:{
         'menuContent':{
             templateUrl: 'templates/profile.html',
-            controller:'ProfileCtrl',
+            controller:'ProfileCtrl'
+            /*
             resolve:{
-              user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
+              user:['$stateParams', 'usersFactory', 'AuthService', function($stateParams, usersFactory, AuthService){
+                console.log("we're trying to do stuff her at app profile");
+                usersFactory.searchUser(null, $scope.myToken, $stateParams.id )
+                    .then(function success(res){
+                          console.log('and getting something');
+                          return usersFactory.getUser();
 
-                  return usersFactory.get({id:parseInt($stateParams.id, 10)});
+                    }, function fail(res){
+                          console.log(res);
+                    });
+                  //return usersFactory.get({id:parseInt($stateParams.id, 10)});
               }]
             }
+            */
 
         },
         'footer@':{

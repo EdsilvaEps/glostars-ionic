@@ -113,10 +113,21 @@ angular.module('starter.services',['ngResource'])
             var userFac = {};
             var res;
 
-            userFac.searchUser = function(email, token){
+            userFac.searchUser = function(email, token, userid){
+
+                var route = null, info = null;
+
+                if(email !== null){
+                    route = "api/account/userinfo/?userEmail=";
+                    info = email;
+                } else if(userid !== null){
+                    route = "api/account/userinfo/?userId=";
+                    info = userid;
+                } else return route;
+
                 return $http({
                     method:'GET',
-                    url: baseURL+"api/account/userinfo/?userEmail="+email,
+                    url: baseURL + route + info,
                     headers:{
                         'Auth':'Bearer ' + token,
                         'Content-Type': 'application/json'
@@ -125,22 +136,20 @@ angular.module('starter.services',['ngResource'])
                 }).then(function successCallback(response){
 
                     //getting specic user data
-                    if(user.email === null){
-                        console.log('USER RETRIEVED');
-                        res = response.data.resultPayload;
+                    console.log('USER RETRIEVED');
+                    res = response.data.resultPayload;
 
-                        user = {
-                            name: res.name,
-                            email: res.email,
-                            profilePicUrl: res.profilePicURL,
-                            userId: res.userId
-                        };
-                        console.log(user);
+                    user = {
+                          name: res.name,
+                          email: res.email,
+                          profilePicUrl: res.profilePicURL,
+                          userId: res.userId
+                    };
+                    console.log(user);
 
-                        //pushing user data into stack of cached users
-                        usersCache.push(user);
+                    //pushing user data into stack of cached users
+                    usersCache.push(user);
 
-                    }
 
 
                 }, function errorCallback(response){
@@ -168,64 +177,68 @@ angular.module('starter.services',['ngResource'])
         }])
 
         .factory('picsFactory', ['baseURL', '$http', '$ionicLoading', function(baseURL, $http, $ionicLoading){
-            var pictures = [];
-
+            var pics = [];
             var intoken = null;
 
             pics.getUserPictures = function(id, count, token){
                 console.log('GETTING USER PICS');
-
-              //  if(intoken !== token){
-                   // intoken = token;
 
                 $ionicLoading.show({
                             template: '<p>Loading...</p><ion-spinner></ion-spinner>'
                         });
 
 
-                    return $http({
+                      return $http({
                         method:'GET',
                         url: baseURL + "api/images/user/" + id + "/" + count,
                         headers:{
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + token
                         }
-
                     }).then(function successCallback(response){
 
                         $ionicLoading.hide();
-                        console.log('Pics Retrieved');
-                        pictures = response.resultPayload;
-                        console.log(response);
+                        console.log(response.data.message);
+                        console.log(response.data.resultPayload);
+                        //pictures = response.data.resultPayload;
+                        //console.log(pictures);
+                        pics = response.data.resultPayload;
+                        //return response.resultPayload;
+
 
                     }, function errorCallback(response){
                         $ionicLoading.hide();
                         console.log('Error retrieving pics');
-                        console.log(response);
-                        return null;
+                        console.log(response.data);
                     });
 
-               // }
-
-
 
             };
 
-
-
-            pics.getAllUserPics = function(id, count, token){
-                var userPics = [];
-                for (var i = pictures.competitionPictures.length; i >=0; i --){
-                      userPics.push(pictures.competitionPictures[i]);
-                };
-                for (var i = pictures.mutualFollowerPictures.length; i >=0; i --){
-                      userPics.push(pictures.mutualFollowerPictures[i]);
-                };
-                for (var i = pictures.publicPictures.length; i >=0; i --){
-                      userPics.push(pictures.publicPictures[i]);
-                };
-                return userPics;
+            pics.getAllpictures = function(){
+                var pictures = [];
+                if(pics.competitionPictures.length > 0 ){
+                  for(var i = pics.competitionPictures.length; i >= 0; i --){
+                    if(pics.competitionPictures[i] !== undefined)
+                      pictures.push(pics.competitionPictures[i]);
+                  }
+                }
+                if(pics.mutualFollowerPictures.length > 0){
+                  for(var i = pics.mutualFollowerPictures.length; i >= 0; i --){
+                    if(pics.mutualFollowerPictures[i] !== undefined)
+                        pictures.push(pics.mutualFollowerPictures[i]);
+                  }
+                }
+                if(pics.publicPictures.length > 0){
+                  for(var i = pics.publicPictures.length; i >= 0; i --){
+                    if(pics.publicPictures[i] !== undefined)
+                        pictures.push(pics.publicPictures[i]);
+                  }
+                }
+                return pictures;
             };
+
+
 
             return pics;
 
@@ -382,9 +395,9 @@ angular.module('starter.services',['ngResource'])
                 UserName: null,
                 Email: null,
                 Name: null,
-                BirthdayYear: 0000,
-                BirthdayMonth: 00,
-                BirthdayDay: 00,
+                BirthdayYear: 0,
+                BirthdayMonth: 0,
+                BirthdayDay: 0,
                 Gender: null,
                 LastName: null,
                 Password: null
@@ -601,7 +614,7 @@ angular.module('starter.services',['ngResource'])
                 removeItem: function(key){
                     $window.localStorage.removeItem(key);
                 }
-            }
+            };
         }])
 
 ;

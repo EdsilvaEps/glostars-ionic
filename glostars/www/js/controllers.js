@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ngResource'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, USER_ROLES, $rootScope, $ionicPlatform, $cordovaCamera) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, usersFactory, $rootScope, $ionicPlatform, $cordovaCamera) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -20,9 +20,6 @@ angular.module('starter.controllers', ['ngResource'])
       loop: false,
       speed: 400,
   };
-
-
-
 
     /*The ApplicationController is a container for a lot of global application logic, and an alternative to Angular’s run function. Since it’s at the root of the $scope tree, all other scopes will inherit from it (except isolate scopes). It’s a good place to define the currentUser object
     */
@@ -68,7 +65,7 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.options = {
         loop: false,
         speed: 400,
-    }
+    };
 
 
     $scope.loginData = {};
@@ -83,7 +80,7 @@ angular.module('starter.controllers', ['ngResource'])
         //date = $filter('date')(date, "dd/MM/yyyy");
         //console.log(date);
 
-       if(token !== null && username != null){
+       if(token !== null && username !== null){
            $state.go('app.home');
        }
 
@@ -111,7 +108,7 @@ angular.module('starter.controllers', ['ngResource'])
              console.log('error');
         });
 
-    }
+    };
 
 
     $scope.userinfo = {};
@@ -152,14 +149,14 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory', 'usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','$ionicPopover','usersFactory','picsFactory','$localStorage', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService,$ionicPopover, usersFactory, picsFactory, $localStorage){
+.controller('HomeCtrl', ['$scope', 'mainFactory','usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','picsFactory','$localStorage', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService, picsFactory, $localStorage){
 
 
     $scope.baseURL = baseURL;
     $scope.message = "Loading...";
     $scope.showFeed = false;
     $scope.users = [];
-    $scope.animIN;
+    $scope.animIN = null;
     $scope.animOUT = false;
 
 
@@ -170,6 +167,7 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.myUsername = $localStorage.getObject('userName', null);
     $scope.myToken = AuthService.getAuthentication();
 
+    $scope.pics = null;
     usersFactory.searchUser($scope.myUsername, $scope.myToken)
         .then(function success(res){
 
@@ -178,9 +176,16 @@ angular.module('starter.controllers', ['ngResource'])
             console.log($scope.myUser);
 
             //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
-            $scope.pics = picsFactory.getAllUserPics($scope.myUser.userId, 3, $scope.myToken);
-            console.log("pics: ");
-            console.log($scope.pics);
+            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken)
+              .then(function successCallback(res){
+                    $scope.pics = picsFactory.getAllpictures();
+                    console.log("pics: ");
+                    console.log($scope.pics);
+
+              });
+
+            //console.log("pics: ");
+            //console.log($scope.pics);
 
             //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
     }, function fail(res){
@@ -247,10 +252,10 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.openComment = function(id){
         $scope.picture = $scope.photos[id];
         $scope.comment.show();
-    }
+    };
 
     $scope.submitComment = function(id){
-        if($scope.commentData.comment != ''){
+        if($scope.commentData.comment !== ''){
 
             var commentVar = {
                 id: $scope.photos[id].comments.length + 1,
@@ -294,7 +299,7 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.dejaAime = function(photoId, id){
         //function to check if user has already rated the picture
-        var i = 0; len = $scope.photos[photoId].raters.length;
+        /*var i = 0; len = $scope.photos[photoId].raters.length;
         for(; i < len; i++){
 
             if($scope.photos[photoId].raters[i].id === id){
@@ -302,6 +307,7 @@ angular.module('starter.controllers', ['ngResource'])
             }
         }
         return false;
+        */
     };
 
     $scope.rateAnimation = function(photoId){
@@ -374,7 +380,7 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.save = function(){
 
-         if(!($scope.user.firstName === '')&& !($scope.user.lastName === '')){
+         if(($scope.user.firstName !== '')&& ($scope.user.lastName !== '')){
 
 
 
@@ -403,103 +409,76 @@ angular.module('starter.controllers', ['ngResource'])
     };
 }])
 
-.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory', 'baseURL','$stateParams','user', '$ionicHistory', '$ionicModal','AuthService' ,function($scope, mainFactory, usersFactory, baseURL, $stateParams, user, $ionicHistory, $ionicModal, AuthService){
+.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory', '$ionicModal','AuthService','$localStorage','picsFactory' ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory){
 
-    $scope.baseURL = baseURL;
     $scope.tab = 1;
-    $scope.user = user;
+    console.log('stateParams: ');
+    console.log($stateParams);
+    //-------------- getting my user data ----------------------//
+    $scope.myUsername = $localStorage.getObject('userName', null);
+    $scope.myToken = $localStorage.getObject('userToken', null);;
+
+    $scope.pics = null;
+    usersFactory.searchUser($scope.myUsername, $scope.myToken)
+        .then(function success(res){
+
+            $scope.user = usersFactory.getUser();
+            console.log('my user is');
+            console.log($scope.user);
+
+            //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
+            picsFactory.getUserPictures($scope.user.userId, 10, $scope.myToken)
+              .then(function successCallback(res){
+                    $scope.pics = picsFactory.getAllpictures();
+                    console.log("pics: ");
+                    console.log($scope.pics);
+
+              });
+
+            //console.log("pics: ");
+            //console.log($scope.pics);
+
+            //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
+    }, function fail(res){
+            console.log(res);
+    });
+
+
+
+    //----------------------------------------------------------//
     //$scope.photos = photos;
-    $scope.users = [];
 
-
+/*
     $scope.numOfUserPics = function(id){
         var i = 0; len = $scope.photos.length; y =0;
         for(; i < len; i++){
             if($scope.photos[i].userId === id)
                 y += 1;
         }
-        return y
+        return y;
     };
-
+*/
 
 
     //TODO: make my user return a full user object
     //i can do nothing with just this id number
-    $scope.myUser = AuthService.getMockUser();
+    //$scope.myUser = AuthService.getMockUser();
 
-    $scope.isFollower = function(id){
-        //this functions check i am following the id user
-
-        //Please, get only one user from the users
-        //dont be a gluton
-        //others might want a piece of memory too
-        var i = 0; len = $scope.users[$scope.myUser].friends.length;
-        for(; i < len; i++){
-
-            if($scope.users[$scope.myUser].friends[i].id === id){
-                return true;
-            }
-        }
-        return false;
-
-    };
-
-    $scope.isFollowing = function(id){
-        var i = 0; len = $scope.users[id].friends.length;
-        for(; i < len; i++){
-
-            if($scope.users[id].friends[i].id === $scope.myUser){
-                return true;
-            }
-        }
-        return false;
-    };
 
     $scope.follow = function(i){
 
-        //person to follow
-        var following = {
-            id: i,
-            name: $scope.users[i].name,
-            description: $scope.users[i].description
-        };
-
-        var me = {
-            id: $scope.myUser,
-            name: $scope.users[$scope.myUser].name,
-            description: $scope.users[$scope.myUser].description
-        };
-
-        //push person data into list of follow
-        $scope.users[$scope.myUser].friends.push(following);
-        //issue update command to database
-        usersFactory.update({id:$scope.myUser},$scope.users[$scope.myUser]);
-
-        //add myself into that person's follower list
-        $scope.users[i].followers.push(me);
-
-        //issue server command again
-        usersFactory.update({id:i}, $scope.users[i])
+      //server implementation of the follow
     };
 
     $scope.unfollow = function(id){
 
         //person to unfollow
-        var i = 0; len = $scope.users[$scope.myUser].friends.length;
-        for(; i < len; i++){
+        //server implementation of unfollow
 
-            if($scope.users[$scope.myUser].friends[i].id === id){
-                //you're no worthy
-                $scope.users[$scope.myUser].friends.splice(i,1);
-                //done and done
-                usersFactory.update({id:$scope.myUser},$scope.users[$scope.myUser]);
-            }
-        }
-
-    }
+    };
 
     $scope.pics = []; //this be the own user's pics
-
+/*
 
     $scope.photos = mainFactory.query(
         function(response){
@@ -527,7 +506,7 @@ angular.module('starter.controllers', ['ngResource'])
             $scope.message = "Error: " + response.status + " " + response.statusText;
         });
 
-
+*/
 
     $scope.select = function(setTab){
         $scope.tab = setTab;
@@ -625,7 +604,7 @@ angular.module('starter.controllers', ['ngResource'])
 .controller('SearchCtrl',['$scope','baseURL', 'mainFactory','usersFactory','$ionicModal', function($scope,baseURL,mainFactory, usersFactory,$ionicModal){
 
     $scope.baseURL = baseURL;
-    $scope.searchBox;
+    $scope.searchBox = null;
     $scope.tab = 1;
 
 
@@ -676,7 +655,7 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.openComment = function(id){
         $scope.picture = $scope.photos[id];
         $scope.comment.show();
-    }
+    };
 
 
 
@@ -712,7 +691,7 @@ angular.module('starter.controllers', ['ngResource'])
                             $scope.pics.push(picList[i]);
 
                         }
-                    };
+                    }
 
 
                 },
@@ -739,7 +718,7 @@ angular.module('starter.controllers', ['ngResource'])
                             $scope.pics.push(picList[i]);
 
                         }
-                    };
+                    }
 
 
                 },
@@ -758,9 +737,8 @@ angular.module('starter.controllers', ['ngResource'])
 
 }])
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','baseURL','NotificationService',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, baseURL, NotificationService){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','NotificationService',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, NotificationService){
 
-    $scope.baseURL = baseURL;
     $scope.$state = $state;
     console.log($scope.$state.current.name);
     //$state.go($state.current,{}, {reload:true});
@@ -768,9 +746,12 @@ angular.module('starter.controllers', ['ngResource'])
     var myUserToken = AuthService.getAuthentication();
     var myUsername = AuthService.getUsername();
     var notifications = [];
+    $scope.myUser = usersFactory.getUser();
 
     usersFactory.searchUser(myUserToken, myUsername).then(function success(res){
         $scope.myUser = usersFactory.getUser();
+        console.log('getting user from footer');
+
 //        /$scope.$apply();
         notifications = NotificationService.getNotifications($scope.myUser.userId);
 
@@ -813,7 +794,7 @@ angular.module('starter.controllers', ['ngResource'])
 
 
     //popover config
-    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item" ui-sref="app.picture()" ng-click="closePopover()">Camera</a><a class="item" ui-sref="app.picture() ng-click="closePopover()">Gallery</a></div></ion-content></ion-popover-view>';
+    var template = '<ion-popover-view style="height:125px"><ion-content><div class="list"><a class="item" ng-click="closePopover()">Camera</a><a class="item"  ng-click="closePopover()">Gallery</a></div></ion-content></ion-popover-view>';
 
     $scope.popover = $ionicPopover.fromTemplate(template, {
         scope: $scope
@@ -825,11 +806,11 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.closePopover = function($event) {
         $scope.popover.hide($event);
-    }
+    };
 
     $scope.goTO = function(){
          $state.go('app.picture');
-    }
+    };
 
 }])
 

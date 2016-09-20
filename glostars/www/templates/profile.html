@@ -1,20 +1,20 @@
 <ion-view>
-   
-    
+
+
     <ion-content class="has-footer">
         <!-- profile picture and status -->
         <div class= "list" style="padding-top:10px;" ui-sref="app.edit({id:myUser})">
             <a class="item item-thumbnail-left" style="border:none">
-                <img ng-src="{{baseURL+user.image}}" alt="{{user.name}}">
-                <h2><strong>{{user.firstName}} {{user.lastName}}</strong></h2>
+                <img ng-src="{{user.profilePicUrl}}" alt="{{user.name}}">
+                <h2><strong>{{user.name}}</strong></h2>
                 <div><p>{{user.description}}</p></div>
-                <button class="button icon ion-gear-a" ng-if="user.id == myUser"></button>
+                <button class="button icon ion-gear-a" ng-if="false"></button>
                 <button ng-if="!isFollower(user.id) && user.id != myUser" class="button button-small button-stable" ng-click= "follow(user.id)">Follow</button>
                 <button ng-if="isFollower(user.id) != 0 && user.id != myUser && !isFollowing(user.id)" class="button button-small button-positive" ng-click="unfollow(user.id)">Following</button>
                 <button ng-if="isFollower(user.id) && user.id != myUser && isFollowing(user.id)" class="button button-small button-balanced">Mutual Follower</button>
-                
-                
-            </a>    
+
+
+            </a>
         </div>
         <!-- switch views tab -->
         <div class="button-bar button-block">
@@ -22,25 +22,27 @@
             <a class="button" style="box-shadow: 2px 2px 2px #888888;" ng-click="select(3)"><p>Followers {{user.followers.length}}</p></a>
             <a class="button" style="box-shadow: 2px 2px 2px #888888;" ng-if="user.id === myUser" ng-click="select(4)"><p>Following {{user.friends.length}}</p></a>
         </div>
-        <!-- photos buttom (list view) --> 
+        <!-- photos buttom (list view) -->
         <div ng-if="isSelected(1)">
             <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0">
                 <div class="col col-50 item item-image" ng-if="$index+1 < pics.length">
-                    <img ng-src="{{baseURL + pics[$index].image}}">
+                    <img ng-src="{{ pics[$index].picUrl}}">
                 </div>
                 <div class="col col-50 item item-image" ng-if="$index+1 < pics.length">
-                    <img ng-src="{{baseURL+pics[$index+1].image}}" ->
+                    <img ng-src="{{pics[$index+1].picUrl}}" ->
                 </div>
-                
+
             </div>
+            <!--
             <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 != 0">
                 <div class="col col-50 item item-image">
-                    <img ng-src="{{baseURL+pics[pics.length-1].image}}" width="100%">
+                    <img ng-src="{{pics[pics.length-1].picUrl}}" width="100%">
                 </div>
             </div>
+            -->
         </div>
-            
-            
+
+
         <div class="list" ng-if="isSelected(2)">
             <p>Public pictures</p>
         </div>
@@ -55,7 +57,7 @@
                 </div>
             </a>
         </div>
-        
+
         <div class="list" ng-if="isSelected(4)" ng-repeat="friend in user.friends">
             <a class="item item-avatar" ui-sref="app.profile({id:friend.id})">
                 <img ng-src="{{baseURL+users[friend.id].image}}">
@@ -67,15 +69,15 @@
                 </div>
             </a>
         </div>
-        
-        
-               
-        
-        
-        
-    
-        
-    
-        
+
+
+
+
+
+
+
+
+
+
     </ion-content>
 </ion-view>

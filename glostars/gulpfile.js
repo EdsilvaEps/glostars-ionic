@@ -2,6 +2,8 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var bower = require('bower');
 var concat = require('gulp-concat');
+var jshint = require('gulp-jshint');
+var stylish = require('jshint-stylish');
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
@@ -15,7 +17,22 @@ var paths = {
 
 
 
-gulp.task('default', ['sass']);
+gulp.task('jshint', function() {
+  return gulp.src('www/js/**/*.js')
+  .pipe(jshint())
+  .pipe(jshint.reporter(stylish));
+});
+
+
+gulp.task('usemin',['jshint'], function () {
+  return gulp.src('./www/**/*.html')
+      .pipe(usemin({
+        css:[minifycss(),rev()],
+        js: [ngannotate(),uglify(),rev()]
+      }))
+      .pipe(gulp.dest('dist/'));
+});
+
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -40,6 +57,8 @@ gulp.task('install', ['git-check'], function() {
       gutil.log('bower', gutil.colors.cyan(data.id), data.message);
     });
 });
+
+gulp.task('default', ['jshint']);
 
 gulp.task('git-check', function(done) {
   if (!sh.which('git')) {
