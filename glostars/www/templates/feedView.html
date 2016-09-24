@@ -1,44 +1,74 @@
 <ion-view>
-    <ion-content class="has-footer has-header">
-        <div class="list card" ng-repeat="photo in pics">
-            <p>page</p>
-            <div class="item item-avatar" style="border-bottom:none">
-                
-                <img ui-sref="app.profile({id:photo.userId})" ng-src="{{baseURL+users[photo.userId].image}}">
-                
-                <a ui-sref="app.profile({id:photo.userId})">
-                    <h3>{{photo.author}}</h3></a>
-                <p style="padding-top:10px">{{photo.caption}}</p>
-                
+    <ion-content delegate-handle="content" class="has-footer has-header">
+        <div class="list card" ng-repeat="photo in pics" id="{{photo.id}}">
+          <div class="row ">
+            <div class="col">
+              <div class="item item-avatar" style="border-bottom:none">
+
+                  <img ui-sref="app.profile()" ng-src="{{photo.poster.profilePicURL}}">
+
+                  <i ui-sref="app.profile()">
+                      <h2><strong>{{photo.poster.name}}</strong></h2></i>
+                  <p style="padding-top:10px">{{photo.description}}</p>
+
+              </div>
+            </div>
+          </div>
+            <div class="row no-padding">
+                <div class="col col-20 text-right">
+                    <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" am-time-ago="{{photo.uploaded}}">{{photo.uploaded}}</span>
+
+
+                </div>
+
+                <div class="col col-33 col-offset-33">
+                    <div class="imgContainer" style="display:inline">
+                        <img src="../img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="isCompeting" >
+                        <img src="../img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="photo.privacy === 'public'">
+                    </div>
+                    <div class="imgContainer" style="display:inline" ng-click="rate(photo.id, myUser, users[myUser].name)">
+                        <img src="../img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="!dejaAime(photo.id, myUser)">
+                        <img src="../img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id, myUser)">
+                    </div>
+                </div>
+                <div class="col col-10">
+                    <p>{{photo.ratings.length}}</p>
+                </div>
+
             </div>
             <div class="col text-right">
-                
-                <p style="color:#D1D0CE;"><span style="left:5%;position:absolute">{{photo.date | date:'medium'}}</span><span> <img src="../img/Public%20B.png" height="20px" ng-if="photo.category === 'public'"><img src="../img/Competition%20B.png" ng-if="photo.category === 'competition'" height="20px"> <img ng-if="!dejaAime(photo.id, myUser)" src="../img/Star_empty%20Ts.png" height="20px" ng-click="rate(photo.id, myUser, users[myUser].name)"><img  ng-if="dejaAime(photo.id, myUser)" src="../img/Star%20Filled%201s.png" height="20px" ng-click="rate(photo.id, myUser, users[myUser].name)"> </span>{{photo.rating}}</p>
-                
-                
+
+
+
+
             </div>
-            
+
             <div class="item item-image" style="position:relative">
-                <img ng-src="{{baseURL+photo.image}}" style="position:relative" on-double-tap="rate(photo.id, myUser, users[myUser].name)">
+                <img ng-src="{{photo.picUrl}}" style="position:relative" on-double-tap="rate(photo.id, myUser, users[myUser].name)">
                 <!-- TODO get image from user-->
                 <img ng-if="animIN == photo.id" class="animated rollIn" src="../img/Star%20Filled%201.png" style="height:50%;position:absolute;left:30%;top:20%;">
-                
+
             </div>
             <div class="row no-padding">
                 <div class="col text-left" ng-click="openPopover($event)">
                     <i class="icon ion-android-share-alt" style="font-size:25px"></i> <!-- TODO share stuff -->
-                        
+
                 </div>
-                <div class="col text-right" ng-click="openComment(photo.id)">
-                    <span><img src="../img/Comment.png" style="height:25px;"> {{photo.comments.length}}</span>
+                <div class="col col-10 col-offset-50" ng-click="openComment(photo.id)" style="white-space:nowrap">
+                      <img src="../img/Comment.png" style="height:25px;box-shadow:none;">
+
+
                      <!-- TODO Open comment page -->
-                        
-                     
+
+
                 </div>
-                
+                <div class="col col-10">
+                    {{photo.comments.length}}
+                    <p style="padding-top:5px"></p>
+                </div>
             </div>
-                
-            
+
+
         </div>
     </ion-content>
 </ion-view>

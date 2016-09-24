@@ -88,17 +88,6 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
-        .factory('myUser', ['$resource', 'baseURL', function($resource, baseURL){
-
-            var myUser = {
-                name: '',
-                email: null,
-                profilePicUrl: null,
-                userId: null
-            };
-
-        }])
-
         .factory('usersFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
 
             var user = {
@@ -138,7 +127,7 @@ angular.module('starter.services',['ngResource'])
                     //getting specic user data
                     console.log('USER RETRIEVED');
                     res = response.data.resultPayload;
-
+                    console.log(res);
                     user = {
                           name: res.name,
                           email: res.email,
@@ -147,8 +136,6 @@ angular.module('starter.services',['ngResource'])
                     };
                     console.log(user);
 
-                    //pushing user data into stack of cached users
-                    usersCache.push(user);
 
 
 
@@ -176,7 +163,7 @@ angular.module('starter.services',['ngResource'])
 
         }])
 
-        .factory('picsFactory', ['baseURL', '$http', '$ionicLoading', function(baseURL, $http, $ionicLoading){
+        .factory('picsFactory', ['baseURL', '$http', '$ionicLoading','$rootScope', function(baseURL, $http, $ionicLoading, $rootScope){
             var pics = [];
             var intoken = null;
 
@@ -203,6 +190,7 @@ angular.module('starter.services',['ngResource'])
                         //pictures = response.data.resultPayload;
                         //console.log(pictures);
                         pics = response.data.resultPayload;
+
                         //return response.resultPayload;
 
 
@@ -235,6 +223,7 @@ angular.module('starter.services',['ngResource'])
                         pictures.push(pics.publicPictures[i]);
                   }
                 }
+                $rootScope.$broadcast('pictures-loaded');
                 return pictures;
             };
 

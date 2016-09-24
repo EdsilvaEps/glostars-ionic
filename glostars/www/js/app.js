@@ -4,9 +4,12 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services', 'angularMoment'])
 
-.run(function($ionicPlatform, $ionicPopup) {
+.run(function($ionicPlatform, $ionicPopup, amMoment) {
+
+  amMoment.changeLocale('en');
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -35,7 +38,6 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
 
 
 })
-
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
@@ -170,10 +172,17 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
             templateUrl: 'templates/main.html',
             controller:'HomeCtrl',
         },
-        'footer@':{
+        'footer@': {
+                template: '<button id="fab-profile" class="button button-fab button-fab-bottom-right button-calm-100"><i class="icon ion-plus"></i></button><button id="fab-profile" class="button button-fab button-fab-bottom-left button-calm-100"><i class="icon ion-plus"></i></button>'
+
+        }
+
+
+
+        /*'footer@':{
             templateUrl:'templates/footer.html',
             controller:'FooterCtrl',
-        }
+        } */
     }
   })
 
@@ -250,7 +259,7 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       views: {
         'menuContent': {
           templateUrl: 'templates/feedView.html',
-          controller: 'FeedViewCtrl'
+          controller: 'ProfileCtrl'
         }
       }
     })

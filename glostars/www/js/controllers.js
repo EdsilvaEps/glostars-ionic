@@ -409,7 +409,10 @@ angular.module('starter.controllers', ['ngResource'])
     };
 }])
 
-.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory', '$ionicModal','AuthService','$localStorage','picsFactory' ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory){
+.controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory',
+ '$ionicModal','AuthService','$localStorage','picsFactory','$state','$location', '$anchorScroll','$ionicScrollDelegate','$timeout','$rootScope','moment'
+  ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory,
+     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment){
 
     $scope.tab = 1;
     console.log('stateParams: ');
@@ -432,32 +435,38 @@ angular.module('starter.controllers', ['ngResource'])
                     $scope.pics = picsFactory.getAllpictures();
                     console.log("pics: ");
                     console.log($scope.pics);
-
+                    $scope.time = pics[0].uploaded;
+                    //momentFromNow($scope.pics[0].uploaded);
               });
 
-            //console.log("pics: ");
-            //console.log($scope.pics);
 
-            //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
     }, function fail(res){
             console.log(res);
     });
 
 
 
-    //----------------------------------------------------------//
-    //$scope.photos = photos;
+    $scope.message = { text: 'hello world!', time: new Date() };
 
-/*
-    $scope.numOfUserPics = function(id){
-        var i = 0; len = $scope.photos.length; y =0;
-        for(; i < len; i++){
-            if($scope.photos[i].userId === id)
-                y += 1;
-        }
-        return y;
+    $scope.switchToFeed = function(anchor){
+        $state.go('app.feedView');
+        $rootScope.$on('pictures-loaded', function(event, args){
+
+          $timeout(function(){
+            console.log("anchoring: " + anchor);
+            $location.hash(anchor);
+            var handle = $ionicScrollDelegate.$getByHandle('content');
+            handle.anchorScroll();
+          }, 300);
+
+        });
+
+
+
+
+
     };
-*/
+
 
 
     //TODO: make my user return a full user object
@@ -476,37 +485,6 @@ angular.module('starter.controllers', ['ngResource'])
         //server implementation of unfollow
 
     };
-
-    $scope.pics = []; //this be the own user's pics
-/*
-
-    $scope.photos = mainFactory.query(
-        function(response){
-
-            $scope.photos = response;
-            $scope.showFeed = true;
-            var n = $scope.photos.length;
-
-            for(var i = 0; i < n; i++){
-                if($scope.photos[i].userId === $scope.user.id){
-                    $scope.pics.push($scope.photos[i]);
-
-                }
-            }
-
-
-            $scope.users = usersFactory.query(
-                function(response){
-
-                    $scope.users = response;
-                });
-
-        },
-        function(response){
-            $scope.message = "Error: " + response.status + " " + response.statusText;
-        });
-
-*/
 
     $scope.select = function(setTab){
         $scope.tab = setTab;
@@ -849,7 +827,6 @@ angular.module('starter.controllers', ['ngResource'])
                         <i class="icon ion-ios-search-strong" style="font-size:20px"></i>
                     </div>
                 </div>*/
-
 
 
 ;

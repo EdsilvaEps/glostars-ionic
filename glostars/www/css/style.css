@@ -4,7 +4,7 @@
     font-style: italic;
     color: white;
     text-align: center;
-    
+
 }
 
 .pad {
@@ -29,9 +29,9 @@
 .card-1{
     background-color: #e6005c;
     box-shadow: none;
-    
-        
-    
+
+
+
 }
 
 .logbutton {
@@ -46,7 +46,7 @@
 .signupbackground {
     background: #b3c6ff;
     font-style: italic;
-    
+
 }
 
 .buttonGrey {
@@ -71,8 +71,21 @@
 
 .test {
     margin-top: 20px;
-    
+
 }
+
+/*.ion-plus:before {
+    content: url('../img/Notifications_White.png')!important;
+}  SUPER CODE TO TRANSFORM IMAGES IN ICONS CRAZYYYYYYY */
+
+.noshadow {
+    box-shadow: none;
+}
+
+.imgContainer {
+    float:left;
+}
+
 
 .home-bar {
     height: 55px;
@@ -89,3 +102,8 @@
     height: 142px; /* .push must be the same height as .footer */
 }
 
+.profileGallery {
+    height: 100%;
+    max-height: 150px;
+
+}
