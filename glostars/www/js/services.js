@@ -110,7 +110,7 @@ angular.module('starter.services',['ngResource'])
                     route = "api/account/GetUserInfo?userEmail=";
                     info = email;
                 } else if(userid !== null){
-                    route = "api/account/userinfo/?userId=";
+                    route = "api/account/GetUserInfoById?userId=";
                     info = userid;
                 } else return route;
 
@@ -536,9 +536,10 @@ angular.module('starter.services',['ngResource'])
 
             var friends = {}; //people who follow you, and whom you follow are friends, simple
             var holder = {};
+            var holder_mine = {};
 
 
-            friends.loadFollowers = function(usrId, token){
+            friends.loadFollowers = function(usrId, token, isMe){
                 return $http({
                     method:'GET',
                     url: baseURL + "api/account/GetUserFollowById?userId=" + usrId,
@@ -551,6 +552,7 @@ angular.module('starter.services',['ngResource'])
                       console.log('friends retrieved');
 
                       holder = response.data.resultPayload;
+                      if(isMe) holder_mine = response.data.resultPayload;
                       // /console.log(holder);
 
                 }, function errorCallback(response){
@@ -574,6 +576,9 @@ angular.module('starter.services',['ngResource'])
                 return holder.followingList;
             };
 
+            friends.getMyFriends = function(){
+                return holder_mine;
+            };
 
             return friends;
 

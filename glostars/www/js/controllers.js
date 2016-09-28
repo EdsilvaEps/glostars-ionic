@@ -150,7 +150,9 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory','usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout','AuthService','picsFactory','$localStorage', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,$ionicPopover,$timeout,AuthService, picsFactory, $localStorage){
+.controller('HomeCtrl', ['$scope', 'mainFactory','usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout',
+'AuthService','picsFactory','$localStorage','FollowerService', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,
+$ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService){
 
 
     $scope.baseURL = baseURL;
@@ -165,7 +167,7 @@ angular.module('starter.controllers', ['ngResource'])
 
     //-------------- getting my user data ----------------------//
     $scope.myUsername = $localStorage.getObject('userName', null);
-    $scope.myUserId = $localStorage.getObject('userId', null);
+    $scope.myUserId = $localStorage.getObject('userid', null);
     $scope.myToken = AuthService.getAuthentication();
     console.log($scope.myToken);
     $scope.pics = null;
@@ -186,6 +188,7 @@ angular.module('starter.controllers', ['ngResource'])
 
               });
 
+              FollowerService.loadFollowers($scope.myUserId, $scope.myToken, true);
             //console.log("pics: ");
             //console.log($scope.pics);
 
@@ -421,10 +424,10 @@ angular.module('starter.controllers', ['ngResource'])
     //-------------- getting my user data ----------------------//
     $scope.myUsername = $localStorage.getObject('userName', null);
     $scope.myToken =  $localStorage.getObject('userToken', null);
-    $scope.myId = $localStorage.getObject('userId', null);
+    $scope.myId = $localStorage.getObject('userid', null);
     $scope.pics = null;
 
-    usersFactory.searchUser($scope.myUsername, $scope.myToken)
+    usersFactory.searchUser(null, $scope.myToken, $stateParams.id)
         .then(function success(res){
 
 
@@ -432,7 +435,7 @@ angular.module('starter.controllers', ['ngResource'])
             console.log('my user is');
             console.log($scope.user);
 
-            FollowerService.loadFollowers($scope.user.userId, $scope.myToken)
+            FollowerService.loadFollowers($scope.user.userId, $scope.myToken, $scope.user.userId === $scope.myId)
               .then(function successCallback(res){
                     $scope.followers = FollowerService.getFollowers();
                     $scope.following = FollowerService.getFollowing();
@@ -460,8 +463,9 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.isFollower = function(userId){
       if($scope.followers){
-        for (var i = $scope.followers.length-1; i >= 0 ; i--){
-            if (userId === $scope.followers[i].id){
+        var mineFollowers = FollowerService.getMyFriends();
+        for (var i = mineFollowers.followerList.length-1; i >= 0 ; i--){
+            if (userId === mineFollowers.followerList[i].id){
                 return true;
               }
         }
@@ -471,15 +475,17 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.isFollowing = function(userId){
       if($scope.following){
-      for (var i = $scope.following.length-1; i >= 0; i--){
-          if(userId === $scope.following[i].id){
-              return true;
-          }
+        var mineFollowing = FollowerService.getMyFriends();
+        for (var i = mineFollowing.followingList.length-1; i >= 0; i--){
+            if(userId === mineFollowing.followingList[i].id){
+                return true;
+              }
+        }
       }
-    }
       return false;
 
     };
+
 
 
     $scope.message = { text: 'hello world!', time: new Date() };
@@ -672,7 +678,7 @@ angular.module('starter.controllers', ['ngResource'])
 }])
 
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','NotificationService',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, NotificationService){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','NotificationService','$localStorage',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, NotificationService, $localStorage){
 
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -680,6 +686,7 @@ angular.module('starter.controllers', ['ngResource'])
 
     var myUserToken = AuthService.getAuthentication();
     var myUsername = AuthService.getUsername();
+    var myId = $localStorage.getObject('userId', null);
     var notifications = [];
     $scope.myUser = usersFactory.getUser();
 

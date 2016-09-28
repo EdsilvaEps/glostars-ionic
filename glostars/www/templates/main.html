@@ -6,11 +6,11 @@
             <!-- TODO: make this div repeat for every picture available -->
             <div class="item item-avatar" style="border-bottom:none">
 
-                <img ui-sref="app.profile()" ng-src="{{photo.poster.profilePicURL}}">
+                <img ui-sref="app.profile({id:photo.poster.userId})" ng-src="{{photo.poster.profilePicURL}}">
 
 
 
-                <a ui-sref="app.profile()">
+                <a ui-sref="app.profile({id:photo.poster.userId})">
                 <h3>{{photo.poster.name}}</h3></a>
                 <p style="padding-top:10px">{{photo.description}}</p>
 
