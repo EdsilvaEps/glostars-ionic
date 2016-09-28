@@ -74,9 +74,10 @@
 
 }
 
-/*.ion-plus:before {
-    content: url('../img/Notifications_White.png')!important;
-}  SUPER CODE TO TRANSFORM IMAGES IN ICONS CRAZYYYYYYY */
+.ion-plus:before {
+    content: url('../img/icons_s/Notification_White.png')!important;
+}
+/* SUPER CODE TO TRANSFORM IMAGES IN ICONS CRAZYYYYYYY */
 
 .noshadow {
     box-shadow: none;

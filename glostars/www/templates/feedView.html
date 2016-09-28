@@ -1,7 +1,7 @@
 <ion-view>
-    <ion-content delegate-handle="content" class="has-footer has-header">
+    <ion-content delegate-handle="content" class="has-header">
         <div class="list card" ng-repeat="photo in pics" id="{{photo.id}}">
-          <div class="row ">
+          <div class="row">
             <div class="col">
               <div class="item item-avatar" style="border-bottom:none">
 
@@ -20,7 +20,7 @@
 
 
                 </div>
-
+                <!--
                 <div class="col col-33 col-offset-33">
                     <div class="imgContainer" style="display:inline">
                         <img src="../img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="isCompeting" >
@@ -34,15 +34,26 @@
                 <div class="col col-10">
                     <p>{{photo.ratings.length}}</p>
                 </div>
-
-            </div>
-            <div class="col text-right">
-
-
-
+              -->
 
             </div>
 
+            <div class="row">
+              <div class="col col-33 col-offset-75">
+                  <div class="imgContainer" style="display:inline">
+                      <img src="../img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="isCompeting" >
+                      <img src="../img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="photo.privacy === 'public'">
+                  </div>
+                  <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="rate(photo.id, myUser, users[myUser].name)">
+                      <img src="../img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="!dejaAime(photo.id, myUser)">
+                      <img src="../img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id, myUser)">
+                  </div>
+                  <div class="imgContainer" style="display:inline">
+                    <p style="padding-left:10px">{{photo.ratings.length}}</p>
+                  </div>
+              </div>
+
+            </div>
             <div class="item item-image" style="position:relative">
                 <img ng-src="{{photo.picUrl}}" style="position:relative" on-double-tap="rate(photo.id, myUser, users[myUser].name)">
                 <!-- TODO get image from user-->

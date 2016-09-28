@@ -174,7 +174,6 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
         },
         'footer@': {
                 template: '<button id="fab-profile" class="button button-fab button-fab-bottom-right button-calm-100"><i class="icon ion-plus"></i></button><button id="fab-profile" class="button button-fab button-fab-bottom-left button-calm-100"><i class="icon ion-plus"></i></button>'
-
         }
 
 

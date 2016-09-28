@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ngResource'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, usersFactory, $rootScope, $ionicPlatform, $cordovaCamera) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, usersFactory, $rootScope, $ionicPlatform, $cordovaCamera, NotificationService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -142,6 +142,7 @@ angular.module('starter.controllers', ['ngResource'])
 
         $localStorage.removeItem('userToken');
         $localStorage.removeItem('userName');
+        $localStorage.removeItem('userId');
         $state.go('app.login');
 
     };
@@ -162,11 +163,11 @@ angular.module('starter.controllers', ['ngResource'])
 
 
 
-
     //-------------- getting my user data ----------------------//
     $scope.myUsername = $localStorage.getObject('userName', null);
+    $scope.myUserId = $localStorage.getObject('userId', null);
     $scope.myToken = AuthService.getAuthentication();
-
+    console.log($scope.myToken);
     $scope.pics = null;
     usersFactory.searchUser($scope.myUsername, $scope.myToken)
         .then(function success(res){
@@ -174,6 +175,7 @@ angular.module('starter.controllers', ['ngResource'])
             $scope.myUser = usersFactory.getUser();
             console.log('my user is');
             console.log($scope.myUser);
+            $localStorage.storeObject('userid', $scope.myUser.userId);
 
             //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
             picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken)
@@ -217,8 +219,6 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.closePopover = function($event) {
         $scope.popover.hide($event);
     };
-
-
 
     /*
     $scope.photos = mainFactory.query(
@@ -410,24 +410,37 @@ angular.module('starter.controllers', ['ngResource'])
 }])
 
 .controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory',
- '$ionicModal','AuthService','$localStorage','picsFactory','$state','$location', '$anchorScroll','$ionicScrollDelegate','$timeout','$rootScope','moment'
+ '$ionicModal','AuthService','$localStorage','picsFactory','$state','$location', '$anchorScroll','$ionicScrollDelegate','$timeout',
+ '$rootScope','moment', 'FollowerService'
   ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory,
-     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment){
+     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService){
 
     $scope.tab = 1;
     console.log('stateParams: ');
     console.log($stateParams);
     //-------------- getting my user data ----------------------//
     $scope.myUsername = $localStorage.getObject('userName', null);
-    $scope.myToken = $localStorage.getObject('userToken', null);;
-
+    $scope.myToken =  $localStorage.getObject('userToken', null);
+    $scope.myId = $localStorage.getObject('userId', null);
     $scope.pics = null;
+
     usersFactory.searchUser($scope.myUsername, $scope.myToken)
         .then(function success(res){
+
 
             $scope.user = usersFactory.getUser();
             console.log('my user is');
             console.log($scope.user);
+
+            FollowerService.loadFollowers($scope.user.userId, $scope.myToken)
+              .then(function successCallback(res){
+                    $scope.followers = FollowerService.getFollowers();
+                    $scope.following = FollowerService.getFollowing();
+                    console.log($scope.followers);
+                    console.log($scope.following);
+
+              });
+
 
             //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
             picsFactory.getUserPictures($scope.user.userId, 10, $scope.myToken)
@@ -444,6 +457,29 @@ angular.module('starter.controllers', ['ngResource'])
             console.log(res);
     });
 
+
+    $scope.isFollower = function(userId){
+      if($scope.followers){
+        for (var i = $scope.followers.length-1; i >= 0 ; i--){
+            if (userId === $scope.followers[i].id){
+                return true;
+              }
+        }
+      }
+      return false;
+    };
+
+    $scope.isFollowing = function(userId){
+      if($scope.following){
+      for (var i = $scope.following.length-1; i >= 0; i--){
+          if(userId === $scope.following[i].id){
+              return true;
+          }
+      }
+    }
+      return false;
+
+    };
 
 
     $scope.message = { text: 'hello world!', time: new Date() };
@@ -467,11 +503,6 @@ angular.module('starter.controllers', ['ngResource'])
 
     };
 
-
-
-    //TODO: make my user return a full user object
-    //i can do nothing with just this id number
-    //$scope.myUser = AuthService.getMockUser();
 
 
     $scope.follow = function(i){
@@ -640,80 +671,6 @@ angular.module('starter.controllers', ['ngResource'])
 
 }])
 
-.controller('FeedViewCtrl', ['$scope', 'baseURL', 'AuthService', 'usersFactory', 'mainFactory', '$stateParams', function($scope, baseURL, AuthService, usersFactory, mainFactory, $stateParams){
-
-    $scope.baseURL = baseURL;
-
-    $scope.tView = 'competition';
-    //$scope.tView = $stateParams.category;
-
-    $scope.pics = [];
-    $scope.getPics = function(){
-        console.log("message");
-
-        var picList;
-        if($scope.tView === 'competition'){
-
-            console.log('competition');
-            picList = mainFactory.query(
-                function(response){
-
-                    picList = response;
-                    $scope.showFeed = true;
-                    var n = picList.length;
-
-                    //filter the 'photos' array and make a new array
-                    //only with photos listed "competition" in category
-                    for(var i = 0; i < n; i++){
-                        if(picList[i].category === 'competition'){
-                            $scope.pics.push(picList[i]);
-
-                        }
-                    }
-
-
-                },
-                function(response){
-                    var message = "Error: " + response.status + " " + response.statusText;
-                    console.log(message);
-                });
-
-        }
-        else if($scope.tView === 'userProfile'){
-
-            console.log('userProfile');
-            picList = mainFactory.query(
-                function(response){
-
-                    picList = response;
-                    $scope.showFeed = true;
-                    var n = picList.length;
-
-                    //filter the 'photos' array and make a new array
-                    //only with photos listed "competition" in category
-                    for(var i = 0; i < n; i++){
-                        if(picList[i].userId === $stateParams.id){
-                            $scope.pics.push(picList[i]);
-
-                        }
-                    }
-
-
-                },
-                function(response){
-                    var message = "Error: " + response.status + " " + response.statusText;
-                    console.log(message);
-                });
-        }
-    };
-
-
-
-
-
-
-
-}])
 
 .controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','NotificationService',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, NotificationService){
 

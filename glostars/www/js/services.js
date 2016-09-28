@@ -88,7 +88,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
-        .factory('usersFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+        .factory('usersFactory', ['$resource', 'baseURL', '$http', '$ionicPopup', function($resource, baseURL, $http, $ionicPopup){
 
             var user = {
                 name: '',
@@ -107,7 +107,7 @@ angular.module('starter.services',['ngResource'])
                 var route = null, info = null;
 
                 if(email !== null){
-                    route = "api/account/userinfo/?userEmail=";
+                    route = "api/account/GetUserInfo?userEmail=";
                     info = email;
                 } else if(userid !== null){
                     route = "api/account/userinfo/?userId=";
@@ -127,7 +127,7 @@ angular.module('starter.services',['ngResource'])
                     //getting specic user data
                     console.log('USER RETRIEVED');
                     res = response.data.resultPayload;
-                    console.log(res);
+
                     user = {
                           name: res.name,
                           email: res.email,
@@ -140,8 +140,12 @@ angular.module('starter.services',['ngResource'])
 
 
                 }, function errorCallback(response){
-                    console.log('ERROR RETRIEVING USER');
-                    console.log(response);
+
+
+                    console.log("ERROR!");
+
+                    console.log(response.status);
+                    //return authService.isAuthenticated();
                 });
             };
 
@@ -308,7 +312,6 @@ angular.module('starter.services',['ngResource'])
                                 issued: res.issued,
                                 expires: res.expires
                             };
-
                             //return authService.isAuthenticated();
 
                             console.log(res);
@@ -513,7 +516,6 @@ angular.module('starter.services',['ngResource'])
                          console.log(response.resultPayload);
 
                          notifications = response.resultPayload;
-                        //return response;
 
                     }, function errorCallback(response){
 
@@ -527,6 +529,53 @@ angular.module('starter.services',['ngResource'])
 
 
             return notifications;
+
+        }])
+
+        .factory('FollowerService', ['baseURL', '$http', function(baseURL, $http){
+
+            var friends = {}; //people who follow you, and whom you follow are friends, simple
+            var holder = {};
+
+
+            friends.loadFollowers = function(usrId, token){
+                return $http({
+                    method:'GET',
+                    url: baseURL + "api/account/GetUserFollowById?userId=" + usrId,
+                    headers:{
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
+                }).then(function successCallback(response){
+
+                      console.log('friends retrieved');
+
+                      holder = response.data.resultPayload;
+                      // /console.log(holder);
+
+                }, function errorCallback(response){
+
+                      console.log('ERROR IN FOLLOWER SERVICE');
+                      console.log(response.status);
+                });
+
+                return friends;
+            };
+
+            friends.rate = function(picId, rating){
+              //implement rating here
+            };
+
+            friends.getFollowers = function(){
+                return holder.followerList;
+            };
+
+            friends.getFollowing = function(){
+                return holder.followingList;
+            };
+
+
+            return friends;
 
         }])
 
