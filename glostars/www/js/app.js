@@ -254,7 +254,7 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       }
     })
     .state('app.feedView', {
-      url: '/feedView',
+      url: '/feedView/:id',
       views: {
         'menuContent': {
           templateUrl: 'templates/feedView.html',

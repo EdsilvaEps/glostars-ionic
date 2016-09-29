@@ -451,13 +451,11 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
                     $scope.pics = picsFactory.getAllpictures();
                     console.log("pics: ");
                     console.log($scope.pics);
-                    $scope.time = pics[0].uploaded;
+                    //$scope.time = pics[0].uploaded;
                     //momentFromNow($scope.pics[0].uploaded);
               });
 
 
-    }, function fail(res){
-            console.log(res);
     });
 
 
@@ -486,12 +484,39 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
     };
 
+    $scope.checkUser = function(userId){
+        var user =  null;
+        if($scope.user){
+            if($scope.user.userId === $scope.myId){
+                user = "user";
+                return user;
+            }
+            else if(!$scope.isFollower(userId) && !$scope.isFollowing(userId)){
+                user = "Nfollower";
+                return user;
+            }
+            else if($scope.isFollower(userId) && !$scope.isFollowing(userId)){
+                user = "follower";
+                return user;
+            }
+            else if(!$scope.isFollower(userId) && $scope.isFollowing(userId)){
+                user = "following";
+                return user;
+            }
+            else if($scope.isFollower(userId) && $scope.isFollowing(userId)){
+                user = "Mfollower";
+                return user;
+            } else return null;
+        }
+
+    };
 
 
-    $scope.message = { text: 'hello world!', time: new Date() };
 
-    $scope.switchToFeed = function(anchor){
-        $state.go('app.feedView');
+    //$scope.message = { text: 'hello world!', time: new Date() };
+
+    $scope.switchToFeed = function(anchor, usr){
+        $state.go('app.feedView', {id:usr});
         $rootScope.$on('pictures-loaded', function(event, args){
 
           $timeout(function(){

@@ -10,11 +10,12 @@
                 <h2><strong>{{user.name}}</strong></h2>
                 <p style="padding-top:3px"></p>
                 <div><p>{{user.description}}</p></div>
-                <button class="button icon ion-gear-a" ng-if="user.userId === myId"></button>
-                <button ng-if="!isFollower(user.userId) && user.userId !== myId" class="button button-small button-stable" ng-click= "follow(user.id)">Follow</button>
-                <button ng-if="isFollower(user.userId) != 0 && user.userId !== myId && !isFollowing(user.userId)" class="button button-small button-positive" ng-click="unfollow(user.id)">Following</button>
-                <button ng-if="isFollower(user.userId) && user.userId !== myId && isFollowing(user.userId)" class="button button-small button-balanced">Mutual Follower</button>
-
+                <div ng-if="checkUser(user.userId)">
+                  <button class="button icon ion-gear-a" ng-if="checkUser(user.userId) === 'user'"></button>
+                  <button ng-if="checkUser(user.userId) === 'Nfollower' || checkUser(user.userId) === 'follower'" class="button button-small button-stable" ng-click= "follow(user.id)">Follow</button>
+                  <button ng-if="checkUser(user.userId) === 'following' " class="button button-small button-positive" ng-click="unfollow(user.id)">Following</button>
+                  <button ng-if="checkUser(user.userId) === 'Mfollower'" class="button button-small button-balanced">Mutual Follower</button>
+                </div>
             </a>
         </div>
         <!-- switch views tab -->
@@ -34,10 +35,10 @@
         <!-- photos buttom (list view) -->
         <div ng-if="isSelected(1)">
             <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0">
-                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id)">
+                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id, user.userId)">
                     <img ng-src="{{ pics[$index].picUrl}}" class="profileGallery">
                 </div>
-                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id)">
+                <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id, user.userId)">
                     <img ng-src="{{pics[$index+1].picUrl}}" class="profileGallery">
                 </div>
 
