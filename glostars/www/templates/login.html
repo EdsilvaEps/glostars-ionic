@@ -2,29 +2,33 @@
     <ion-content scroll="false" has-footer="false">
       <ion-slides options="options" slider="data.slider">
           <ion-slide-page class="logbackground pad">
-              <div class="card card-1">
-                <div class="item item-image card-1">
-                    <img src="img/Glostars_Logo-02_White_PNG.png">
+              <div class="card" style="background-color: #e6005c;box-shadow:none">
+                <div class="item item-image">
+                    <img src="img/Glostars_Logo-02_White_PNG.png" class="">
                 </div>
-              </div>  
-              <form ng-submit="doLogin()" class="logbackground">
+              </div>
+              <form ng-submit="doLogin()">
                 <div class="list">
+
                     <label class="item item-input">
-                        <span class="input-label" style="color:white;">Email:</span>
-                        <p style="padding:20px"></p> <input type="email" ng-model="loginData.email">
+                         <span class="input-label" style="color:white;"> Email:</span>
+                            <input type="email" ng-model="loginData.email">
                     </label>
+                    <hr>
                     <label class="item item-input">
-                        <span class="input-label" style="color:white;text-align:center;">Password: </span>
-                        <p style="padding:20px"></p><input type="password" ng-model="loginData.password">
+                      <span class="input-label" style="color:white;">Password: </span>
+                      <input type="password" ng-model="loginData.password">
                     </label>
-                    <label class="item" style="background:transparent; border:none;">
-                    <button class="button logbutton" type="submit"  ng-click="doLogin()" >Log in</button> <!-- ui-sref="app.home()" -->
+                    <hr>
+                    <label class="item" style="background:transparent; border:none; margin-left:auto; margin-right:auto; width:10em">
+                    <button class="button logbutton" type="submit"  ng-click="doLogin()"
+                      style="border: solid 1px white;background-color: transparent;font-style: italic;color: white;border-radius: 30;">Log in</button> <!-- ui-sref="app.home()" -->
                     </label>
                     <br>
-                    <p>Forgot your password?</p>
+                    <p style="padding-top:10px">Forgot your password?</p>
                 </div>
               </form>
-              <h3 style="color:white;">Sign in</h3>
+              <h3 style="color:white;">Log in</h3>
           </ion-slide-page>
           <!-- promo page slide -->
           <ion-slide-page hide-nav-bar="true">
@@ -42,7 +46,7 @@
               <div class="row">
                 <div class="col col-50 col-offset-20" style="padding-left:15px">
                     <button class="button button-assertive">Log in </button>
-                    <button class="button button-balanced">Signup</button>
+                    <button class="button button-balanced">Sign up</button>
               </div>
             </div>
           </ion-slide-page>
@@ -77,9 +81,9 @@
                     <label>
                         <br>
                         <span style="color:white; font-size:20px"><input type="radio" name="sex" ng-model="userinfo.sex" value="Male" checked> Male </span>
-                        
+
                         <span style="color:white; font-size:20px"><input type="radio" name="sex" ng-model="userinfo.sex" value="Female"> Female</span>
-                        
+
                     </label>
                     <label class="item item-input">
                         <span class="input-label" style="color:white; font-size:20px">Birthday</span>
@@ -91,6 +95,6 @@
                </form>
           </ion-slide-page>
       </ion-slides>
-    
+
   </ion-content>
 </ion-view>

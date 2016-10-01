@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services', 'angularMoment'])
+angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services', 'angularMoment','ng-mfb'])
 
 .run(function($ionicPlatform, $ionicPopup, amMoment) {
 
@@ -88,27 +88,10 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
         'menuContent':{
             templateUrl: 'templates/profile.html',
             controller:'ProfileCtrl'
-            /*
-            resolve:{
-              user:['$stateParams', 'usersFactory', 'AuthService', function($stateParams, usersFactory, AuthService){
-                console.log("we're trying to do stuff her at app profile");
-                usersFactory.searchUser(null, $scope.myToken, $stateParams.id )
-                    .then(function success(res){
-                          console.log('and getting something');
-                          return usersFactory.getUser();
-
-                    }, function fail(res){
-                          console.log(res);
-                    });
-                  //return usersFactory.get({id:parseInt($stateParams.id, 10)});
-              }]
-            }
-            */
-
         },
-        'footer@':{
-            templateUrl:'templates/footer.html',
-            controller:'FooterCtrl',
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
     }
   })
@@ -125,9 +108,9 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
                     }]
               }
           },
-          'footer@':{
-              templateUrl:'templates/footer.html',
-              controller:'FooterCtrl',
+          'footer@': {
+                  templateUrl:'templates/bottomMenu.html',
+                  controller:'FooterCtrl'
           }
       }
   })
@@ -139,9 +122,9 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
               templateUrl: 'templates/settings.html',
               controller:'SettingsCtrl',
           },
-          'footer@':{
-              templateUrl:'templates/footer.html',
-              controller:'FooterCtrl',
+          'footer@': {
+                  templateUrl:'templates/bottomMenu.html',
+                  controller:'FooterCtrl'
           }
       }
   })
@@ -173,7 +156,8 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
             controller:'HomeCtrl',
         },
         'footer@': {
-                template: '<button id="fab-profile" class="button button-fab button-fab-bottom-right button-calm-100"><i class="icon ion-plus"></i></button><button id="fab-profile" class="button button-fab button-fab-bottom-left button-calm-100"><i class="icon ion-plus"></i></button>'
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
 
 
@@ -192,9 +176,9 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
             templateUrl: 'templates/search.html',
             controller:'SearchCtrl',
         },
-        'footer@':{
-            templateUrl:'templates/footer.html',
-            controller:'FooterCtrl',
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
     }
   })
@@ -206,9 +190,9 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
             templateUrl: 'templates/photoup.html',
             controller:'PictureUploadCtrl',
         },
-        'footer@':{
-            templateUrl:'templates/footer.html',
-            controller:'FooterCtrl',
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
     }
   })
@@ -247,9 +231,9 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
                 }],
             }
         },
-        'footer@':{
-            templateUrl:'templates/footer.html',
-            controller:'FooterCtrl',
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
       }
     })
@@ -259,6 +243,10 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
         'menuContent': {
           templateUrl: 'templates/feedView.html',
           controller: 'ProfileCtrl'
+        },
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
       }
     })

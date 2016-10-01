@@ -1,6 +1,7 @@
 angular.module('starter.controllers', ['ngResource'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, usersFactory, $rootScope, $ionicPlatform, $cordovaCamera, NotificationService) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, usersFactory, $rootScope, $ionicPlatform,
+   $cordovaCamera, NotificationService,  $rootScope) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -21,8 +22,25 @@ angular.module('starter.controllers', ['ngResource'])
       speed: 400,
   };
 
-    /*The ApplicationController is a container for a lot of global application logic, and an alternative to Angular’s run function. Since it’s at the root of the $scope tree, all other scopes will inherit from it (except isolate scopes). It’s a good place to define the currentUser object
-    */
+  //$scope.$state = $state;
+//  console.log($scope.$state.current.name);
+  var previousState = null;
+  $rootScope.$on('state-changed', function(event, args){
+      previousState = args;
+  });
+
+
+
+  $scope.initialPage = function(){
+    return (previousState === 'app.login' || previousState === null);
+  };
+  console.log($scope.initialPage());
+
+  $scope.myGoBack = function(){
+    if(!$scope.initialPage()){
+      $ionicHistory.goBack();
+    }
+  };
 
 
 
@@ -37,6 +55,7 @@ angular.module('starter.controllers', ['ngResource'])
 
 
   };
+
 
 
 })
@@ -55,9 +74,13 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('LoginCtrl',['$scope','$state','AuthService','$http','$resource', 'RegisterService', '$q', '$ionicLoading', '$localStorage','$filter', function($scope,$state,AuthService,$http,$resource,RegisterService, $q, $ionicLoading, $localStorage, $filter){
+.controller('LoginCtrl',['$scope','$state','AuthService','$http',
+'$resource', 'RegisterService', '$q', '$ionicLoading', '$localStorage',
+'$filter','ionicMaterialInk', function($scope,$state,AuthService,$http,$resource,RegisterService,
+   $q, $ionicLoading, $localStorage, $filter, ionicMaterialInk){
 
 
+    ionicMaterialInk.displayEffect();
     $scope.$state = $state;
     console.log($scope.$state.current.name);
     $scope.token = null;
@@ -435,6 +458,13 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
             console.log('my user is');
             console.log($scope.user);
 
+            if($state === 'app.profile'){
+                console.log("anchoring: " + anchor);
+                $location.hash(0);
+                var handle = $ionicScrollDelegate.$getByHandle('content');
+                handle.anchorScroll();
+            }
+
             FollowerService.loadFollowers($scope.user.userId, $scope.myToken, $scope.user.userId === $scope.myId)
               .then(function successCallback(res){
                     $scope.followers = FollowerService.getFollowers();
@@ -703,15 +733,25 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 }])
 
 
-.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory','NotificationService','$localStorage',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory, NotificationService, $localStorage){
+.controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory',
+'NotificationService','$localStorage','$rootScope','$ionicHistory',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory,
+  NotificationService, $localStorage, $rootScope, $ionicHistory){
 
-    $scope.$state = $state;
-    console.log($scope.$state.current.name);
+    //$scope.$state = $state;
+    //console.log($scope.$state.current.name);
+    var history = $ionicHistory.viewHistory();
+    //history = $ionicHistory.viewHistory();
+
+    console.log(history.currentView);
+    console.log(history.backView.stateId);
+    $rootScope.$broadcast('state-changed',history.backView.stateId);
     //$state.go($state.current,{}, {reload:true});
 
     var myUserToken = AuthService.getAuthentication();
     var myUsername = AuthService.getUsername();
-    var myId = $localStorage.getObject('userId', null);
+    $scope.myId = $localStorage.getObject('userid', null);
+
+
     var notifications = [];
     $scope.myUser = usersFactory.getUser();
 

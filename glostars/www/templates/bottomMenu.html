@@ -1,0 +1,14 @@
+<nav mfb-menu position="br" effect="zoomin" ng-if="!modal.isShown()"
+     active-icon="icon ion-plus" resting-icon="icon ion-plus"
+     toggling-method="click" ng-click="modal.show()">
+
+</nav>
+
+<nav mfb-menu position="bl" effect="slidein" label="close" ng-if="!modal.isShown()"
+     active-icon="ion-chevron-down" resting-icon="ion-chevron-up"
+     toggling-method="click">
+  <button mfb-button icon="ion-asterisk"  label="home" ui-sref="app.home"></button>
+  <button mfb-button icon="ion-ios-play" label="profile" ui-sref="app.profile({id:myId})">></button>
+  <button mfb-button icon="ion-heart-broken" label="competition" ui-sref="app.competition()"></button>
+  <button mfb-button icon="ion-quote" label="take picture"></button>
+</nav>

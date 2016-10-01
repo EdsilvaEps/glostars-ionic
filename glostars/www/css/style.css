@@ -28,7 +28,7 @@
 
 .card-1{
     background-color: #e6005c;
-    box-shadow: none;
+    box-shadow:none;
 
 
 
@@ -71,13 +71,33 @@
 
 .test {
     margin-top: 20px;
-
 }
+
 
 .ion-plus:before {
-    content: url('../img/icons_s/Notification_White.png')!important;
+    content: url('../img/icons_s/Notification_Ash.png')!important;
 }
-/* SUPER CODE TO TRANSFORM IMAGES IN ICONS CRAZYYYYYYY */
+
+.ion-plus {
+    font-size:30px;
+}
+
+.ion-asterisk:before {
+    content: url('../img/icons_s/Home_Ash.png')!important;
+}
+
+.ion-quote:before {
+    content: url('../img/icons_s/Upload_Ash.png')!important;
+}
+
+.ion-heart-broken:before {
+    content: url('../img/icons_s/Competition_Ash.png')!important;
+}
+
+.ion-ios-play:before {
+    content: url('../img/icons_s/Mutual_icon.png')!important;
+}
+/* SUPER CODE TO TRANSFORM IMAGES IN ICONS CRAZYYYYYYY  */
 
 .noshadow {
     box-shadow: none;

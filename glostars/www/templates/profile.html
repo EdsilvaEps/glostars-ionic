@@ -1,11 +1,11 @@
 <ion-view>
 
 
-    <ion-content class="has-footer">
+    <ion-content delegate-handle="content">
         <!-- profile picture and status -->
         <div class= "list" style="padding-top:10px;" ui-sref="app.edit({id:myUser})">
             <a class="item item-thumbnail-left" style="border:none">
-                <img ng-src="{{user.profilePicUrl}}" alt="{{user.name}}">
+                <img ng-src="{{user.profilePicUrl}}" alt="{{user.name}}" id='0'>
                 <br>
                 <h2><strong>{{user.name}}</strong></h2>
                 <p style="padding-top:3px"></p>
@@ -61,15 +61,17 @@
                 <img ng-src="{{follower.profilemediumPath}}">
                 <h2>{{follower.name}} {{follower.lastName}}</h2>
                 <br>
-                <div ng-if="myId === user.userId">
-                  <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.name)">Mutual Follower</button>
-                  <button ng-if="!isFollowing(follower.id) && isFollower(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id)">Follow</button>
-                </div>
-                <div ng-if="myId !== user.userId">
-                  <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.name)">Mutual Follower</button>
-                  <button ng-if="!isFollowing(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id)">Follow</button>
-                  <button ng-if="!isFollower(friend.id) && isFollowing(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id)">Following</button>
+                <div ng-if="myId !== follower.id">
+                  <div ng-if="myId === user.userId">
+                    <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.name)">Mutual Follower</button>
+                    <button ng-if="!isFollowing(follower.id) && isFollower(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id)">Follow</button>
+                  </div>
+                  <div ng-if="myId !== user.userId">
+                    <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.name)">Mutual Follower</button>
+                    <button ng-if="!isFollowing(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id)">Follow</button>
+                    <button ng-if="!isFollower(friend.id) && isFollowing(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id)">Following</button>
 
+                  </div>
                 </div>
             </a>
         </div>
