@@ -532,7 +532,7 @@ angular.module('starter.services',['ngResource'])
 
         }])
 
-        .factory('FollowerService', ['baseURL', '$http', function(baseURL, $http){
+        .factory('FollowerService', ['baseURL', '$http','$ionicLoading', function(baseURL, $http, $ionicLoading){
 
             var friends = {}; //people who follow you, and whom you follow are friends, simple
             var holder = {};
@@ -548,16 +548,16 @@ angular.module('starter.services',['ngResource'])
                         'Authorization': 'Bearer ' + token
                     }
                 }).then(function successCallback(response){
-
+                      $ionicLoading.hide();
                       console.log('friends retrieved');
 
                       holder = response.data.resultPayload;
-                      if(isMe) holder_mine = response.data.resultPayload;
+                      if(isMe) holder_mine = response.data.resultPayload; //important
                       // /console.log(holder);
 
                 }, function errorCallback(response){
-
-                      console.log('ERROR IN FOLLOWER SERVICE');
+                      $ionicLoading.hide();
+                      console.log('ERROR IN GETTING FOLLOWERS SERVICE');
                       console.log(response.status);
                 });
 
@@ -567,6 +567,60 @@ angular.module('starter.services',['ngResource'])
             friends.rate = function(picId, rating){
               //implement rating here
             };
+
+            friends.follow = function(usrId, token){
+                //method for following users (userId)
+
+                $ionicLoading.show({
+                            template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+                });
+
+
+                return $http({
+                    method:'POST',
+                    url: baseURL + "api/Follower/Following/" + usrId,
+                    headers:{
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                    }
+                }).then(function successCallback(response){
+
+                    console.log("you're now following this user ");
+                    console.log(response.data);
+                    //REFRESH FOLLOWERS LIST AFTER FOLLOWING SOMEONE
+
+                }, function errorCallback(response){
+
+                    console.log('ERROR WITH FOLLOWING USER:');
+                    console.log(response.status);
+                });
+            };
+
+            friends.unfollow = function(usrId, token){
+                $ionicLoading.show({
+                          template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+                        }); 
+                return $http({
+                    method:'POST',
+                    url: baseURL + "api/Follower/Unfollowing/" + usrId,
+                    headers:{
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                    }
+                }).then(function successCallback(response){
+
+                    console.log("you're not following this user anymore");
+                    console.log(response.data);
+                    //REFRESH FOLLOWERS LIST AFTER Unfollowing SOMEONE
+                }, function errorCallback(response){
+
+                    console.log('ERROR WITH UNFOLLOWING USER:');
+                    console.log(response.status);
+                });
+
+            };
+
+
 
             friends.getFollowers = function(){
                 return holder.followerList;

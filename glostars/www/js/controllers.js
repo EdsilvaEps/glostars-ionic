@@ -465,28 +465,36 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
                 handle.anchorScroll();
             }
 
-            FollowerService.loadFollowers($scope.user.userId, $scope.myToken, $scope.user.userId === $scope.myId)
-              .then(function successCallback(res){
-                    $scope.followers = FollowerService.getFollowers();
-                    $scope.following = FollowerService.getFollowing();
-                    console.log($scope.followers);
-                    console.log($scope.following);
-
-              });
-
-
-            //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
-            picsFactory.getUserPictures($scope.user.userId, 10, $scope.myToken)
-              .then(function successCallback(res){
-                    $scope.pics = picsFactory.getAllpictures();
-                    console.log("pics: ");
-                    console.log($scope.pics);
-                    //$scope.time = pics[0].uploaded;
-                    //momentFromNow($scope.pics[0].uploaded);
-              });
+            $scope.doRefresh();
 
 
     });
+
+    $scope.doRefresh = function(){
+
+      $scope.followers = null;
+      $scope.following = null;
+      FollowerService.loadFollowers($scope.user.userId, $scope.myToken, $scope.user.userId === $scope.myId)
+        .then(function successCallback(res){
+              $scope.followers = FollowerService.getFollowers();
+              $scope.following = FollowerService.getFollowing();
+              console.log($scope.followers);
+              console.log($scope.following);
+              $scope.checkUser($scope.user.userId);
+
+        });
+
+
+      //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
+      picsFactory.getUserPictures($scope.user.userId, 10, $scope.myToken)
+        .then(function successCallback(res){
+              $scope.pics = picsFactory.getAllpictures();
+              console.log("pics: ");
+              console.log($scope.pics);
+              //$scope.time = pics[0].uploaded;
+              //momentFromNow($scope.pics[0].uploaded);
+        });
+    };
 
 
     $scope.isFollower = function(userId){
@@ -514,33 +522,67 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
     };
 
+    $scope.btnClass = {
+        btn: null,
+        userStats: null,
+        info: null
+    };
     $scope.checkUser = function(userId){
         var user =  null;
+
+
         if($scope.user){
             if($scope.user.userId === $scope.myId){
                 user = "user";
+                $scope.btnClass.btn = "button icon ion-gear-a";
+                $scope.btnClass.info = user;
+
                 return user;
             }
             else if(!$scope.isFollower(userId) && !$scope.isFollowing(userId)){
                 user = "Nfollower";
+                $scope.btnClass.btn =  "button button-small button-stable";
+                $scope.btnClass.userStats = "Follow";
+                $scope.btnClass.info = user;
+
                 return user;
             }
             else if($scope.isFollower(userId) && !$scope.isFollowing(userId)){
                 user = "follower";
+                $scope.btnClass.btn =  "button button-small button-stable";
+                $scope.btnClass.userStats = "Follow";
+                $scope.btnClass.info =  user;
+
                 return user;
             }
             else if(!$scope.isFollower(userId) && $scope.isFollowing(userId)){
                 user = "following";
+                $scope.btnClass.btn =  "button button-small button-positive";
+                $scope.btnClass.userStats = "Following";
+                $scope.btnClass.info = user;
+
                 return user;
             }
             else if($scope.isFollower(userId) && $scope.isFollowing(userId)){
                 user = "Mfollower";
+                $scope.btnClass.btn =  "button button-small button-balanced";
+                $scope.btnClass.userStats = "Mutual Follower";
+                $scope.btnClass.info = user;
                 return user;
             } else return null;
         }
 
     };
 
+    $scope.handleUser = function(user){
+        if (user === "Mfollower" || user === "following"){
+          $scope.unfollow($scope.user.userId, $scope.myToken);
+        }
+        else if (user === "follower" || user === "Nfollower"){
+          $scope.follow($scope.user.userId, $scope.myToken);
+        }
+
+    };
 
 
     //$scope.message = { text: 'hello world!', time: new Date() };
@@ -566,15 +608,30 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 
 
-    $scope.follow = function(i){
+    $scope.follow = function(usrId, token){
+        // HERE usrId IS THE USER WE WANT TO FOLLOW/UNFOLLOW
+        console.log("following");
+        FollowerService.follow(usrId, token)
+          .then(function successCallback(response){
+              FollowerService.loadFollowers($scope.myId, $scope.myToken, true)
+                .then(function successCallback(response){
+                    $scope.doRefresh();
+                });
+          });
 
-      //server implementation of the follow
     };
 
-    $scope.unfollow = function(id){
+    $scope.unfollow = function(usrId, token){
+        // HERE usrId IS THE USER WE WANT TO FOLLOW/UNFOLLOW
+        console.log("unfollowing");
+        FollowerService.unfollow(usrId, token)
+          .then(function successCallback(response){
+            FollowerService.loadFollowers($scope.myId, $scope.myToken, true)
+              .then(function successCallback(response){
+                  $scope.doRefresh();
+              });
 
-        //person to unfollow
-        //server implementation of unfollow
+          });
 
     };
 
@@ -598,9 +655,6 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
         $scope.modal = modal;
     });
 
-    //TODO: include params - DONE
-    //TODO: make modal for notifications - DONE
-    //TODO: make page for friends - DONE (partially - make friends on the profile pg)
 }])
 
 .controller('CompetitionController',['$scope','mainFactory','images',  'baseURL','competitionFactory', function($scope, mainFactory, images, baseURL, competitionFactory){
@@ -614,32 +668,7 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 
     $scope.photos = competitionFactory.getCompetitionPics().get({id: 9});
-    //console.log($scope.photos);
 
-    /*
-    $scope.photos = mainFactory.query(
-        function(response){
-
-            $scope.photos = response;
-            $scope.showFeed gete;
-            var n = $scope.photos.length;
-
-            //filter the 'photos' array and make a new array
-            //only with photos listed "competition" in category
-            for(var i = 0; i < n; i++){
-                if($scope.photos[i].category === 'competition'){
-                    $scope.pics.push($scope.photos[i]);
-
-                }
-            }
-
-
-        },
-        function(response){
-            $scope.message = "Error: " + response.status + " " + response.statusText;
-        });
-
-    */
     $scope.check = function(){
         console.log("pics filtered: " + $scope.pics.length);
     };
@@ -737,8 +766,8 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 'NotificationService','$localStorage','$rootScope','$ionicHistory',function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory,
   NotificationService, $localStorage, $rootScope, $ionicHistory){
 
-    //$scope.$state = $state;
-    //console.log($scope.$state.current.name);
+    $scope.$state = $state;
+    console.log($scope.$state.current.name);
     var history = $ionicHistory.viewHistory();
     //history = $ionicHistory.viewHistory();
 
