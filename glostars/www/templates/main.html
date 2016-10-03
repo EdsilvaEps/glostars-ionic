@@ -2,6 +2,10 @@
 
 
     <ion-content class="has-header">
+      <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
         <div class="list card" ng-repeat="photo in pics">
           <div class="row">
             <div class="col">

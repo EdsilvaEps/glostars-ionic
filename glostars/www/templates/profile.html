@@ -2,6 +2,10 @@
 
 
     <ion-content delegate-handle="content">
+        <ion-refresher
+          pulling-text="Pull to refresh..."
+          on-refresh="doRefresh()">
+        </ion-refresher>
         <!-- profile picture and status -->
         <div class= "list" style="padding-top:10px;" ui-sref="app.edit({id:myUser})">
             <a class="item item-thumbnail-left" style="border:none">
@@ -45,7 +49,7 @@
                 </div>
 
             </div>
-            <!--
+                        <!--
             <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 != 0">
                 <div class="col col-50 item item-image">
                     <img ng-src="{{pics[pics.length-1].picUrl}}" width="100%">
@@ -94,11 +98,10 @@
 
 
 
-
-
-
-
-
+    <ion-infinite-scroll
+        on-infinite="loadMorePics()"
+        distance="1%">
+    </ion-infinite-scroll>
 
     </ion-content>
 </ion-view>

@@ -599,7 +599,8 @@ angular.module('starter.services',['ngResource'])
             friends.unfollow = function(usrId, token){
                 $ionicLoading.show({
                           template: '<p>Loading...</p><ion-spinner></ion-spinner>'
-                        }); 
+                        });
+                        
                 return $http({
                     method:'POST',
                     url: baseURL + "api/Follower/Unfollowing/" + usrId,

@@ -194,32 +194,43 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
     $scope.myToken = AuthService.getAuthentication();
     console.log($scope.myToken);
     $scope.pics = null;
-    usersFactory.searchUser($scope.myUsername, $scope.myToken)
-        .then(function success(res){
 
-            $scope.myUser = usersFactory.getUser();
-            console.log('my user is');
-            console.log($scope.myUser);
-            $localStorage.storeObject('userid', $scope.myUser.userId);
 
-            //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
-            picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken)
-              .then(function successCallback(res){
-                    $scope.pics = picsFactory.getAllpictures();
-                    console.log("pics: ");
-                    console.log($scope.pics);
+    $scope.doRefresh = function(){
 
-              });
+      usersFactory.searchUser($scope.myUsername, $scope.myToken)
+          .then(function success(res){
 
-              FollowerService.loadFollowers($scope.myUserId, $scope.myToken, true);
-            //console.log("pics: ");
-            //console.log($scope.pics);
+              $scope.myUser = usersFactory.getUser();
+              console.log('my user is');
+              console.log($scope.myUser);
+              $localStorage.storeObject('userid', $scope.myUser.userId);
 
-            //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
-    }, function fail(res){
-            console.log(res);
-    });
+              //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
+              picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken)
+                .then(function successCallback(res){
+                      $scope.pics = picsFactory.getAllpictures();
+                      console.log("pics: ");
+                      console.log($scope.pics);
 
+                });
+
+                FollowerService.loadFollowers($scope.myUserId, $scope.myToken, true);
+              //console.log("pics: ");
+              //console.log($scope.pics);
+
+              //$scope.photos = picsFactory.getMutualFollowerPics($scope.myUser.userId, 3, $scope.myToken);
+      }, function fail(res){
+              console.log(res);
+      }).finally(function() {
+       // Stop the ion-refresher from spinning
+       $scope.$broadcast('scroll.refreshComplete');
+     });
+
+
+    };
+
+    $scope.doRefresh();
 
 
     //----------------------------------------------------------//
@@ -437,23 +448,26 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 .controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory',
  '$ionicModal','AuthService','$localStorage','picsFactory','$state','$location', '$anchorScroll','$ionicScrollDelegate','$timeout',
- '$rootScope','moment', 'FollowerService'
+ '$rootScope','moment', 'FollowerService','$filter'
   ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory,
-     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService){
+     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService, $filter){
 
     $scope.tab = 1;
     console.log('stateParams: ');
     console.log($stateParams);
+    var PIC_NUMBER = 10;
     //-------------- getting my user data ----------------------//
     $scope.myUsername = $localStorage.getObject('userName', null);
     $scope.myToken =  $localStorage.getObject('userToken', null);
     $scope.myId = $localStorage.getObject('userid', null);
     $scope.pics = null;
 
-    usersFactory.searchUser(null, $scope.myToken, $stateParams.id)
-        .then(function success(res){
 
 
+    $scope.doRefresh = function(){
+
+      usersFactory.searchUser(null, $scope.myToken, $stateParams.id)
+          .then(function success(res){
             $scope.user = usersFactory.getUser();
             console.log('my user is');
             console.log($scope.user);
@@ -465,37 +479,74 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
                 handle.anchorScroll();
             }
 
-            $scope.doRefresh();
+            $scope.followers = null;
+            $scope.following = null;
+            FollowerService.loadFollowers($scope.user.userId, $scope.myToken, $scope.user.userId === $scope.myId)
+              .then(function successCallback(res){
+                    $scope.followers = FollowerService.getFollowers();
+                    $scope.following = FollowerService.getFollowing();
+                    console.log($scope.followers);
+                    console.log($scope.following);
+                    $scope.checkUser($scope.user.userId);
+
+              });
 
 
-    });
+            //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
+            picsFactory.getUserPictures($scope.user.userId, PIC_NUMBER, $scope.myToken)
+              .then(function successCallback(res){
+                    $scope.pics = picsFactory.getAllpictures();
+                    console.log("pics: ");
+                    console.log($scope.pics);
+                    //$scope.time = pics[0].uploaded;
+                    //momentFromNow($scope.pics[0].uploaded);
+              });
 
-    $scope.doRefresh = function(){
-
-      $scope.followers = null;
-      $scope.following = null;
-      FollowerService.loadFollowers($scope.user.userId, $scope.myToken, $scope.user.userId === $scope.myId)
-        .then(function successCallback(res){
-              $scope.followers = FollowerService.getFollowers();
-              $scope.following = FollowerService.getFollowing();
-              console.log($scope.followers);
-              console.log($scope.following);
-              $scope.checkUser($scope.user.userId);
-
-        });
+      }).finally(function() {
+       // Stop the ion-refresher from spinning
+       $scope.$broadcast('scroll.refreshComplete');
+     });
 
 
-      //picsFactory.getUserPictures($scope.myUser.userId, 3, $scope.myToken);
-      picsFactory.getUserPictures($scope.user.userId, 10, $scope.myToken)
-        .then(function successCallback(res){
-              $scope.pics = picsFactory.getAllpictures();
-              console.log("pics: ");
-              console.log($scope.pics);
-              //$scope.time = pics[0].uploaded;
-              //momentFromNow($scope.pics[0].uploaded);
-        });
+
     };
 
+    $scope.doRefresh();
+
+    $scope.select = function(setTab){
+        $scope.tab = setTab;
+
+    };
+
+    $scope.isSelected = function(checkTab){
+        return ($scope.tab === checkTab);
+    };
+
+    $scope.loadMorePics = function(){
+      if($scope.user){
+        console.log("loading more pics");
+        PIC_NUMBER += 10;
+
+        picsFactory.getUserPictures($scope.user.userId, PIC_NUMBER, $scope.myToken)
+          .then(function successCallback(res){
+
+                $scope.morePics = picsFactory.getAllpictures();
+                console.log("testing filter");
+
+                for(var i = $scope.morePics.length-1; i >= 0; i--){
+
+                    if($filter('getById')($scope.pics, $scope.morePics[i].id) == null){
+                        $scope.pics.push($scope.morePics[i]);
+                        console.log("new pics added");
+                    } else console.log("picture already in scope");
+                };
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+          });
+      }
+
+
+
+    };
 
     $scope.isFollower = function(userId){
       if($scope.followers){
@@ -635,24 +686,31 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
     };
 
-    $scope.select = function(setTab){
-        $scope.tab = setTab;
 
-    };
-
-    $scope.isSelected = function(checkTab){
-        return ($scope.tab === checkTab);
-    };
 
     $scope.myGoBack = function(){
         $ionicHistory.goBack();
     };
 
     //$scope.modal_n;
-    $ionicModal.fromTemplateUrl('templates/notifications.html',{
+    $ionicModal.fromTemplateUrl('templates/comment.html',{
         scope: $scope
     }).then(function(modal){
         $scope.modal = modal;
+    });
+
+    $scope.openComment = function(obj) {
+      $scope.modal.show();
+      console.log(obj);
+      $scope.com = obj;
+    };
+
+    $scope.closeComment = function() {
+      $scope.modal.hide();
+    };
+    // Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
     });
 
 }])
@@ -851,40 +909,16 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 }])
 
 
-
-
-
-.filter('searchContacts', function(){
-  return function (items, query) {
-    var filtered = [];
-    var letterMatch = new RegExp(query, 'i');
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      if (query) {
-        if (letterMatch.test(item.name.substring(0, query.length))) {
-          filtered.push(item);
-
-        }
-      } else {
-        filtered.push(item);
+.filter('getById', function() {
+  return function(input, id) {
+    var i=0, len=input.length;
+    for (; i<len; i++) {
+      if (+input[i].id == +id) {
+        return input[i];
       }
     }
-      console.log(filtered[0]);
-    return filtered;
-  };
-})
-
-/*<div class="row">
-                    <div class="col">
-                        <i class="icon ion-navicon-round" style="font-size:20px"></i>
-                    </div>
-                    <div class="col col-offset-33">
-                        <img src="../img/Glostars_Logo-02_White_PNG.png" style="width:100px;">
-                    </div>
-                    <div class="col col-offset-50">
-                        <i class="icon ion-ios-search-strong" style="font-size:20px"></i>
-                    </div>
-                </div>*/
-
+    return null;
+  }
+});
 
 ;

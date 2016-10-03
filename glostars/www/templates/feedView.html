@@ -1,5 +1,9 @@
 <ion-view>
-    <ion-content delegate-handle="content" class="has-header">
+    <ion-content delegate-handle="content" class="has-header has-footer">
+      <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
         <div class="list card" ng-repeat="photo in pics" id="{{photo.id}}">
           <div class="row">
             <div class="col">
@@ -65,7 +69,7 @@
                     <i class="icon ion-android-share-alt" style="font-size:25px"></i> <!-- TODO share stuff -->
 
                 </div>
-                <div class="col col-10 col-offset-50" ng-click="openComment(photo.id)" style="white-space:nowrap">
+                <div class="col col-10 col-offset-50" ng-click="openComment(photo)" style="white-space:nowrap">
                       <img src="img/Comment.png" style="height:25px;box-shadow:none;">
 
 
