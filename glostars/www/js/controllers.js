@@ -17,10 +17,7 @@ angular.module('starter.controllers', ['ngResource'])
   // Form data for the login modal
   $scope.loginData = {};
 
-  $scope.options = {
-      loop: false,
-      speed: 400,
-  };
+
 
   //$scope.$state = $state;
 //  console.log($scope.$state.current.name);
@@ -76,8 +73,24 @@ angular.module('starter.controllers', ['ngResource'])
 
 .controller('LoginCtrl',['$scope','$state','AuthService','$http',
 '$resource', 'RegisterService', '$q', '$ionicLoading', '$localStorage',
-'$filter','ionicMaterialInk', function($scope,$state,AuthService,$http,$resource,RegisterService,
-   $q, $ionicLoading, $localStorage, $filter, ionicMaterialInk){
+'$filter','ionicMaterialInk','$ionicSlideBoxDelegate', function($scope,$state,AuthService,$http,$resource,RegisterService,
+   $q, $ionicLoading, $localStorage, $filter, ionicMaterialInk, $ionicSlideBoxDelegate){
+
+
+
+     var swiper = new Swiper('.swiper-container', {
+        pagination: '.swiper-pagination',
+        paginationClickable: true,
+        slidesPerView: 1,
+        spaceBetween: 30
+    });
+
+    $scope.slideTo = function(id){
+      swiper.slideTo(id);
+
+    };
+
+
 
 
     ionicMaterialInk.displayEffect();
@@ -165,7 +178,7 @@ angular.module('starter.controllers', ['ngResource'])
 
         $localStorage.removeItem('userToken');
         $localStorage.removeItem('userName');
-        $localStorage.removeItem('userId');
+        $localStorage.removeItem('userid');
         $state.go('app.login');
 
     };
@@ -462,6 +475,9 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
     $scope.myId = $localStorage.getObject('userid', null);
     $scope.pics = null;
 
+    $scope.animIN = null;
+    $scope.animOUT = false;
+
 
 
     $scope.doRefresh = function(){
@@ -522,31 +538,59 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
         return ($scope.tab === checkTab);
     };
 
-    $scope.loadMorePics = function(){
-      if($scope.user){
-        console.log("loading more pics");
-        PIC_NUMBER += 10;
 
-        picsFactory.getUserPictures($scope.user.userId, PIC_NUMBER, $scope.myToken)
-          .then(function successCallback(res){
+    //------------------ picture rating -------------------------------//
+    var arrayObjectIndexOf = function(arr, obj){
+      for(var i = 0; i < arr.length; i++){
+          if(angular.equals(arr[i].id, obj)){
+              return i;
+            }
+      };
+          return null;
+    };
 
-                $scope.morePics = picsFactory.getAllpictures();
-                console.log("testing filter");
 
-                for(var i = $scope.morePics.length-1; i >= 0; i--){
+    $scope.rateAnimation = function(photoId){
 
-                    if($filter('getById')($scope.pics, $scope.morePics[i].id) == null){
-                        $scope.pics.push($scope.morePics[i]);
-                        console.log("new pics added");
-                    } else console.log("picture already in scope");
-                };
-                $scope.$broadcast('scroll.infiniteScrollComplete');
+        $scope.animIN = photoId;
+
+        $timeout(function anim(){
+            $scope.animIN = null;
+        }, 500);
+
+    };
+
+    $scope.dejaAime = function(id){
+      var i = arrayObjectIndexOf($scope.pics, id);
+      if(i){
+          var k = arrayObjectIndexOf($scope.pics[i].ratings, $scope.myId);
+          if(k) return true;
+      }
+      return false;
+
+    };
+
+    $scope.ratePicture = function(picId, rating, token){
+
+      if($scope.dejaAime(picId)){
+          //we should be able to unrate this pic
+          console.log("we should be able to unrate this pic");
+      } else {
+          picsFactory.ratePicture(picId, rating, token);
+          $rootScope.$on('rate-success', function(event, args){
+              $scope.pics[arrayObjectIndexOf($scope.pics, picId)] += rating;
+              console.log("rate sucess");
           });
+          $scope.rateAnimation(picId);
       }
 
 
 
+
     };
+
+    //-----------------------------------------------------------------//
+
 
     $scope.isFollower = function(userId){
       if($scope.followers){
@@ -758,40 +802,38 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 }])
 
-.controller('SearchCtrl',['$scope','baseURL', 'mainFactory','usersFactory','$ionicModal', function($scope,baseURL,mainFactory, usersFactory,$ionicModal){
+.controller('SearchCtrl',['$scope','usersFactory','$ionicModal','$localStorage',
+ function($scope, usersFactory, $ionicModal, $localStorage){
 
-    $scope.baseURL = baseURL;
     $scope.searchBox = null;
     $scope.tab = 1;
+    $scope.searchText = "Search users here";
+    var myToken =  $localStorage.getObject('userToken', null);
+    $scope.users = null;
+    $scope.searching = false;
 
 
     $scope.changeMe = function(){
         $scope.tab = 2;
         console.log("changed");
+        $scope.searching = true;
+
+        if($scope.searchBox !== null){
+            usersFactory.findUserByName($scope.searchBox, myToken)
+              .then(function successCallback(res){
+                    $scope.users = usersFactory.getUserSearchList();
+                    $scope.searching = false;
+              }, function errorCallback(res){
+                    $scope.searching = false;
+                    $scope.searchText = "no results found";
+              });
+        };
+
     };
 
-    $scope.names = [];
 
 
-    $scope.photos = mainFactory.query(
-        function(response){
-            $scope.photos = response;
 
-
-        },
-        function(response){
-            //some error routine
-        });
-
-    $scope.peoples = usersFactory.query(
-        function(response){
-            $scope.peoples = response;
-            //IMPLEMENT FACTORY FUNCTION TO GET ONLY NAMES AND ID'S
-
-        },
-        function(){
-            //some error
-        });
 
 
 

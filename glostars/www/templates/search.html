@@ -1,18 +1,15 @@
 <ion-view>
-    <ion-nav-bar class="home-bar">
-        <ion-nav-buttons side="primary" >
-                <button class="button button-assertive" style="box-shadow: 1px 1px 1px; background-color:transparent" ng-click="select(1)">
-                    Recent Uploads
-                </button>
-        </ion-nav-buttons>
-        <ion-nav-buttons side="secondary" class="item-input-inset">
-            <label class="item-input-wrapper">
-                <i class="icon ion-ios-search placeholder-icon" style="font-size:20px"></i>
-                <input type="search" placeholder="Search" style="background-color:transparent" ng-model="search" ng-change="changeMe()" aria-label="filter names">
-            </label>  
-        </ion-nav-buttons>
-        
-    </ion-nav-bar>
+    <!-- <ion-nav-bar class="home-bar"> -->
+      <div class="home-bar item-input-inset">
+        <label class="item-input-wrapper">
+          <input type="search" placeholder="Search" ng-model="searchBox" ng-change="changeMe()">
+          <i class="icon ion-ios-search placeholder-icon" style="font-size:20px" ng-click=""></i>
+        </label>
+        <button class="button button-assertive" style="box-shadow: 1px 1px 1px 1px; background-color:transparent" ng-click="select(1)">
+          Recent
+        </button>
+      </div>
+
   <ion-content class="has-header has-footer">
       <p style="padding:5px"></p>
       <!-- a new row is only created when there are  -->
@@ -20,23 +17,28 @@
       <div ng-if="isSelected(1)">
       <div class="row" ng-repeat="photo in photos" ng-if="$index % 2 === 0">
             <div class="col col-50 item " ng-if="$index+1 < photos.length">
-                <img ng-src="{{baseURL+photos[$index].image}}" style="height:150px" ng-click="openComment(photo.id)">    
+                <img ng-src="{{baseURL+photos[$index].image}}" style="height:150px" ng-click="openComment(photo.id)">
             </div>
             <div class="col col-50 item item-image" ng-if="$index+1 < photos.length" ng-click="openComment(photo.id)">
                 <img ng-src="{{baseURL+photos[$index+1].image}}" style="height:150px">
             </div>
       </div>
       </div>
-      
+
       <div ng-if="isSelected(2)">
           <div class="list">
-              <a class="item item-avatar" ng-repeat="person in peoples | searchContacts:search" ui-sref="app.profile({id:person.id})">
-                  <img ng-src="{{baseURL+person.image}}">
-                  <h2>{{person.firstName}} {{person.lastName}}</h2>
-                  <p>{{person.description}}</p>
+              <a class="item item-avatar" ng-repeat="person in users" ui-sref="app.profile({id:person.id})" ng-if="users.length > 0">
+                  <img ng-src="{{person.profilemediumPath}}">
+                  <h2>{{person.name}} {{person.lastName}}</h2>
+                  <br>
+                  <p></p>
               </a>
+              <div ng-if="searching == true" style="text-align: center;">
+                <ion-spinner></ion-spinner>
+              </div>
+              <a ng-if="users.length == 0 && searching == false"> {{searchText}}</a>
           </div>
       </div>
-      
+
   </ion-content>
 </ion-view>

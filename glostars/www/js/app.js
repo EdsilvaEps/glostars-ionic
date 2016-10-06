@@ -174,7 +174,7 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
     views: {
         'content@':{
             templateUrl: 'templates/search.html',
-            controller:'SearchCtrl',
+            controller: 'SearchCtrl'
         },
         'footer@': {
                 templateUrl:'templates/bottomMenu.html',

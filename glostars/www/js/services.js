@@ -98,7 +98,7 @@ angular.module('starter.services',['ngResource'])
             };
 
 
-            var usersCache = [];
+            var users = [];
             var userFac = {};
             var res;
 
@@ -149,14 +149,37 @@ angular.module('starter.services',['ngResource'])
                 });
             };
 
+            userFac.findUserByName = function(name, token){
+                return $http({
+                  method:'GET',
+                  url: baseURL + "api/account/GetUserListByName?Name=" + name,
+                  headers:{
+                      'Auth':'Bearer ' + token,
+                      'Content-Type': 'application/json'
+                  }
+                }).then(function successCallback(response){
+
+                      console.log('USER SEARCH RETURNED:');
+
+                      users = response.data.resultPayload;
+                      console.log(users);
+                      //return users;
+                }, function errorCallback(response){
+
+                      console.log('ERROR IN USER SEARCH BY NAME');
+                      console.log(response.status);
+                      //return null;
+                });
+            };
+
 
             userFac.getUser = function(){
                 return user;
             };
 
 
-            userFac.getUserStack = function(){
-                return usersCache;
+            userFac.getUserSearchList = function(){
+                return users;
             };
 
 
@@ -232,6 +255,33 @@ angular.module('starter.services',['ngResource'])
             };
 
 
+            //--- rating ----//
+            pics.ratePicture = function(picId, rating, token){
+              return $http({
+                method:'POST',
+                url: baseURL + "api/images/rating",
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                data:{NumOfStars:rating, PhotoId:picId}
+
+            }).then(function successCallback(response){
+                if(response.data.responseCode == 1){
+                  $rootScope.$broadcast('rate-success');
+                }
+                console.log(response.data);
+
+            }, function errorCallback(response){
+                console.log('ERROR RATING PIC');
+                console.log(response.data);
+            });
+
+          };
+
+
+
+
 
             return pics;
 
@@ -283,7 +333,7 @@ angular.module('starter.services',['ngResource'])
 
                         return $http({
                             method:'POST',
-                        url: 'http://www.glostars.com/Token',
+                            url: 'http://www.glostars.com/Token',
                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 
                             //Transforming data into x-www-form-urlencode type
@@ -600,7 +650,7 @@ angular.module('starter.services',['ngResource'])
                 $ionicLoading.show({
                           template: '<p>Loading...</p><ion-spinner></ion-spinner>'
                         });
-                        
+
                 return $http({
                     method:'POST',
                     url: baseURL + "api/Follower/Unfollowing/" + usrId,

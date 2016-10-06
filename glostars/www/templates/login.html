@@ -1,18 +1,20 @@
 <ion-view ng-init="fastLogin()">
     <ion-content scroll="false" has-footer="false">
-      <ion-slides options="options" slider="data.slider">
-          <ion-slide-page class="logbackground pad">
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide logbackground pad">
               <div class="card" style="background-color: #e6005c;box-shadow:none">
                 <div class="item item-image">
-                    <img src="img/Glostars_Logo-02_White_PNG.png" class="">
+                    <img src="img/Glostars_Logo-02_White_PNG.png">
                 </div>
+                <p style="padding-top:10px"></p>
               </div>
               <form ng-submit="doLogin()">
                 <div class="list">
 
                     <label class="item item-input">
                          <span class="input-label" style="color:white;"> Email:</span>
-                            <input type="email" ng-model="loginData.email">
+                          <input type="email" ng-model="loginData.email">
                     </label>
                     <hr>
                     <label class="item item-input">
@@ -29,37 +31,45 @@
                 </div>
               </form>
               <h3 style="color:white;">Log in</h3>
-          </ion-slide-page>
+          </div> <!-- swiper slide -->
           <!-- promo page slide -->
-          <ion-slide-page hide-nav-bar="true">
+          <div class="swiper-slide" hide-nav-bar="true">
               <div class="card">
-                <div class="item item-image " style="height:170px">
-                    <img src="img/IMG_4253.jpg">
-                </div>
-                <div class="item item-image" style="height:170px">
-                    <img src="img/0,5.jpg">
-                </div>
-                <div class="item item-image" style="height:170px">
-                    <img src="img/3.jpg">
-                </div>
+                  <div class="item item-image " style="height:180px">
+                      <img src="img/IMG_4253.jpg">
+                  </div>
+
+                  <div class="item item-image" style="height:180px">
+                      <img src="img/0,5.jpg">
+                  </div>
+
+                  <div class="item item-image" style="height:180px">
+                      <img src="img/3.jpg">
+                  </div>
+
+
               </div>
               <div class="row">
-                <div class="col col-50 col-offset-20" style="padding-left:15px">
-                    <button class="button button-assertive">Log in </button>
-                    <button class="button button-balanced">Sign up</button>
-              </div>
+                <div class="button-bar">
+                    <a class="button button-assertive" ng-click="slideTo(0)">Log in</a>
+                    <a class="button button-balanced" ng-click="slideTo(2)">Sign up</a>
+                </div>
+
             </div>
-          </ion-slide-page>
+            <div class="row">
+            </div>
+          </div> <!-- swiper slide -->
           <!-- sign up page slide -->
-          <ion-slide-page class="signupbackground pad" hide-nav-bar="true">
+          <div class="swiper-slide signupbackground pad" hide-nav-bar="true">
               <div class="row">
                 <h3>Sign up</h3>
               </div>
               <div class="row">
-                <button class="button button-block button-positive" ng-click="fbSign()">Sign up with facebook</button>
+                <button class="button button-small button-border icon-left ion-social-facebook button-positive-900" ng-click="fbSign()">Sign up with facebook</button>
                 <!-- TODO: make function to log with facebook -->
               </div>
               <div class="row">
+                <br>
                 <p style="text-align: center">or</p>
               </div>
               <!-- TODO: build the js functions and variables for this form  -->
@@ -68,16 +78,20 @@
                     <label class="item item-input">
                         <span class="input-label" style="color:white">First Name</span><input type="text" ng-model="userinfo.firstname">
                     </label>
+                    <hr>
                     <label class="item item-input">
                         <span class="input-label" style="color:white">Last Name</span><input type="text" ng-model="userinfo.lastname">
                     </label>
+                    <hr>
                     <label class="item item-input">
                         <span class="input-label" style="color:white;">Email</span>
                         <input type="email" ng-model="userinfo.email">
                     </label>
+                    <hr>
                     <label class="item item-input">
-                        <span class="input-label" style="color:white;text-align:center;">Password</span><input type="password" ng-model="userinfo.password">
+                        <span class="input-label" style="color:white;">Password</span><input type="password" ng-model="userinfo.password">
                     </label>
+                    <hr>
                     <label>
                         <br>
                         <span style="color:white; font-size:20px"><input type="radio" name="sex" ng-model="userinfo.sex" value="Male" checked> Male </span>
@@ -91,10 +105,16 @@
                     </label>
                     <br><p><small>By clicking create account you agree with our <a href="#">Terms of use</i></small></p>
                     <button class="button button-block button-positive" type="submit" ng-click="createAcc()">Create account</button>
+
                   </div>
                </form>
-          </ion-slide-page>
-      </ion-slides>
+          </div> <!-- swipe slide -->
+        </div> <!-- swiper wrapper -->
+        <div class="swiper-pagination" style="position:absolute;width:100%;bottom:0;text-align:center;"></div>
+
+      </div> <!-- swiper container -->
 
   </ion-content>
+
+
 </ion-view>
