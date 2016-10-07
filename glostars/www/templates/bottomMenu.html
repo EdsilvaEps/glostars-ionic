@@ -1,10 +1,10 @@
-<nav mfb-menu position="br" effect="zoomin" ng-if="!modal.isShown()"
+<nav mfb-menu position="br" effect="zoomin" ng-if="!modal.isShown() && showFloatingMenu"
      active-icon="icon ion-plus" resting-icon="icon ion-plus"
      toggling-method="click" ng-click="modal.show()">
 
 </nav>
 
-<nav mfb-menu position="bl" effect="slidein" label="close" ng-if="!modal.isShown()"
+<nav mfb-menu position="bl" effect="slidein" label="close" ng-if="!modal.isShown() && showFloatingMenu"
      active-icon="ion-chevron-down" resting-icon="ion-chevron-up"
      toggling-method="click">
   <button mfb-button icon="ion-asterisk"  label="home" ui-sref="app.home"></button>

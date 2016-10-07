@@ -1,20 +1,23 @@
 <ion-modal-view>
     <ion-header-bar class="bar bar-header bar-positive">
         <h1 class="title">{{com.poster.name}}'s picture   </h1>
-        <button class="button button-clear button-primary" ng-click="closeComment()">Back</button>
+        <button class="button button-clear button-primary" ng-click="closeComment()"><i class="icon ion-close-round"></i></button>
     </ion-header-bar>
     <ion-content class="has-footer">
         <div class="card" style="box-shadow:none;">
             <div class="list" >
 
-                <a class="item item-avatar"  ng-repeat="comment in com.comments | orderBy: 'commentTime'" ui-sref="app.profile({id:comment.commenterId})" ng-click="closeComment()" ng-if="com.comments.length > 0">
+                <a class="item item-avatar"  ng-repeat="comment in com.comments | orderBy: -'commentTime'" ng-if="com.comments.length > 0">
 
-                    <img ng-src="{{}}" ><span style="position:absolute;top:0;right:10px;" ng-if="com.poster.userId === myId || commment.commenterId === myId" ng-click="deleteComment(picture.id, com.id)"><i class="icon ion-close-round"></i></span>
-                    <h2 class="text-left" ui-sref="app.profile({id:comment.commenterId})">{{comment.commenterUserName}}</h2>
+                    <img ng-src="{{comment.profilePicUrl}}" ui-sref="app.profile({id:comment.commenterId})"><span style="position:absolute;top:0;right:10px;" ng-if="com.poster.userId === myId || commment.commenterId === myId" ng-click="deleteComment(com.id, comment.commentId, myToken)"><i class="icon ion-close-round"></i></span>
+                    <h2 class="text-left" ui-sref="app.profile({id:comment.commenterId})">{{comment.firstName}} {{comment.lastName}}</h2>
                     <p class="text-left" style="padding-top:5px">{{comment.commentMessage}}</p>
                     <br>
                    <p style="color:#D1D0CE;"> {{comment.commentTime | date:'medium'}}</p>
                 </a>
+                <div ng-if="loading" style="text-align: center;">
+                  <ion-spinner></ion-spinner>
+                </div>
                 <a ng-if="com.comments.length == 0">
                   <p>Be the first to comment</p>
                 </a>
@@ -23,7 +26,16 @@
 
 
     </ion-content>
-    <ion-footer-bar>
+    <form id="form" ng-submit="addComment(com.id, myToken)" name="form" novalidate>
+      <ion-footer-bar keyboard-attach class="item-input-inset" style="padding-left:3px; padding-right:2px;padding-bottom:2px">
+
+        <label class="item-input-wrapper">
+          <input type="text" placeholder="Write a comment" ng-model="message.data" required>
+        </label>
+        <button class="button button-positive"  style="padding:5px 5px"><i class="icon ion-chevron-right"></i></button>
+      </ion-footer-bar>
+    </form>
+    <!-- <ion-footer-bar>
         <div class="row no-padding">
             <div class="col col-50">
               <label class="item item-input inline">
@@ -36,13 +48,5 @@
               </button>
             </div>
         </div>
-            <!--
-            <form style="bottom:0;left:0;position:relative" name="commentForm" ng-submit="submitComment(picture.id)" novalidate>
-
-                <button class="button button-small button-positive" type="reset" ng-click="submitComment(picture.id)" style="bottom:0;right:0">
-                    Send
-                </button>
-
-            </form> -->
-    </ion-footer-bar>
+    </ion-footer-bar> -->
 </ion-modal-view>

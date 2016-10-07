@@ -186,8 +186,8 @@ angular.module('starter.controllers', ['ngResource'])
 })
 
 
-.controller('HomeCtrl', ['$scope', 'mainFactory','usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout',
-'AuthService','picsFactory','$localStorage','FollowerService', function($scope, mainFactory,usersFactory, baseURL,$ionicModal,
+.controller('HomeCtrl', ['$scope','usersFactory','baseURL','$ionicModal','$ionicPopover','$timeout',
+'AuthService','picsFactory','$localStorage','FollowerService', function($scope,usersFactory, baseURL,$ionicModal,
 $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService){
 
 
@@ -270,25 +270,7 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
         $scope.popover.hide($event);
     };
 
-    /*
-    $scope.photos = mainFactory.query(
-        function(response){
 
-            $scope.photos = response;
-            $scope.showFeed = true;
-
-            $scope.users = usersFactory.query(
-                function(response){
-
-                    $scope.users = response;
-                });
-
-
-        },
-        function(response){
-            $scope.message = "Error: " + response.status + " " + response.statusText;
-        });
-    */
     //---------- comments -------------//
 
     $scope.commentData = {};
@@ -461,9 +443,9 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 .controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory',
  '$ionicModal','AuthService','$localStorage','picsFactory','$state','$location', '$anchorScroll','$ionicScrollDelegate','$timeout',
- '$rootScope','moment', 'FollowerService','$filter'
+ '$rootScope','moment', 'FollowerService','$filter','$ionicLoading'
   ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory,
-     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService, $filter){
+     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService, $filter, $ionicLoading){
 
     $scope.tab = 1;
     console.log('stateParams: ');
@@ -481,6 +463,11 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 
     $scope.doRefresh = function(){
+
+      $ionicLoading.show({
+                  template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+              });
+
 
       usersFactory.searchUser(null, $scope.myToken, $stateParams.id)
           .then(function success(res){
@@ -514,6 +501,7 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
                     $scope.pics = picsFactory.getAllpictures();
                     console.log("pics: ");
                     console.log($scope.pics);
+                    $ionicLoading.hide();
                     //$scope.time = pics[0].uploaded;
                     //momentFromNow($scope.pics[0].uploaded);
               });
@@ -745,39 +733,78 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
     $scope.openComment = function(obj) {
       $scope.modal.show();
+      $rootScope.$broadcast('comment-open');
       console.log(obj);
       $scope.com = obj;
     };
 
     $scope.closeComment = function() {
       $scope.modal.hide();
+      $rootScope.$broadcast('comment-closed');
     };
     // Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
       $scope.modal.remove();
     });
 
+    //--------------------------- <comments> ---------------------------//
+    $scope.message = {"data": ""};
+    $scope.loading = false;
+
+    $scope.addComment = function(picId, token){
+        if ($scope.message.data !== ""){
+          $scope.loading = true;
+          var newComment = {
+              commentMessage: $scope.message.data,
+              commentTime: new Date(),
+              commenterId: $scope.myId,
+              commentId: null,
+              firstName: $scope.user.name,
+              profilePicUrl: $scope.user.profilePicUrl
+          };
+
+
+
+
+          picsFactory.commentPicture(picId, $scope.message.data, token)
+            .then(function successCallback(res){
+                newComment.commentId = picsFactory.getNewComment().commentId;
+                $scope.pics[arrayObjectIndexOf($scope.pics, picId)].comments.push(newComment);
+                $scope.loading = false;
+            });
+
+            $scope.message.data = "";
+        }
+
+
+    };
+
+    $scope.deleteComment = function(picId, commentId, token){
+
+          picsFactory.deleteComment(commentId, token)
+            .then(function successCallback(res){
+                var i = arrayObjectIndexOf($scope.pics, picId);
+                $scope.pics[i].comments.splice(arrayObjectIndexOf($scope.pics[i].comments, commentId),1);
+            });
+    };
+    //--------------------------- </comments> ---------------------------//
+
 }])
 
-.controller('CompetitionController',['$scope','mainFactory','images',  'baseURL','competitionFactory', function($scope, mainFactory, images, baseURL, competitionFactory){
+.controller('CompetitionController',['$scope','competitionFactory','$localStorage',
+ function($scope, competitionFactory, $localStorage){
 
 
 
     $scope.pics = [];
-    $scope.photos = [];
     $scope.tab = 1;
-    var n;
+    $scope.myToken =  $localStorage.getObject('userToken', null);
+    var pics_number = 20;
 
-
-    $scope.photos = competitionFactory.getCompetitionPics().get({id: 9});
-
-    $scope.check = function(){
-        console.log("pics filtered: " + $scope.pics.length);
-    };
-
-
-    $scope.baseURL = baseURL;
-
+    competitionFactory.getCompetitionPics(pics_number, $scope.myToken)
+      .then(function successCallback(res){
+          $scope.pics = competitionFactory.getPics();
+      });
 
     $scope.select = function(setTab){
         $scope.tab = setTab;
@@ -802,8 +829,8 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
 
 }])
 
-.controller('SearchCtrl',['$scope','usersFactory','$ionicModal','$localStorage',
- function($scope, usersFactory, $ionicModal, $localStorage){
+.controller('SearchCtrl',['$scope','usersFactory','$ionicModal','$localStorage','picsFactory',
+ function($scope, usersFactory, $ionicModal, $localStorage, picsFactory){
 
     $scope.searchBox = null;
     $scope.tab = 1;
@@ -811,6 +838,9 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
     var myToken =  $localStorage.getObject('userToken', null);
     $scope.users = null;
     $scope.searching = false;
+    $scope.pics = [];
+    var pics_number = 20;
+
 
 
     $scope.changeMe = function(){
@@ -832,7 +862,10 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
     };
 
 
-
+    picsFactory.getPublicPictures(pics_number, myToken)
+      .then(function successCallback(res){
+          $scope.pics = picsFactory.getPublic();
+      });
 
 
 
@@ -869,12 +902,22 @@ $ionicPopover,$timeout,AuthService, picsFactory, $localStorage, FollowerService)
     $scope.$state = $state;
     console.log($scope.$state.current.name);
     var history = $ionicHistory.viewHistory();
-    //history = $ionicHistory.viewHistory();
+    $scope.showFloatingMenu = true;
 
     console.log(history.currentView);
     console.log(history.backView.stateId);
     $rootScope.$broadcast('state-changed',history.backView.stateId);
     //$state.go($state.current,{}, {reload:true});
+
+    $rootScope.$on('comment-open', function(event, args){
+        $scope.showFloatingMenu = false;
+    });
+
+    $rootScope.$on('comment-closed', function(event, args){
+        $scope.showFloatingMenu = true  ;
+    });
+
+
 
     var myUserToken = AuthService.getAuthentication();
     var myUsername = AuthService.getUsername();

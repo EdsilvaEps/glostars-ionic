@@ -49,33 +49,33 @@ angular.module('starter.services',['ngResource'])
         .factory('competitionFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
 
             var pics = [];
+            var compics = [];
 
-            pics.getCompetitionPics = function(){
-                /*
-                var config = {
-                    "headers" : {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer WBCQGgAJ2f6J9RD6xCRp5Jy8uU0AiKW30qPsiACZM0Ih7gruXl5OLIpCmV_fQ2TVmos1ZnJevanjt48K1VjzpWDfoymRa_jGdX27bfDaIOA2KbcLPfy0hDTqJXGaY-RPty_3SVICXSQvOb2CRMzwZc8OWYzS8uIE1O2k4zG59RKuAqDpE5Ra34pvzjiJsgDnVDIJjqWZK84rgQgQEqt89SFHKJvHeFE7D5wft5csb5tmOCbkf8GUMUf7pUhDfRZoJaAFmzkgPv-Twq0baCCzphAZ-g2_2OahisGzDBjQH6jOdB5fc2C5drMjV1s9NcFwie3ws-5bxwOpGzShje0Y__I4DyJvwu_7psTJYYTDxN6-3TdObI2n59usqFbdgagsy7fc4esTBxv_Eok_BkrwfhSwFs69OMxR8_GzDzO4a3xC0N9pNrU98nJul-FbvpqVCfCuyYQmR05SRePmP16qNYiCzmesp4KaOfzWedc4LetgRfzOpJ9k-arBZuOczZ5Ox5OFjiCKm9YWBlMvgBP0fs4urV_1xfE4pLS3JTCb_NFWOlWaobYdhbSkRxq2B9ivsmJ0q7YYQfBZDM8aNUK16ecz-k6JSvV1S9yx6vKHXOY'
-                    }
-                };
+            pics.getCompetitionPics = function(count, token){
 
-                $http.get(baseURL+'/images/competition/12', config)
-                    .success(function(response){
+                return $http({
+                  method:'GET',
+                  url: baseURL + "api/images/competition/" + count,
+                  headers:{
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                  }
+              }).then(function successCallback(response){
 
-                        console.log(response);
-                        return response;
-                    })
-                    .error(function(data, status, header, config){
-                        console.log("ERROR");
-                        console.log("data: "+ data +" status:"+
-                                   header + " config: " + config);
+                  compics = response.data.resultPayload;
+                  console.log(response.data);
 
-                        return null;
-                    });
-                */
+              }, function errorCallback(response){
+                  console.log('ERROR ON COMPETITION PICS');
+                  console.log(response.data.status);
+              });
 
-                return $resource(baseURL+'/images/competition/:id');
 
+
+            };
+
+            pics.getPics = function(){
+                return compics;
             };
 
             return pics;
@@ -118,7 +118,7 @@ angular.module('starter.services',['ngResource'])
                     method:'GET',
                     url: baseURL + route + info,
                     headers:{
-                        'Auth':'Bearer ' + token,
+                        'Authorization':'Bearer ' + token,
                         'Content-Type': 'application/json'
                     },
                     unique:true
@@ -214,11 +214,7 @@ angular.module('starter.services',['ngResource'])
                         $ionicLoading.hide();
                         console.log(response.data.message);
                         console.log(response.data.resultPayload);
-                        //pictures = response.data.resultPayload;
-                        //console.log(pictures);
                         pics = response.data.resultPayload;
-
-                        //return response.resultPayload;
 
 
                     }, function errorCallback(response){
@@ -254,9 +250,52 @@ angular.module('starter.services',['ngResource'])
                 return pictures;
             };
 
+            var publicPics = [];
+            pics.getPublicPictures = function(count, token){
+                console.log('GETTING USER PICS');
+
+                $ionicLoading.show({
+                            template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+                        });
+
+
+                      return $http({
+                        method:'GET',
+                        url: baseURL + "api/images/public/" + count,
+                        headers:{
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        }
+                    }).then(function successCallback(response){
+
+                        $ionicLoading.hide();
+                        console.log(response.data);
+                        console.log(response.data.resultPayload);
+                        publicPics = response.data.resultPayload;
+
+
+                    }, function errorCallback(response){
+                        $ionicLoading.hide();
+                        console.log('Error retrieving pics');
+                        console.log(response.data);
+                    });
+
+
+            };
+
+            pics.getPublic = function(){
+                return publicPics;
+            };
+
+
 
             //--- rating ----//
             pics.ratePicture = function(picId, rating, token){
+              var rate = {
+                  NumOfStars: rating,
+                  PhotoId: picId
+              };
+
               return $http({
                 method:'POST',
                 url: baseURL + "api/images/rating",
@@ -264,7 +303,7 @@ angular.module('starter.services',['ngResource'])
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                data:{NumOfStars:rating, PhotoId:picId}
+                data:rate
 
             }).then(function successCallback(response){
                 if(response.data.responseCode == 1){
@@ -277,6 +316,56 @@ angular.module('starter.services',['ngResource'])
                 console.log(response.data);
             });
 
+          };
+
+          var newComment = {};
+
+          pics.commentPicture = function(picId, message, token){
+              var comment = {
+                  CommentText: message,
+                  PhotoId: picId
+              };
+
+              return $http({
+                  method:'POST',
+                  url: baseURL + "api/images/comment",
+                  headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  },
+                  data: comment
+
+                }).then(function successCallback(res){
+                    console.log(res.data.message);
+                    console.log(res.data.resultPayload);
+                    newComment = res.data.resultPayload;
+
+                }, function errorCallback(res){
+                    console.log('ERROR IN COMMENT SERVICE');
+                    return null;
+                });
+
+          };
+
+          pics.getNewComment = function(){
+              return newComment;
+          };
+
+          pics.deleteComment = function(commentId, token){
+             return $http({
+                method: 'GET',
+                url: baseURL + "api/images/DeleteComment?commentId=" + commentId,
+                headers:{
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                }
+
+             }).then(function successCallback(res){
+                  console.log(res.data);
+
+             }, function errorCallback(res){
+                  console.log('ERROR WITH DELETING COMMENT');
+             });
           };
 
 
