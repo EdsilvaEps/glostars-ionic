@@ -97,16 +97,12 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
   })
 
   .state('app.edit', {
-      url: '/edit/:id',
+      url: '/edit',
       views:{
           'content@':{
               templateUrl: 'templates/edit.html',
-              controller:'EditCtrl',
-              resolve:{
-              user:['$stateParams', 'usersFactory', function($stateParams, usersFactory){
-                  return usersFactory.get({id:parseInt($stateParams.id, 10)});
-                    }]
-              }
+              controller:'ProfileCtrl'
+
           },
           'footer@': {
                   templateUrl:'templates/bottomMenu.html',
@@ -183,6 +179,20 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
     }
   })
 
+  .state('app.recentFeed', {
+    url: '/recentFeed',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/recentFeed.html',
+        controller: 'SearchCtrl'
+      },
+      'footer@': {
+              templateUrl:'templates/bottomMenu.html',
+              controller:'FooterCtrl'
+      }
+    }
+  })
+
   .state('app.photoup', {
     url: '/photoup',
     views: {
@@ -207,11 +217,24 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
     }
   })
 
-  .state('app.browse', {
+  .state('app.browse', { //useless
       url: '/browse',
       views: {
         'menuContent': {
           templateUrl: 'templates/browse.html'
+        }
+      }
+    })
+    .state('app.competitionFeed', {
+      url: '/competitionFeed',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/competitionFeed.html',
+          controller: 'CompetitionController'
+        },
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
         }
       }
     })

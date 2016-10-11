@@ -11,15 +11,19 @@
       </div>
 
   <ion-content class="has-header has-footer">
+      <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="refresh()">
+      </ion-refresher>
       <p style="padding:5px"></p>
       <!-- a new row is only created when there are  -->
       <!-- enough pictures  -->
       <div ng-if="isSelected(1)">
           <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0">
-              <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id, user.userId)">
+              <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id)">
                   <img ng-src="{{ pics[$index].picUrl}}" class="profileGallery">
               </div>
-              <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id, user.userId)">
+              <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id)">
                   <img ng-src="{{pics[$index+1].picUrl}}" class="profileGallery">
               </div>
 

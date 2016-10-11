@@ -1,4 +1,5 @@
 <ion-view>
+    <!--
     <div class="tabs-top tabs-striped tabs-color-royal">
         <ul class="tabs">
             <li ng-class="{active:isSelected(1)}" class="tab-item"><a ng-click="select(1)">Gallery</a></li>
@@ -7,35 +8,48 @@
             <li ng-class="{active:isSelected(4)}" class="tab-item"><a ng-click="select(4)">Terms</a></li>
         </ul>
     </div>
+    -->
+
     <ion-content class="has-footer has-header">
+
+      <!-- switch views tab  -->
+      <div class="tabs tabs-stable static">
+          <a class="tab-item" ng-click="select(1)">Gallery</a>
+          <a class="tab-item" ng-click="select(3)">Prizes</a>
+          <a class="tab-item" ng-click="select(4)">Tips</a>
+          <a class="tab-item" ng-click="select(4)">Terms</a>
+          <!-- TODO: add some 'selected class' on them -->
+      </div>
+
             <!-- a new row is only created when there are  -->
             <!-- enough pictures  -->
             <div ng-if="isSelected(1)">
-            <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0" style="padding-top:60px">
-                <div class="col col-50 item" ng-if="$index+1 < pics.length" ui-sref="app.feedView({category:'competition'})">
-                    <img ng-src="{{baseURL+pics[$index].image}}" width="100%">    
-                </div>
-                <div class="col col-50 item" ng-if="$index+1 < pics.length">
-                    <img ng-src="{{baseURL+pics[$index+1].image}}" width="100%">
+                <div class="row" ng-repeat="photo in pics" ng-if="$index % 2 === 0">
+                    <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id, user.userId)">
+                        <img ng-src="{{ pics[$index].picUrl}}" class="profileGallery">
+                    </div>
+                    <div class="col col-50 item item-image" ng-if="$index+1 < pics.length" ng-click="switchToFeed(photo.id, user.userId)">
+                        <img ng-src="{{pics[$index+1].picUrl}}" class="profileGallery">
+                    </div>
+
                 </div>
             </div>
-            </div>
-        
+
         <div ng-if="isSelected(2)" style="padding-top:60px">
             <p>Prizes</p>
         </div>
-        
+
         <div ng-if="isSelected(3)" style="padding-top:60px">
             <div class="card">
                 <div class="card-header">
                     <h3>Photography tips</h3>
                 </div>
                 <div class="card-content">
-                    
+
                 </div>
             </div>
         </div>
-        
+
         <div ng-if="isSelected(4)" style="padding-top:60px">
             <div class="card">
                 <div class="card-header">
@@ -52,7 +66,7 @@
                         <li>
                             <p> Only one rating by a registered user will be considered, however a user can change the rating at any time </p>
                             <p>Contents (i.e. currently the images) with identifiable watermarks (including any text or date embedded in the image) will not be considered for the competition. </p>
-                            
+
                             <p>Any picture submitted by an international celebrity or a picture of an international celebrity submitted by himself or herself or by another user will not be considered for winning the prizes </p>
                             <p> Users will be held liable for any dispute related to the originality and ownership of the picture </p>
                             <p> Glostars rewarding mechanism aims to promote individuals’ photography skill; therefore, any downloaded picture (both free and purchased pictures) will not be considered for winning prizes in competition </p>
@@ -69,16 +83,16 @@
                             <p> Individual picture of the winner must be sent to Glostars while claiming the prize, which will be used for marketing purpose </p>
                             <p> Glostars current employees, sponsors of the prizes, investors and other individuals directly related with Glostars cannot win any of the prizes </p>
                             <p> Overall, Glostars reserves all the rights to disqualify any picture which the company considers to be inappropriate. </p>
-                            
-                            
-                            
+
+
+
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        
-        
-        
+
+
+
     </ion-content>
 </ion-view>

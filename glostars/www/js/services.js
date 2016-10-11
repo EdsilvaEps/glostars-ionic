@@ -46,7 +46,7 @@ angular.module('starter.services',['ngResource'])
 
         }])
 
-        .factory('competitionFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+        .factory('competitionFactory', ['$resource', 'baseURL', '$http','$rootScope', function($resource, baseURL, $http, $rootScope){
 
             var pics = [];
             var compics = [];
@@ -75,6 +75,7 @@ angular.module('starter.services',['ngResource'])
             };
 
             pics.getPics = function(){
+                $rootScope.$broadcast('pictures-loaded');
                 return compics;
             };
 
@@ -247,6 +248,7 @@ angular.module('starter.services',['ngResource'])
                   }
                 }
                 $rootScope.$broadcast('pictures-loaded');
+                pics = [];
                 return pictures;
             };
 
@@ -284,6 +286,7 @@ angular.module('starter.services',['ngResource'])
             };
 
             pics.getPublic = function(){
+                $rootScope.$broadcast('pictures-loaded');
                 return publicPics;
             };
 
@@ -644,26 +647,38 @@ angular.module('starter.services',['ngResource'])
         .factory('NotificationService', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
 
             var notifications = [];
+            var notes = [];
 
-            notifications.getNotifications = function(userId){
+            notifications.getNotifications = function(userId, token){
 
-                $http.get(baseURL + 'api/notifications/user/'+ userId)
-                    .then(function successCallback(response){
+                return $http({
+                  method:'GET',
+                  url: baseURL + 'api/notifications/user/'+ userId,
+                  headers:{
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                  }
 
-                         console.log('NOTICATIONS SEIZED');
-                         console.log(response.message);
-                         console.log(response.resultPayload);
+                }).then(function successCallback(response){
 
-                         notifications = response.resultPayload;
+                     console.log('NOTICATIONS SEIZED');
+                     console.log(response.message);
+                     console.log(response.resultPayload);
 
-                    }, function errorCallback(response){
+                     notes = response.resultPayload;
 
-                        console.log("ERROR IN NOTIFICATION SERVICE!");
-                        //res = response.data;
-                        console.log(response);
+                }, function errorCallback(response){
+
+                    console.log("ERROR IN NOTIFICATION SERVICE!");
+                    //res = response.data;
+                    console.log(response);
                 });
 
-                return notifications;
+
+            };
+
+            notifications.getNotes = function(){
+              return notes;
             };
 
 
