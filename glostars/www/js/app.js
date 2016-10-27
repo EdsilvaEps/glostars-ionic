@@ -103,10 +103,6 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
               templateUrl: 'templates/edit.html',
               controller:'ProfileCtrl'
 
-          },
-          'footer@': {
-                  templateUrl:'templates/bottomMenu.html',
-                  controller:'FooterCtrl'
           }
       }
   })
@@ -192,7 +188,7 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       }
     }
   })
-
+/*
   .state('app.photoup', {
     url: '/photoup',
     views: {
@@ -205,7 +201,7 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
                 controller:'FooterCtrl'
         }
     }
-  })
+  }) */
 
   .state('app.picture', {
     url: '/picture',

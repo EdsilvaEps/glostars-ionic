@@ -1,14 +1,17 @@
-<nav mfb-menu position="br" effect="zoomin" ng-if="!modal.isShown() && showFloatingMenu"
+
+
+  <nav mfb-menu position="br" effect="zoomin" ng-if="!modal.isShown() && showFloatingMenu"
      active-icon="icon ion-plus" resting-icon="icon ion-plus"
-     toggling-method="click" ng-click="openModal()">
+     toggling-method="click" ng-click="openModal()" style="position:absolute;right:0;bottom:0;">
+     <span ng-if="unseen.amount !== 0" class="badge badge-assertive" style="position:absolute;right:0;bottom:0;z-index:31;">{{unseen.amount}}</span>
 
-</nav>
+   </nav>
 
-<nav mfb-menu position="bl" effect="slidein" label="close" ng-if="!modal.isShown() && showFloatingMenu"
+   <nav mfb-menu position="bl" effect="slidein" label="close" ng-if="!modal.isShown() && showFloatingMenu"
      active-icon="ion-chevron-down" resting-icon="ion-chevron-up"
      toggling-method="click">
-  <button mfb-button icon="ion-asterisk"  label="home" ui-sref="app.home"></button>
-  <button mfb-button icon="ion-ios-play" label="profile" ui-sref="app.profile({id:myId})">></button>
-  <button mfb-button icon="ion-heart-broken" label="competition" ui-sref="app.competition()"></button>
-  <button mfb-button icon="ion-quote" label="take picture"></button>
-</nav>
+     <button mfb-button icon="ion-asterisk"  label="home" ui-sref="app.home"></button>
+     <button mfb-button icon="ion-ios-play" label="profile" ui-sref="app.profile({id:myId})">></button>
+     <button mfb-button icon="ion-heart-broken" label="competition" ui-sref="app.competition()"></button>
+     <button mfb-button icon="ion-quote" label="take picture" ng-click="pictureMode()"></button>
+   </nav>

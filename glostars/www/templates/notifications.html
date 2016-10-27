@@ -1,35 +1,44 @@
 <ion-modal-view>
-    <ion-header-bar class="bar bar-header bar-positive" on-drag-down="notificationsModal.hide()">
+    <ion-header-bar class="bar bar-header bar-positive" on-drag-down="closeModal()">
         <h1 class="title">Notifications</h1>
-        <button class="button button-clear button-primary" ng-click="notificationsModal.hide()">Back</button>
+        <button class="button button-clear button-primary" ng-click="closeModal()">Back</button>
     </ion-header-bar>
     <ion-content class="padding">
         <div class="list">
             <!-- switch views tab  -->
             <div class="button-bar botton-block">
-                <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(1)]" ng-click="select(1)" style="padding-top:5px"><p>Notifications</p></a>
-                <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(2)]" style="padding-top:5px" ng-click="select(2)"><p>New Followers</p></a>
+                <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(1)]" ng-click="select(1)" style="padding-top:5px"><p>Notifications <span class="badge badge-assertive" ng-if="unseen.activity !== 0">{{unseen.activity}}</span></p></a>
+                <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(2)]" style="padding-top:5px" ng-click="select(2)"><p>Followers <span class="badge badge-assertive" ng-if="unseen.follower !== 0">{{unseen.follower}}</span></p></a>
             </div>
             <br>
             <div ng-if="isSelected(1)">
-                <div class="list" repeat="notification in notifications.activityNotifications" ng-ini="">
+                <div class="list" ng-repeat="notification in activityNotifications" ng-if="loading == false">
                     <a class="item item-avatar" ui-sref=""><!-- send to picture -->
-                        <img ng-src=""><!-- person's profile pic -->
-                        <h4>"person" starred your picture</h4>
-                        <p>{notification.description}</p>
+                        <img ng-src="{{notificationUsers[$index].profilePicUrl}}"><!-- person's profile pic -->
+                        <h4>{{notificationUsers[$index].name}} {{notification.description}}</h4>
+                        <p>{{notification.date | date: 'medium'}}</p>
                     </a>
+                    <div ng-if="activityNotifications.length == 0">
+                        <p>you don't have notifications</p>
+                    </div>
                 </div>
+                <div ng-if="loading == true" style="text-align: center;">
+                  <ion-spinner></ion-spinner>
+                </div>
+
             </div>
             <div ng-if="isSelected(2)">
-                <div class="list" repeat="">
-                    <a class="item item-avatar" ui-sref=""><!-- send to person's profil -->
+                <div class="list" ng-repeat="notification in followerNotifications">
+                    <a class="item item-avatar" ui-sref="app.profile({id:notification.originatedById})" ng-click=closeModal();><!-- send to person's profil -->
                         <img ng-src=""><!-- person's profile pic -->
                         <h4>"person" started following you</h4>
-                        <p>timestamp</p>
+                        <p>{{notification.date}}</p>
                     </a>
+                    <div ng-if="followerNotifications.length == 0">
+                        <p>you don't have notifications</p>
+                    </div>
                 </div>
             </div>
-            <p>you don't have notifications</p>
         </div>
     </ion-content>
 

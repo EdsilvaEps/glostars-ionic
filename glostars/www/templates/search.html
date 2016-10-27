@@ -13,7 +13,7 @@
   <ion-content class="has-header has-footer">
       <ion-refresher
         pulling-text="Pull to refresh..."
-        on-refresh="refresh()">
+        on-refresh="refresh(false)">
       </ion-refresher>
       <p style="padding:5px"></p>
       <!-- a new row is only created when there are  -->
@@ -52,6 +52,12 @@
               <a ng-if="users.length == 0 && searching == false"> {{searchText}}</a>
           </div>
       </div>
+
+      <ion-infinite-scroll
+        ng-if="isSelected(1) && !refreshing"
+        on-infinite="refresh(true, 20)"
+        distance="2%">
+      </ion-infinite-scroll>
 
   </ion-content>
 </ion-view>

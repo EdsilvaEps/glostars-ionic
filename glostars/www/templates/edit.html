@@ -4,7 +4,7 @@
             <div class="bar bar-header" style="border-bottom:none;">
                 <button class="button" style="background-color: transparent; height:50px" ng-click="myGoBack()">
                     <i class="icon ion-arrow-left-a"></i>
-                    
+
                 </button>
             </div>
         </ion-nav-buttons>
@@ -13,10 +13,10 @@
         <div class="row" style="padding-top:20px">
             <div class="col col-100">
                 <a style="border:none">
-                    <img ng-src="{{baseURL + user.image}}" class="img-responsive" style="height:120px;width=auto">
+                    <img ng-src="{{user.profilePicUrl}}" class="img-responsive" style="height:120px;width=auto">
                     <span><button class="button button-stable" style="border: 1px solid black">Change Image</button></span>
                 </a>
-                
+
             </div>
         </div>
         <div class="row">
@@ -85,8 +85,8 @@
                 <hr>
                 <h4 style="padding-left:10px" ui-sref="app.settings()">Settings</h4>
             </div>
-            
+
         </div>
-        
+
     </ion-content>
 </ion-view>

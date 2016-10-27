@@ -11,6 +11,10 @@
     -->
 
     <ion-content class="has-footer has-header">
+      <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
 
       <!-- switch views tab  -->
       <div class="tabs tabs-stable static">
@@ -91,6 +95,11 @@
                 </div>
             </div>
         </div>
+        <ion-infinite-scroll
+          ng-if="isSelected(1) && !refreshing"
+          on-infinite="doRefresh(true)"
+          distance="2%">
+        </ion-infinite-scroll>
 
 
 

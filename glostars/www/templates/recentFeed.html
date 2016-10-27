@@ -53,7 +53,7 @@
                       <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id)">
                   </div>
                   <div class="imgContainer" style="display:inline">
-                    <p style="padding-left:10px">{{photo.ratings.length}}</p>
+                    <p style="padding-left:10px">{{photo.starsCount}}</p>
                   </div>
               </div>
 
@@ -82,6 +82,12 @@
                     <p style="padding-top:5px"></p>
                 </div>
             </div>
+
+            <ion-infinite-scroll
+              ng-if="!refreshing"
+              on-infinite="refresh(true, 10)"
+              distance="2%">
+            </ion-infinite-scroll>
 
 
         </div>

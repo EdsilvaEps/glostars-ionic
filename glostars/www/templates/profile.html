@@ -1,12 +1,27 @@
-<ion-view>
+vi<ion-view>
 
 
     <ion-content delegate-handle="content">
         <ion-refresher
           pulling-text="Pull to refresh..."
-          on-refresh="doRefresh()">
+          on-refresh="doRefresh(false)">
         </ion-refresher>
         <!-- profile picture and status -->
+        <div class="row" style="padding-top:20px">
+          <div class="col">
+              <a class="item item-thumbnail-left" style="border:none">
+                <img ng-src="{{user.profilePicUrl}}" alt="{{user.name}}" id='0'>
+              </a>
+          </div>
+          <div class="col" style="padding-top:10px">
+              <p><strong>{{user.name}}</strong></p>
+          </div>
+          <div class="col" ng-if="checkUser(user.userId)" style="padding-top:10px">
+              <button class="{{btnClass.btn}}" ng-click="handleUser(btnClass.info)"><i style="font-size:10px">{{btnClass.userStats}}</i></button>
+          </div>
+
+        </div>
+        <!--
         <div class= "list" style="padding-top:10px;" ui-sref="app.edit({id:myUser})">
             <a class="item item-thumbnail-left" style="border:none">
                 <img ng-src="{{user.profilePicUrl}}" alt="{{user.name}}" id='0'>
@@ -15,18 +30,16 @@
                 <p style="padding-top:3px"></p>
                 <div><p>{{user.description}}</p></div>
                 <div ng-if="checkUser(user.userId)">
-                  <!-- <button class="button icon ion-gear-a" ng-if="checkUser(user.userId) === 'user'"></button> -->
                   <button class="{{btnClass.btn}}" ng-click="handleUser(btnClass.info)">{{btnClass.userStats}}</button>
-                  <!--
                   <button ng-if="checkUser(user.userId) === 'Nfollower' || checkUser(user.userId) === 'follower'" class="{{btnClass.btn}}" ng-click= "follow(user.userId, myToken)">{{btnClass.userStats}}</button>
                   <button ng-if="checkUser(user.userId) === 'following' " class="{{btnClass.btn}}" ng-click="unfollow(user.userId, myToken)">{{btnClass.userStats}}</button>
                   <button ng-if="checkUser(user.userId) === 'Mfollower'" class="{{btnClass.btn}}" ng-click="unfollow(user.userId, myToken)">{{btnClass.userStats}}</button> -->
-                </div>
+              <!--  </div>
             </a>
-        </div>
+        </div> -->
         <!-- switch views tab -->
         <div class="tabs tabs-stable static">
-            <a class="tab-item" ng-click="select(1)">{{pics.length}} Photos</a>
+            <a class="tab-item" ng-click="select(1)">{{picsAmount}} Photos</a>
             <a class="tab-item" ng-click="select(3)">{{followers.length}} Followers</a>
             <a class="tab-item" ng-if="myId === user.userId" ng-click="select(4)">{{following.length}} Following</a>
 
@@ -69,13 +82,13 @@
                 <br>
                 <div ng-if="myId !== follower.id">
                   <div ng-if="myId === user.userId">
-                    <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.id, myToken)">Mutual Follower</button>
-                    <button ng-if="!isFollowing(follower.id) && isFollower(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id, myToken)">Follow</button>
+                    <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.id, myToken)"><i style="font-size:10px">Mutual Follower</i></button>
+                    <button ng-if="!isFollowing(follower.id) && isFollower(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id, myToken)"><i style="font-size:10px">Follow</i></button>
                   </div>
                   <div ng-if="myId !== user.userId">
-                    <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.id, myToken)">Mutual Follower</button>
-                    <button ng-if="!isFollowing(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id, myToken)">Follow</button>
-                    <button ng-if="!isFollower(friend.id) && isFollowing(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id, myToken)">Following</button>
+                    <button ng-if="isFollower(follower.id) && isFollowing(follower.id)" class="button button-small button-balanced" ng-click="unfollow(follower.id, myToken)"><i style="font-size:10px">Mutual Follower</i></button>
+                    <button ng-if="!isFollowing(follower.id)" class="button button-small button-stable" ng-click="follow(follower.id, myToken)"><i style="font-size:10px">Follow</i></button>
+                    <button ng-if="!isFollower(friend.id) && isFollowing(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id, myToken)"><i style="font-size:10px">Following</i></button>
 
                   </div>
                 </div>
@@ -88,21 +101,21 @@
                 <h2>{{friend.name}} {{friend.lastName}}</h2>
                 <br>
                 <div ng-if="friend.id !== myId">
-                <button ng-if="!isFollowing(friend.id)" class="button button-small button-stable" ng-click= "follow(friend.id, myToken)">Follow</button>
-                <button ng-if="!isFollower(friend.id) && isFollowing(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id, myToken)">Following</button>
-                <button ng-if="isFollowing(friend.id) && isFollower(friend.id)" class="button button-small button-balanced" ng-click="unfollow(friend.id, myToken)">Mutual Follower</button>
+                <button ng-if="!isFollowing(friend.id)" class="button button-small button-stable" ng-click= "follow(friend.id, myToken)"><i style="font-size:10px">Follow</i></button>
+                <button ng-if="!isFollower(friend.id) && isFollowing(friend.id)" class="button button-small button-positive" ng-click="unfollow(friend.id, myToken)"><i style="font-size:10px">Following</i></button>
+                <button ng-if="isFollowing(friend.id) && isFollower(friend.id)" class="button button-small button-balanced" ng-click="unfollow(friend.id, myToken)"><i style="font-size:10px">Mutual Follower</i></button>
                 </div>
             </a>
         </div>
 
 
 
-<!--
+
     <ion-infinite-scroll
-        on-infinite="loadMorePics()"
-        distance="1%">
+        ng-if="isSelected(1) && !refreshing"
+        on-infinite="doRefresh(true)"
+        distance="2%">
     </ion-infinite-scroll>
-  -->
 
     </ion-content>
 </ion-view>

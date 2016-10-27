@@ -61,8 +61,8 @@ angular.module('starter.services',['ngResource'])
                       'Authorization': 'Bearer ' + token
                   }
               }).then(function successCallback(response){
-
                   compics = response.data.resultPayload;
+                  console.log('competition pics');
                   console.log(response.data);
 
               }, function errorCallback(response){
@@ -75,8 +75,8 @@ angular.module('starter.services',['ngResource'])
             };
 
             pics.getPics = function(){
-                $rootScope.$broadcast('pictures-loaded');
-                return compics;
+              return compics;
+
             };
 
             return pics;
@@ -193,37 +193,46 @@ angular.module('starter.services',['ngResource'])
 
         .factory('picsFactory', ['baseURL', '$http', '$ionicLoading','$rootScope', function(baseURL, $http, $ionicLoading, $rootScope){
             var pics = [];
-            var intoken = null;
+            var pics_number = 0;
 
             pics.getUserPictures = function(id, count, token){
                 console.log('GETTING USER PICS');
-
+                /*
                 $ionicLoading.show({
                             template: '<p>Loading...</p><ion-spinner></ion-spinner>'
                         });
-
-
+                        */
+                        console.log(baseURL);
+                        console.log(token);
                       return $http({
                         method:'GET',
-                        url: baseURL + "api/images/user/" + id + "/" + count,
+                        url: baseURL + "api/images/user/" + id + "/" + count, //here
                         headers:{
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + token
                         }
                     }).then(function successCallback(response){
 
-                        $ionicLoading.hide();
-                        console.log(response.data.message);
+                        //$ionicLoading.hide();
+                        console.log(response.data);
                         console.log(response.data.resultPayload);
-                        pics = response.data.resultPayload;
+                        pics_number = response.data.resultPayload;
+                        pics = response.data.resultPayload.model;
+
 
 
                     }, function errorCallback(response){
-                        $ionicLoading.hide();
+                        //$ionicLoading.hide();
                         console.log('Error retrieving pics');
                         console.log(response.data);
                     });
 
+
+            };
+
+            pics.getPicsAmount = function() {
+              var amount = pics_number.totalCompetitonPic + pics_number.totalmutualFollowerPics + pics_number.totalpublicPictures;
+              return amount;
 
             };
 
@@ -256,10 +265,11 @@ angular.module('starter.services',['ngResource'])
             pics.getPublicPictures = function(count, token){
                 console.log('GETTING USER PICS');
 
+                /*
                 $ionicLoading.show({
                             template: '<p>Loading...</p><ion-spinner></ion-spinner>'
                         });
-
+                        */
 
                       return $http({
                         method:'GET',
@@ -270,14 +280,14 @@ angular.module('starter.services',['ngResource'])
                         }
                     }).then(function successCallback(response){
 
-                        $ionicLoading.hide();
+                        //$ionicLoading.hide();
                         console.log(response.data);
-                        console.log(response.data.resultPayload);
-                        publicPics = response.data.resultPayload;
+                        console.log('public pics');
+                        publicPics = response.data.resultPayload.picsToReturn;
 
 
                     }, function errorCallback(response){
-                        $ionicLoading.hide();
+                        //$ionicLoading.hide();
                         console.log('Error retrieving pics');
                         console.log(response.data);
                     });
@@ -331,7 +341,7 @@ angular.module('starter.services',['ngResource'])
 
               return $http({
                   method:'POST',
-                  url: baseURL + "api/images/comment",
+                  url: "http://www.glostars.com/" + "api/images/comment",
                   headers:{
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
@@ -341,10 +351,12 @@ angular.module('starter.services',['ngResource'])
                 }).then(function successCallback(res){
                     console.log(res.data.message);
                     console.log(res.data.resultPayload);
+                    $rootScope.$broadcast('comment-success');
                     newComment = res.data.resultPayload;
 
                 }, function errorCallback(res){
                     console.log('ERROR IN COMMENT SERVICE');
+                    $rootScope.$broadcast('comment-fail');
                     return null;
                 });
 
@@ -379,6 +391,66 @@ angular.module('starter.services',['ngResource'])
 
 
 
+
+        }])
+
+        .factory('CommentFactory',['baseURL', '$http','$ionicLoading','$rootScope', function(baseURL, $http, $ionicLoading, $rootScope){
+
+          //comment factory to test comment functionality
+          var comment = [];
+          var newComment = {};
+
+          comment.commentPicture = function(picId, message, token){
+              var comment = {
+                  CommentText: message,
+                  PhotoId: picId
+              };
+
+              return $http({
+                  method:'POST',
+                  url: "http://www.glostars.com/" + "api/images/comment",
+                  headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  },
+                  data: comment
+
+                }).then(function successCallback(res){
+                    console.log(res.data.message);
+                    console.log(res.data.resultPayload);
+                    $rootScope.$broadcast('comment-success');
+                    newComment = res.data.resultPayload;
+
+                }, function errorCallback(res){
+                    console.log('ERROR IN COMMENT SERVICE');
+                    $rootScope.$broadcast('comment-fail');
+                    return null;
+                });
+
+          };
+
+          comment.getNewComment = function(){
+              return newComment;
+          };
+
+          comment.deleteComment = function(commentId, token){
+             return $http({
+                method: 'GET',
+                url: baseURL + "api/images/DeleteComment?commentId=" + commentId,
+                headers:{
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                }
+
+             }).then(function successCallback(res){
+                  console.log(res.data);
+
+             }, function errorCallback(res){
+                  console.log('ERROR WITH DELETING COMMENT');
+             });
+          };
+
+        return comment;
 
         }])
 
@@ -592,7 +664,8 @@ angular.module('starter.services',['ngResource'])
 
         }])
 
-        .factory('UploadFactory', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
+        .factory('UploadFactory', ['$resource', 'baseURL', '$http','$ionicLoading','$rootScope',
+         function($resource, baseURL, $http, $ionicLoading, $rootScope){
 
             var uploadData = {
                 Description: null,
@@ -601,9 +674,16 @@ angular.module('starter.services',['ngResource'])
                 ImageDataUri: null
             };
 
-            var upload;
+            var upload = {};
 
-            upload.UploadPicture = function(description, isCompeting, privacy, imgUri){
+            upload.UploadPicture = function(description, isCompeting, privacy, imgUri, token){
+
+              $ionicLoading.show({
+                  template: '<p>Loading...</p><ion-spinner></ion-spinner>'
+              });
+
+
+
                 uploadData = {
                     Description: description,
                     IsCompeting: isCompeting,
@@ -611,27 +691,30 @@ angular.module('starter.services',['ngResource'])
                     ImageDataUri: imgUri
                 };
 
+                return $http({
+                    method:'POST',
+                    url: baseURL+'api/images/upload',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token},
+                    data: uploadData,
+                    unique:true
 
-                var config = {
-                    headers : {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                    }
-                };
+                }).then(function successCallback(response){
+                        $ionicLoading.hide();
 
-                $http.post(baseURL+'api/images/upload', uploadData, config)
-                    .success(function(response){
+                         console.log('SUCCESSFULLY UPLOADED');
+                         $rootScope.broadcast('upload-success');
+                        //return response;
 
-                        console.log(response);
-                        return response;
-                    })
-                    .error(function(data, status, header, config){
-                        console.log("ERROR");
-                        console.log("data: "+ data +" status:"+
-                                   header + " config: " + config);
+                }, function errorCallback(response){
+                        $ionicLoading.hide();
 
-                        return null;
-                    });
-
+                        console.log("ERROR IN PICTURE UPLOAD");
+                        $rootScope.broadcast('upload-fail');
+                        //res = response.data;
+                        //console.log(response);
+                });
 
 
             };
@@ -643,7 +726,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
-        //service for notifications
+        //service for cations
         .factory('NotificationService', ['$resource', 'baseURL', '$http', function($resource, baseURL, $http){
 
             var notifications = [];
@@ -662,10 +745,10 @@ angular.module('starter.services',['ngResource'])
                 }).then(function successCallback(response){
 
                      console.log('NOTICATIONS SEIZED');
-                     console.log(response.message);
-                     console.log(response.resultPayload);
+                     console.log(response.data.resultPayload);
+                     console.log(response.data);
 
-                     notes = response.resultPayload;
+                     notes = response.data.resultPayload;
 
                 }, function errorCallback(response){
 

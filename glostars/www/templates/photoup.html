@@ -1,18 +1,22 @@
-<ion-view view-title="Photo Upload">
-    <ion-content class="has-footer">
+<ion-modal-view>
+  <ion-header-bar class="bar bar-header bar-positive">
+      <h1 class="title">picture upload</h1>
+      <button class="button button-clear button-primary" ng-click="closePicSetup()"><i class="icon ion-close-round"></i></button>
+  </ion-header-bar>
+    <ion-content>
         <div class="card">
             <div class="item item-image">
-                <img src="../img/0,5.jpg">
+                <img ng-src="{{imgSrc}}">
             </div>
         </div>
         <div class="row no-padding">
             <div class="col">
                  <form style="padding-left:30px">
-                    <input type="radio" name="people" value="followers" checked> Followers  <input type="radio" name="people" value="public"> Public              <input type="radio" name="people" value="competition"> Competition<br><br>
-                    
+                    <input type="radio" name="people" value="followers" ng-model="pictureData.privacy" checked> Followers  <input type="radio" name="people" ng-model="pictureData.privacy" value="public"> Public<input type="radio" name="people" ng-model="pictureData.privacy" value="competition"> Competition<br><br>
+
                 </form>
                 <label class="item item-input" style="border:solid black 1px; padding-right:10px">
-                         <textarea placeholder=" description"></textarea>
+                         <textarea placeholder=" description" ng-model="pictureData.description"></textarea>
                 </label>
             </div>
         </div>
@@ -47,10 +51,10 @@
                     </label>
                 </li>
             </ul>
-            <button class="button button-full button-positive">
+            <button class="button button-full button-positive" ng-click="postPicture()">
                 Post
             </button>
         </div>
-        
+
     </ion-content>
-</ion-view>
+</ion-modal-view>
