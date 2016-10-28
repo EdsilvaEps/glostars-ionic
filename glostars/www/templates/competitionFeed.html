@@ -4,10 +4,10 @@
         pulling-text="Pull to refresh..."
         on-refresh="refresh()">
       </ion-refresher>
-        <div class="list card" ng-repeat="photo in pics" id="{{photo.id}}">
+        <div class="list card" ng-repeat="photo in pics | orderBy: '-uploaded'" id="{{photo.id}}" style="box-shadow:none;border-bottom:1px solid gray ">
           <div class="row">
             <div class="col">
-              <div class="item item-avatar" style="border-bottom:none">
+              <div class="item item-avatar item-text-wrap" style="border-bottom:none">
 
                   <img ui-sref="app.profile({id:photo.poster.userId})" ng-src="{{photo.poster.profilePicURL}}">
 
@@ -20,37 +20,37 @@
           </div>
             <div class="row no-padding">
                 <div class="col col-20 text-right">
-                    <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" >{{photo.uploaded}}</span>
+                    <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" >{{photo.uploaded | date: 'medium'}}</span>
 
 
                 </div>
-                <!--
-                <div class="col col-33 col-offset-33">
-                    <div class="imgContainer" style="display:inline">
-                        <img src="../img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="isCompeting" >
-                        <img src="../img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="photo.privacy === 'public'">
-                    </div>
-                    <div class="imgContainer" style="display:inline" ng-click="rate(photo.id, myUser, users[myUser].name)">
-                        <img src="../img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="!dejaAime(photo.id, myUser)">
-                        <img src="../img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id, myUser)">
-                    </div>
-                </div>
-                <div class="col col-10">
-                    <p>{{photo.ratings.length}}</p>
-                </div>
-              -->
-
             </div>
-
+            <p style="padding-top:1px"></p>
             <div class="row">
-              <div class="col col-33 col-offset-75">
+
+              <div class="col col-67 col-offset-50">
                   <div class="imgContainer" style="display:inline">
-                      <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="isCompeting" >
-                      <img src="img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="photo.privacy === 'public'">
+                      <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="photo.isCompeting" >
                   </div>
                   <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,1,myToken)">
-                      <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="!dejaAime(photo.id)">
-                      <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id)">
+                      <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 1">
+                      <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 1">
+                  </div>
+                  <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,2,myToken)">
+                      <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 2">
+                      <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 2">
+                  </div>
+                  <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,3,myToken)">
+                      <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 3">
+                      <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 3">
+                  </div>
+                  <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,4,myToken)">
+                      <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 4">
+                      <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 4">
+                  </div>
+                  <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,5,myToken)">
+                      <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 5">
+                      <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) == 5">
                   </div>
                   <div class="imgContainer" style="display:inline">
                     <p style="padding-left:10px">{{photo.starsCount}}</p>

@@ -8,12 +8,12 @@
       </ion-refresher>
 
 
-        <div class="list card" ng-repeat="photo in pics | orderBy: uploaded">
+        <div class="list card" ng-repeat="photo in pics | orderBy: uploaded" style="box-shadow:none;border-bottom:1px solid gray ">
           <div class="row">
             <div class="col">
 
             <!-- stuff comes here  -->
-              <div class="item item-avatar" style="border-bottom:none">
+              <div class="item item-avatar item-text-wrap" style="border-bottom:none">
 
                   <img ui-sref="app.profile({id:photo.poster.userId})" ng-src="{{photo.poster.profilePicURL}}">
 
@@ -41,7 +41,7 @@
                     <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id, myUser)">
                 </div>
                 <div class="imgContainer" style="display:inline">
-                  <p style="padding-left:10px">{{photo.ratings.length}}</p>
+                  <p style="padding-left:10px">{{photo.starsCount}}</p>
                 </div>
             </div>
 

@@ -849,9 +849,9 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
 
 .controller('CompetitionController',['$scope','competitionFactory','$localStorage',
 '$rootScope','$anchorScroll','$ionicScrollDelegate','$timeout','$state','$location',
-'$ionicModal','$ionicLoading',
+'$ionicModal','$ionicLoading','picsFactory',
  function($scope, competitionFactory, $localStorage, $rootScope, $anchorScroll,
-   $ionicScrollDelegate,$timeout, $state, $location, $ionicModal, $ionicLoading){
+   $ionicScrollDelegate,$timeout, $state, $location, $ionicModal, $ionicLoading, picsFactory){
 
      $scope.$on('$ionicView.enter', function(e) {
         $scope.doRefresh(false);
@@ -881,7 +881,7 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
             $ionicLoading.hide();
             //$scope.pics = competitionFactory.getPics();
             var newpg = competitionFactory.getPics();
-            for(var i = newpg.length; i >= 0; i--){
+            for(var i = newpg.length-1; i >= 0; i--){
               $scope.pics.push(newpg[i])
 
             }
@@ -943,6 +943,77 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
       $scope.$on('$destroy', function() {
         $scope.modal.remove();
       });
+
+      //--------------------------- <rate> --------------------------------//
+      var arrayObjectIndexOf = function(arr, obj){
+        for(var i = 0; i < arr.length; i++){
+            if(arr[i].id === obj){
+                return i;
+              }
+        };
+            return null;
+      };
+
+      var arrayObjectIndexOfRatings = function(arr, obj){
+        for(var i = 0; i < arr.length; i++){
+            if(arr[i].raterId === obj){
+                return i;
+              }
+        };
+            return null;
+      };
+
+      $scope.animIN = null;
+      $scope.rateAnimation = function(photoId){
+
+          $scope.animIN = photoId;
+
+          $timeout(function anim(){
+              $scope.animIN = null;
+          }, 500);
+
+      };
+
+      $scope.dejaAime = function(id){
+        var i = arrayObjectIndexOf($scope.pics, id);
+        if(i !== null){
+            var k = arrayObjectIndexOfRatings($scope.pics[i].ratings, $scope.myId);
+            if(k !== null){
+              return $scope.pics[i].ratings[k].starsCount;
+            }
+        }
+        return null;
+
+      };
+
+
+      $scope.ratePicture = function(picId, rating, token){
+
+        var newRating = {
+            raterId: $scope.myId,
+            ratingTime: new Date(),
+            starsCount: rating
+        };
+
+        if($scope.dejaAime(picId)){
+            //we should be able to unrate this pic
+            console.log("we should be able to unrate this pic");
+        } else {
+            picsFactory.ratePicture(picId, rating, token);
+            $rootScope.$on('rate-success', function(event, args){
+                $scope.pics[arrayObjectIndexOf($scope.pics, picId)].ratings.push(newRating);
+                $scope.pics[arrayObjectIndexOf($scope.pics, picId)].starsCount += rating;
+                console.log("rate sucess");
+            });
+            $scope.rateAnimation(picId);
+        }
+
+
+
+
+      };
+      //------------------------- </rate>-----------------------------//
+
 
 
 

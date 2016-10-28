@@ -7,7 +7,7 @@
         <div class="card" style="box-shadow:none;">
             <div class="list" >
 
-                <a class="item item-avatar"  ng-repeat="comment in com.comments | orderBy: -'commentTime'" ng-if="com.comments.length > 0">
+                <a class="item item-avatar item-text-wrap"  ng-repeat="comment in com.comments | orderBy: -'commentTime'" ng-if="com.comments.length > 0">
 
                     <img ng-src="{{comment.profilePicUrl}}" ui-sref="app.profile({id:comment.commenterId})"><span style="position:absolute;top:0;right:10px;" ng-if="com.poster.userId === myId || commment.commenterId === myId" ng-click="deleteComment(com.id, comment.commentId, myToken)"><i class="icon ion-close-round"></i></span>
                     <h2 class="text-left" ui-sref="app.profile({id:comment.commenterId})">{{comment.firstName}} {{comment.lastName}}</h2>
