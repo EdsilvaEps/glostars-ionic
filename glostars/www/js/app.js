@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services', 'angularMoment','ng-mfb'])
+angular.module('starter', ['ionic','ngCordova','ionic-material','starter.controllers', 'starter.services', 'angularMoment','ng-mfb', 'ionicLazyLoad'])
 
 .run(function($ionicPlatform, $ionicPopup, amMoment) {
 
@@ -142,6 +142,7 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
 
   .state('app.home', {
     url: '/home',
+    parent:'app',
     views:{
         'menuContent':{
             templateUrl: 'templates/main.html',
@@ -203,15 +204,6 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
     }
   }) */
 
-  .state('app.picture', {
-    url: '/picture',
-    views: {
-        'content@':{
-            templateUrl: 'templates/picture.html',
-            controller:'PictureUploadCtrl',
-        }
-    }
-  })
 
   .state('app.browse', { //useless
       url: '/browse',
@@ -262,6 +254,19 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
         'menuContent': {
           templateUrl: 'templates/feedView.html',
           controller: 'ProfileCtrl'
+        },
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
+        }
+      }
+    })
+    .state('app.picture', {
+      url: '/picture',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/picture.html',
+          controller: 'FooterCtrl'
         },
         'footer@': {
                 templateUrl:'templates/bottomMenu.html',

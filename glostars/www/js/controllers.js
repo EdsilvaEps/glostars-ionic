@@ -1,7 +1,7 @@
 angular.module('starter.controllers', ['ngResource'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, AuthService, usersFactory, $rootScope, $ionicPlatform,
-   $cordovaCamera, NotificationService,  $rootScope) {
+   $cordovaCamera, NotificationService,  $rootScope, picsFactory) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -45,7 +45,9 @@ angular.module('starter.controllers', ['ngResource'])
 
 
 
+
 })
+
 
 
 .controller('HeaderCtrl', function($scope,$ionicSideMenuDelegate){
@@ -97,6 +99,7 @@ angular.module('starter.controllers', ['ngResource'])
     $scope.loginData = {};
     var token = $localStorage.getObject('userToken', null);
     var username = $localStorage.getObject('userName', null);
+    var tokenExpiry = $localStorage.getObject('tokenExpiry', null);
     //TODO: encrypt data
     //TODO: the swipe screen has three views now, handle them here
 
@@ -107,7 +110,10 @@ angular.module('starter.controllers', ['ngResource'])
         //console.log(date);
 
        if(token !== null && username !== null){
-           $state.go('app.home');
+          if(AuthService.checkToken(token, tokenExpiry)){
+              $state.go('app.home');
+          }
+
        }
 
     };
@@ -119,15 +125,25 @@ angular.module('starter.controllers', ['ngResource'])
             if(AuthService.isAuthenticated()){
 
                 token = AuthService.getAuthentication();
-                var username = AuthService.getUsername();
+                username = AuthService.getUsername();
+                tokenExpiry = AuthService.getExpiryDate();
 
                 $localStorage.storeObject('userToken', token);
                 $localStorage.storeObject('userName', username);
+                $localStorage.storeObject('tokenExpiry', tokenExpiry)
                 console.log('changing view');
-                $state.go('app.home');
 
-                var d = AuthService.getExpiryDate();
-                console.log(d);
+
+                var token = $localStorage.getObject('userToken', null);
+                var username = $localStorage.getObject('userName', null);
+                var tokenExpiry = $localStorage.getObject('tokenExpiry', null);
+
+                if(token && username && tokenExpiry){
+                  $state.go('app.home');
+                }
+
+                AuthService.checkToken(token, tokenExpiry);
+
 
             }
         }, function failure(res){
@@ -177,9 +193,10 @@ angular.module('starter.controllers', ['ngResource'])
 
 
 .controller('HomeCtrl', ['$scope','usersFactory','picsFactory','$ionicModal','$ionicPopover','$timeout',
-'AuthService','$localStorage','FollowerService','competitionFactory'
+'AuthService','$localStorage','FollowerService','competitionFactory','$rootScope','CommentFactory'
 , function($scope,usersFactory,picsFactory ,$ionicModal,
-$ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionFactory){
+$ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionFactory,
+$rootScope, CommentFactory){
 
     $scope.message = "Loading...";
     $scope.showFeed = false;
@@ -190,9 +207,11 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
     var pags_number = 1;
 
     //-------------- getting my user data ----------------------//
+
     $scope.myUsername = $localStorage.getObject('userName', null);
     $scope.myUserId = $localStorage.getObject('userid', null);
     $scope.myToken = $localStorage.getObject('userToken', null); //AuthService.getAuthentication();
+    $scope.myId = $localStorage.getObject('userid', null); //to make a global id
     console.log($scope.myToken);
     $scope.pics = [];
 
@@ -205,10 +224,11 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
     });
 
     $scope.doRefresh = function(loadMore){
+      $scope.refreshing = true;
 
       if(loadMore){
-          console.log('infinte scroll invoked');
           pags_number += 1;
+          console.log('infinte scroll invoked, pgs:' + pags_number);
       } else {
          FollowerService.loadFollowers($scope.myUserId, $scope.myToken, true);
       }
@@ -221,43 +241,40 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
               console.log($scope.myUser);
               $localStorage.storeObject('userid', $scope.myUser.userId);
 
-              picsFactory.getPublicPictures(pags_number, $scope.myToken)
+
+              picsFactory.getMutualPictures($scope.myUser.userId, pags_number, $scope.myToken)
                 .then(function successCallback(res){
-                      //$scope.pics = picsFactory.getAllpictures();
 
-                      competitionFactory.getCompetitionPics(pags_number, $scope.myToken)
-                        .then(function successCallback(res){
+                  var mutualPics = picsFactory.getMutual();
+                  //prevent duplicates
+                  for(var i = 0; i < mutualPics.length; i++){
 
-                          var publicPics = picsFactory.getPublic();
-                          var competitionPics = competitionFactory.getPics();
-
-                          for (var i = 0; i < publicPics.length; i++){
-                            $scope.pics.push(publicPics[i]);
-                          }
-                          /*
-                          for(var i = 0; i < competitionPics.length; i++){
-                            $scope.pics.push(competitionPics[i]);
-                          } */
-
-                          console.log($scope.pics);
-
-                          $timeout(function(){
-
-                              //to avoid jamming the phone in cases of error
-                              if($scope.pics.length > 0){
-
-                                $scope.refreshing = false;
-                              } else {pags_number = 1}
-
-                          }, 1000);
+                      $scope.pics.push(mutualPics[i]);
 
 
 
+                  }
 
-                        });
+                  $timeout(function(){
+
+                      //to avoid jamming the phone in cases of error
+                      if(mutualPics.length > 0){
+                        console.log('refresh is false');
+                        $scope.refreshing = false;
+                      }
+
+                  }, 3000);
+
+
+                  $rootScope.$on('pictures-failed',function(event, args){
+                      console.log('pics failed');
+                      $scope.refresh(false);
+
+                  });
+
+
 
                 });
-
 
 
       }, function fail(res){
@@ -298,147 +315,152 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
     };
 
 
-    //---------- comments -------------//
-
-    $scope.commentData = {};
-
+    //$scope.modal_n;
     $ionicModal.fromTemplateUrl('templates/comment.html',{
         scope: $scope
     }).then(function(modal){
-        $scope.comment = modal;
+        $scope.modal = modal;
     });
 
-    $scope.openComment = function(id){
-        $scope.picture = $scope.photos[id];
-        $scope.comment.show();
+    $scope.openComment = function(obj) {
+      $scope.modal.show();
+      $rootScope.$broadcast('comment-open');
+      console.log(obj);
+      $scope.com = obj;
     };
 
-    $scope.submitComment = function(id){
-        if($scope.commentData.comment !== ''){
+    $scope.closeComment = function() {
+      $scope.modal.hide();
+      $rootScope.$broadcast('comment-closed');
+    };
+    // Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
 
-            var commentVar = {
-                id: $scope.photos[id].comments.length + 1,
-                firstName: $scope.users[$scope.userId].firstName,
-                lastName: $scope.users[$scope.userId].lastName,
-                userId: $scope.userId,
-                comment: $scope.commentData.comment,
-                date: new Date().toISOString()
-            };
+    //--------------------------- <comments> ---------------------------//
+    $scope.Check_1 = function(id){
+        return $scope.myId == id;
+    };
 
-            $scope.photos[id].comments.push(commentVar);
+    $scope.message = {"data": ""};
+    $scope.loading = false;
 
-            mainFactory.update({id:id},$scope.photos[id]);
+    $scope.addComment = function(picId, token){
+        if ($scope.message.data !== ""){
+          $scope.loading = true;
 
-            //$scope.commentForm.$setPristine();
+          CommentFactory.commentPicture($scope.myUser, picId, $scope.message.data, token)
+              .then(function successCallback(res){
+                  var id = arrayObjectIndexOf($scope.pics, picId);
+                  $scope.pics[id].comments = CommentFactory.getNewComment($scope.pics[id].comments);
+                  $scope.loading = false;
+                });
 
-            $scope.commentData.comment = "";
 
-
+          $scope.message.data = "";
         }
 
+
     };
 
-    $scope.deleteComment = function(photoid, commentid){
+    $scope.deleteComment = function(picId, commentId, token){
 
-        var i = 0; len = $scope.photos[photoid].comments.length;
-        for(; i < len; i++){
+          picsFactory.deleteComment(commentId, token)
+            .then(function successCallback(res){
+                var i = arrayObjectIndexOf($scope.pics, picId);
+                $scope.pics[i].comments.splice((arrayObjectIndexOf($scope.pics[i].comments, commentId)),1);
+            });
+    };
+    //--------------------------- </comments> ---------------------------//
 
-            if($scope.photos[photoid].comments[i].id === commentid){
-                $scope.photos[photoid].comments.splice(i,1);
-            mainFactory.update({id:photoid},$scope.photos[photoid]);
+
+      //------------------ picture rating -------------------------------//
+      /*
+        inherit those functions from AppCtrl to make this code smaller
+      */
+
+      var arrayObjectIndexOf = function(arr, obj){
+        for(var i = 0; i < arr.length; i++){
+            if(arr[i].id  === obj){
+                return i;
+              }
+        };
+            return null;
+      };
+
+      var arrayObjectIndexOfRatings = function(arr, obj){
+        for(var i = 0; i < arr.length; i++){
+            if(arr[i].raterId  === obj){
+                return i;
+              }
+        };
+            return null;
+      };
+
+
+      $scope.rateAnimation = function(photoId){
+
+          $scope.animIN = photoId;
+
+          $timeout(function anim(){
+              $scope.animIN = null;
+          }, 500);
+
+      };
+
+      $scope.dejaAime = function(id){
+        var i = arrayObjectIndexOf($scope.pics, id);
+        if(i !== null){
+            var k = arrayObjectIndexOfRatings($scope.pics[i].ratings, $scope.myUserId);
+            if(k !== null){
+              return $scope.pics[i].ratings[k].starsCount;
             }
         }
+        return null;
 
+      };
+      $scope.ratePicture = function(picId, rating, token){
 
-    };
-
-
-    //---------- comments -------------//
-
-
-    $scope.dejaAime = function(photoId, id){
-        //function to check if user has already rated the picture
-        /*var i = 0; len = $scope.photos[photoId].raters.length;
-        for(; i < len; i++){
-
-            if($scope.photos[photoId].raters[i].id === id){
-                return true;
-            }
-        }
-        return false;
-        */
-    };
-
-    $scope.rateAnimation = function(photoId){
-
-        $scope.animIN = photoId;
-
-        $timeout(function anim(){
-            $scope.animIN = null;
-        }, 500);
-
-    };
-
-
-    $scope.rate = function(photoId, id, name){
-        //this function takes the photo id, the id of the rater
-        //and his name and add this info into the photo object
-        console.log("rated");
-
-        var rater = {
-            id: id,
-            name: name
+        var newRating = {
+            raterId: $scope.myUserId,
+            ratingTime: new Date(),
+            starsCount: rating
         };
 
-        if(!$scope.dejaAime(photoId, id)){
-
-            $scope.photos[photoId].rating += 1;
-
-            $scope.photos[photoId].raters.push(rater);
-
-            mainFactory.update({id:photoId},$scope.photos[photoId]);
-
-            $scope.rateAnimation(photoId);
-
+        if($scope.dejaAime(picId)){
+            //we should be able to unrate this pic
+            console.log("we should be able to unrate this pic");
         } else {
-
-            $scope.photos[photoId].rating -= 1;
-
-            var i = 0; len = $scope.photos[photoId].raters.length;
-            for(; i < len; i++){
-
-                if($scope.photos[photoId].raters[i].id === id){
-
-                    $scope.photos[photoId].raters.splice(i,1);
-                                                                    mainFactory.update({id:photoId},$scope.photos[photoId]);
-                }
-            }
+            picsFactory.ratePicture(picId, rating, token);
+            $rootScope.$on('rate-success', function(event, args){
+                $scope.pics[arrayObjectIndexOf($scope.pics, picId)].ratings.push(newRating);
+                $scope.pics[arrayObjectIndexOf($scope.pics, picId)].starsCount += rating;
+                console.log("rate sucess");
+            });
+            $scope.rateAnimation(picId);
         }
 
 
-    };
+
+
+      };
+
+      //-----------------------------------------------------------------//
 
 
 
 
 
-
-    //TODO: render all the pictures from all the users
-    //doesnt matter in what order at the main page - DONE
-    //TODO: users are only the followers of the current user
-    //TODO: implement followers on the json server
-    //TODO: pictures should have date of uploading, show only the latest, make date filter - DONE (partial)
-    //TODO: open comment modal for picture - DONE
-    //TODO: comment modal text area should not be email
 
 }])
 
 
 .controller('ProfileCtrl',['$scope', 'mainFactory', 'usersFactory','$stateParams', '$ionicHistory',
  '$ionicModal','AuthService','$localStorage','picsFactory','$state','$location', '$anchorScroll','$ionicScrollDelegate','$timeout',
- '$rootScope','moment', 'FollowerService','$filter','$ionicLoading'
+ '$rootScope','moment', 'FollowerService','$filter','$ionicLoading','CommentFactory'
   ,function($scope, mainFactory, usersFactory, $stateParams, $ionicHistory, $ionicModal, AuthService, $localStorage, picsFactory,
-     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService, $filter, $ionicLoading){
+     $state, $location, $anchorScroll, $ionicScrollDelegate, $timeout, $rootScope, moment, FollowerService, $filter, $ionicLoading, CommentFactory){
 
     $scope.tab = 1;
     console.log('stateParams: ');
@@ -804,32 +826,27 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
     });
 
     //--------------------------- <comments> ---------------------------//
+
+    $scope.Check_1 = function(id){
+        return $scope.myId == id;
+    };
+
     $scope.message = {"data": ""};
     $scope.loading = false;
 
     $scope.addComment = function(picId, token){
         if ($scope.message.data !== ""){
           $scope.loading = true;
-          var newComment = {
-              commentMessage: $scope.message.data,
-              commentTime: new Date(),
-              commenterId: $scope.myId,
-              commentId: null,
-              firstName: $scope.me.name,
-              profilePicUrl: $scope.me.profilePicUrl
-          };
+
+          CommentFactory.commentPicture($scope.me, picId, $scope.message.data, token)
+              .then(function successCallback(res){
+                  var id = arrayObjectIndexOf($scope.pics, picId);
+                  $scope.pics[id].comments = CommentFactory.getNewComment($scope.pics[id].comments);
+                  $scope.loading = false;
+                });
 
 
-
-
-          picsFactory.commentPicture(picId, $scope.message.data, token)
-            .then(function successCallback(res){
-                newComment.commentId = picsFactory.getNewComment().commentId;
-                $scope.pics[arrayObjectIndexOf($scope.pics, picId)].comments.push(newComment);
-                $scope.loading = false;
-            });
-
-            $scope.message.data = "";
+          $scope.message.data = "";
         }
 
 
@@ -849,9 +866,10 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
 
 .controller('CompetitionController',['$scope','competitionFactory','$localStorage',
 '$rootScope','$anchorScroll','$ionicScrollDelegate','$timeout','$state','$location',
-'$ionicModal','$ionicLoading','picsFactory',
+'$ionicModal','$ionicLoading','picsFactory','CommentFactory','usersFactory',
  function($scope, competitionFactory, $localStorage, $rootScope, $anchorScroll,
-   $ionicScrollDelegate,$timeout, $state, $location, $ionicModal, $ionicLoading, picsFactory){
+   $ionicScrollDelegate,$timeout, $state, $location, $ionicModal, $ionicLoading, picsFactory,
+   CommentFactory, usersFactory){
 
      $scope.$on('$ionicView.enter', function(e) {
         $scope.doRefresh(false);
@@ -893,10 +911,14 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
                 if($scope.pics.length > 0){
 
                   $scope.refreshing = false;
-                } else {pics_number = 20}
+                } else {pg_number = 1}
 
             }, 3000);
 
+            usersFactory.searchUser(null, $scope.myToken, $scope.myId)
+              .then(function successCallback(res){
+                  $scope.me = usersFactory.getUser();
+              });
 
 
         }).finally(function() {
@@ -1013,7 +1035,41 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
 
       };
       //------------------------- </rate>-----------------------------//
+      //--------------------------<comments>-------------------------//
+      $scope.Check_1 = function(id){
+          return $scope.myId == id;
+      };
 
+      $scope.message = {"data": ""};
+      $scope.loading = false;
+
+      $scope.addComment = function(picId, token){
+          if ($scope.message.data !== ""){
+            $scope.loading = true;
+
+            CommentFactory.commentPicture($scope.me, picId, $scope.message.data, token)
+                .then(function successCallback(res){
+                    var id = arrayObjectIndexOf($scope.pics, picId);
+                    $scope.pics[id].comments = CommentFactory.getNewComment($scope.pics[id].comments);
+                    $scope.loading = false;
+                  });
+
+
+            $scope.message.data = "";
+          }
+
+
+      };
+
+      $scope.deleteComment = function(picId, commentId, token){
+
+            picsFactory.deleteComment(commentId, token)
+              .then(function successCallback(res){
+                  var i = arrayObjectIndexOf($scope.pics, picId);
+                  $scope.pics[i].comments.splice((arrayObjectIndexOf($scope.pics[i].comments, commentId)),1);
+              });
+      };
+      //--------------------------</comments>-------------------------//
 
 
 
@@ -1062,13 +1118,16 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
     $scope.users = null;
     $scope.searching = false;
     $scope.pics = [];
-    var pics_number = 20;
+    var pags_number = 1;
     $scope.user = null;
     $scope.refreshing = true;
 
 
     $scope.$on('$ionicView.enter', function(e) {
+       $scope.pics = [];
+       pags_number = 1;
        $scope.refresh(false);
+
     });
 
 
@@ -1090,35 +1149,39 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
 
     };
 
-    $scope.refresh = function(loadMore, loadNumber){
+    $scope.refresh = function(loadMore){
       $scope.refreshing = true;
 
 
       if(loadMore){
           console.log('infinite scroll triggered');
-          pics_number += loadNumber;
+          pags_number+=1;
+          console.log('infinte scroll invoked, pgs:' + pags_number);
       } else{
         $ionicLoading.show({
                     template: '<p>Loading...</p><ion-spinner></ion-spinner>'
                 });
       }
-      picsFactory.getPublicPictures(pics_number, $scope.myToken)
+      picsFactory.getPublicPictures(pags_number, $scope.myToken)
         .then(function successCallback(res){
+
             $ionicLoading.hide();
+
             var newPics = picsFactory.getPublic();
+
             for(var i = 0; i < newPics.length; i++){
+
               $scope.pics.push(newPics[i]);
             }
 
             $timeout(function(){
 
               if($scope.pics.length > 0){
-
+                console.log('infinte scroll invoked, pgs:' + pags_number);
                 $scope.refreshing = false;
-              } else {pics_number = 20}
+              }
 
             }, 3000);
-            $scope.refreshing = true;
 
         }).finally(function() {
          // Stop the ion-refresher from spinning
@@ -1184,35 +1247,31 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
             return null;
       };
 
+      $scope.Check_1 = function(id){
+          return $scope.myId == id;
+      };
+
       $scope.message = {"data": ""};
       $scope.loading = false;
 
       $scope.addComment = function(picId, token){
           if ($scope.message.data !== ""){
             $scope.loading = true;
-            var newComment = {
-                commentMessage: $scope.message.data,
-                commentTime: new Date(),
-                commenterId: $scope.myId,
-                commentId: null,
-                firstName:$scope.user.name,
-                profilePicUrl: $scope.user.profilePicUrl
-            };
+
+            CommentFactory.commentPicture($scope.user, picId, $scope.message.data, token)
+                .then(function successCallback(res){
+                    var id = arrayObjectIndexOf($scope.pics, picId);
+                    $scope.pics[id].comments = CommentFactory.getNewComment($scope.pics[id].comments);
+                    $scope.loading = false;
+                  });
 
 
-
-            picsFactory.commentPicture(picId, $scope.message.data, token)
-              .then(function successCallback(res){
-                  newComment.commentId = picsFactory.getNewComment().commentId;
-                  $scope.pics[arrayObjectIndexOf($scope.pics, picId)].comments.push(newComment);
-                  $scope.loading = false;
-              });
-
-              $scope.message.data = "";
+            $scope.message.data = "";
           }
 
 
       };
+
 
       $scope.deleteComment = function(picId, commentId, token){
 
@@ -1250,10 +1309,10 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
         if(i !== null){
             var k = arrayObjectIndexOfRatings($scope.pics[i].ratings, $scope.myId);
             if(k !== null){
-              return true;
+              return $scope.pics[i].ratings[k].starsCount;
             }
         }
-        return false;
+        return null;
 
       };
 
@@ -1343,6 +1402,7 @@ $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionF
     };
 
     $scope.getNotifs = function(){
+      $scope.myId = $localStorage.getObject('userid', null);
       $scope.unseen.amount = 0;
       $scope.unseen.activity = 0;
       $scope.unseen.follower = 0;

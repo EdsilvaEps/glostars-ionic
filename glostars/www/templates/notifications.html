@@ -13,9 +13,9 @@
             <br>
             <div ng-if="isSelected(1)">
                 <div class="list" ng-repeat="notification in activityNotifications" ng-if="loading == false">
-                    <a class="item item-avatar" ui-sref=""><!-- send to picture -->
-                        <img ng-src="{{notificationUsers[$index].profilePicUrl}}"><!-- person's profile pic -->
-                        <h4>{{notificationUsers[$index].name}} {{notification.description}}</h4>
+                    <a class="item item-avatar item-text-wrap" ui-sref=""><!-- send to picture -->
+                        <img ng-src="{{notification.profilePicURL}}"><!-- person's profile pic -->
+                        <h4>{{notification.name}} {{notification.description}}</h4>
                         <p>{{notification.date | date: 'medium'}}</p>
                     </a>
                     <div ng-if="activityNotifications.length == 0">
@@ -30,9 +30,9 @@
             <div ng-if="isSelected(2)">
                 <div class="list" ng-repeat="notification in followerNotifications">
                     <a class="item item-avatar" ui-sref="app.profile({id:notification.originatedById})" ng-click=closeModal();><!-- send to person's profil -->
-                        <img ng-src=""><!-- person's profile pic -->
-                        <h4>"person" started following you</h4>
-                        <p>{{notification.date}}</p>
+                        <img ng-src="{{notification.profilePicURL}}"><!-- person's profile pic -->
+                        <h4>{{notification.name}} started following you</h4>
+                        <p>{{notification.date | date: 'medium'}}</p>
                     </a>
                     <div ng-if="followerNotifications.length == 0">
                         <p>you don't have notifications</p>

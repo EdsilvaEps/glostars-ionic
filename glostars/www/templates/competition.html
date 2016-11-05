@@ -20,7 +20,7 @@
       <div class="tabs tabs-stable static">
           <a class="tab-item" ng-click="select(1)">Gallery</a>
           <a class="tab-item" ng-click="select(3)">Prizes</a>
-          <a class="tab-item" ng-click="select(4)">Tips</a>
+          <a class="tab-item" ng-click="select(2)">Tips</a>
           <a class="tab-item" ng-click="select(4)">Terms</a>
           <!-- TODO: add some 'selected class' on them -->
       </div>
@@ -39,14 +39,69 @@
                 </div>
             </div>
 
-        <div ng-if="isSelected(2)" style="padding-top:60px">
-            <p>Prizes</p>
+        <div ng-if="isSelected(2)" style="">
+          <div class="card" style="box-shadow:none">
+            <div class="card-header">
+                <h3>Tips</h3>
+            </div>
+            <div class="card-content">
+                <ul>
+                  <li>
+                    <h4>Use the Right Light</h4>
+                    <p>Applying the light in a right way will make good impression by any photo you take – that is why it is an essential thing to keep in mind. You can get the best shot when the subject is lit from the side or from the front.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Don’t Use Zoom</h4>
+                    <p>If you want to take a good picture, forget about zooming using your phone! A better solution for zooming is to move yourself or change an angle you want to take picture from. If moving is not possible, you can crop the picture later to get the desired shot.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Get your Exposure Right (Focus on proper exposure)</h4>
+                    <p>Your picture will always be good if you will set your exposure right in your mobile phone. Small cameras need light and you have to be patient to catch it. Try to move around, stand in the shade, use some light reflectors. Note! Tune your exposure and then you can use your fancy apps that will help you to make your picture even better.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Use the Frame for Your Shots</h4>
+                    <p>Try to place the objects in the foreground to frame the main subjects in your picture. Windows, arches, doorways etc. can form natural frames.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Change Perspectives</h4>
+                    <p>Pictures taken from different angles are more buzzworthy. Change your place and take some original shots! Try to use apps as well to add some special effects.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Crop your Picture</h4>
+                    <p>Nowadays we all have hectic lifestyles so very often we don’t have much time to think carefully about the composition when taking a picture, so the advice is to take a wider picture. You can modify it latter by cropping unnecessary parts if needed.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Choose the Right Apps</h4>
+                    <p>There are a lot of apps on the market that can add significant value to the picture and allow to use DLSR camera functions and special effects while shooting. Don’t be afraid to get the best shot possible.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Volume Buttons</h4>
+                    <p>To make the phone more stable and reduce blur in the photo try to hold the phone still and use a volume button to make photo instead.
+                    </p>
+                  </li>
+                  <li>
+                    <h4>Phone Features</h4>
+                    <p>Don’t forget that your phone camera has a set of features itself without using extra apps. For example, you can use HDR or turn on the grid which will help you to shoot according to the rule of thirds. As well, you can set the exposure and choose the amount of light in the picture.
+                    </p>
+                  </li>
+                  <li></li>
+                </ul>
+            </div>
+          </div>
+
         </div>
 
-        <div ng-if="isSelected(3)" style="padding-top:60px">
+        <div ng-if="isSelected(3)" style="">
             <div class="card">
                 <div class="card-header">
-                    <h3>Photography tips</h3>
+                    <h3>Prizes</h3>
                 </div>
                 <div class="card-content">
 
@@ -54,8 +109,8 @@
             </div>
         </div>
 
-        <div ng-if="isSelected(4)" style="padding-top:60px">
-            <div class="card">
+        <div ng-if="isSelected(4)" style="">
+            <div class="card" style="box-shadow:none;">
                 <div class="card-header">
                     <h3>Competition Terms</h3><br>
                     <h4>PLEASE READ THESE TERMS AND CONDITIONS OF COMPETITION CAREFULLY. BY PARTICIPATING IN THE COMPETITION YOU AGREE TO BE BOUND BY THESE TERMS.</h4>

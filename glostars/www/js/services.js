@@ -300,6 +300,42 @@ angular.module('starter.services',['ngResource'])
                 return publicPics;
             };
 
+            var mutualPics = [];
+            pics.getMutualPictures = function(userid, count, token) {
+
+                console.log('getting mutual followers pics');
+
+                return $http({
+                    method:'GET',
+                    url: baseURL + "api/images/mutualpic/" + userid + "/" + count,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
+
+                }).then(function successCallback(response){
+
+                    console.log('mutual pics');
+                    console.log(response.data);
+                    mutualPics = response.data.resultPayload.mutualFollowerPictures;
+                    if(response.data.resultPayload == null){
+                      $rootScope.$broadcast('pictures-failed');
+                    }
+                    //$rootScope.$broadcast('pictures-retrieved');
+
+                }, function errorCallback(response) {
+
+                    console.log('Error retrieving pics');
+                    console.log(response.data);
+                });
+
+            };
+
+            pics.getMutual = function(){
+                $rootScope.$broadcast('pictures-loaded');
+                return mutualPics;
+            };
+
 
 
             //--- rating ----//
@@ -400,10 +436,20 @@ angular.module('starter.services',['ngResource'])
           var comment = [];
           var newComment = {};
 
-          comment.commentPicture = function(picId, message, token){
-              var comment = {
+          comment.commentPicture = function(user, picId, message, token){
+              var commentData = {
                   CommentText: message,
                   PhotoId: picId
+              };
+
+              //we'll be returning this comment back
+              newComment = {
+                  commentMessage: message,
+                  commentTime: new Date(),
+                  commenterId: user.userId,
+                  commentId: null,
+                  firstName: user.name,
+                  profilePicUrl: user.profilePicUrl
               };
 
               return $http({
@@ -413,15 +459,17 @@ angular.module('starter.services',['ngResource'])
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                   },
-                  data: comment
+                  data: commentData
 
                 }).then(function successCallback(res){
+
                     console.log(res.data.message);
                     console.log(res.data.resultPayload);
                     $rootScope.$broadcast('comment-success');
-                    newComment = res.data.resultPayload;
+                    newComment.commentId = res.data.resultPayload.commentId;
 
                 }, function errorCallback(res){
+
                     console.log('ERROR IN COMMENT SERVICE');
                     $rootScope.$broadcast('comment-fail');
                     return null;
@@ -429,8 +477,10 @@ angular.module('starter.services',['ngResource'])
 
           };
 
-          comment.getNewComment = function(){
-              return newComment;
+          comment.getNewComment = function(comments){
+              var com = comments;
+              com.push(newComment);
+              return com;
           };
 
           comment.deleteComment = function(commentId, token){
@@ -476,6 +526,35 @@ angular.module('starter.services',['ngResource'])
                 password: null,
                 username: null
             };
+
+            authService.checkToken = function(token, expires){
+                var now = {
+                  day: new Date().getDate(),
+                  month: new Date().getMonth(),
+                  year: new Date().getFullYear()
+                };
+
+                var tokenExpiry = {
+                    day: new Date(expires).getDate(),
+                    month: new Date(expires).getMonth(),
+                    year: new Date(expires).getFullYear()
+                };
+
+                if(now.year <= tokenExpiry.year){
+                    if(now.month == tokenExpiry.month){
+                        if(now.day < tokenExpiry.day){
+                          console.log('token valid');
+                          return true;
+                        } else return false;
+                    } else if(now.month < tokenExpiry.month){
+                      console.log('token valid');
+                      return true;
+                    } else {
+                      return false;
+                    }
+                } else return false;
+            };
+
 
             // login routines
             authService.login = function(credentials) {
@@ -523,12 +602,13 @@ angular.module('starter.services',['ngResource'])
                                 token_type: res.token_type,
                                 expires_in: res.expires_in,
                                 username: res.userName,
-                                issued: res.issued,
-                                expires: res.expires
+                                issued: res[".issued"],
+                                expires: res[".expires"]
                             };
                             //return authService.isAuthenticated();
 
-                            console.log(res);
+                            console.log(userAuth);
+                            console.log(new Date());
                         }, function errorCallback(response){
 
                             $ionicLoading.hide();

@@ -1,7 +1,7 @@
 <ion-view>
 
 
-    <ion-content class="has-header">
+    <ion-content lazy-scroll delegate-handle="content" class="has-header">
       <ion-refresher
         pulling-text="Pull to refresh..."
         on-refresh="doRefresh()">
@@ -31,14 +31,45 @@
           </div>
 
           <div class="row">
-            <div class="col col-33 col-offset-75">
+            <!-- standard picture wrapper -->
+            <div class="col col-33 col-offset-75" ng-if="!photo.isCompeting">
                 <div class="imgContainer" style="display:inline">
-                    <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="isCompeting" >
-                    <img src="img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="photo.privacy === 'public'">
+                    <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="photo.isCompeting" >
+                    <img src="img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="(photo.privacy === 'public') && (!photo.isCompeting)">
                 </div>
-                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="rate(photo.id, myUser, users[myUser].name)">
-                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="!dejaAime(photo.id, myUser)">
-                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id, myUser)">
+                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,1,myToken)">
+                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 1">
+                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 1">
+                </div>
+                <div class="imgContainer" style="display:inline">
+                  <p style="padding-left:10px">{{photo.starsCount}}</p>
+                </div>
+            </div>
+            <!-- competition picture wrapper -->
+            <div class="col col-67 col-offset-50" ng-if="photo.isCompeting">
+                <div class="imgContainer" style="display:inline">
+                    <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="photo.isCompeting" >
+                    <img src="img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="(photo.privacy === 'public') && (!photo.isCompeting)">
+                </div>
+                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,1,myToken)">
+                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 1">
+                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 1">
+                </div>
+                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,2,myToken)" ng-if="photo.isCompeting">
+                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 2">
+                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 2">
+                </div>
+                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,3,myToken)" ng-if="photo.isCompeting">
+                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 3">
+                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 3">
+                </div>
+                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,4,myToken)" ng-if="photo.isCompeting">
+                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 4">
+                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 4">
+                </div>
+                <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,5,myToken)" ng-if="photo.isCompeting">
+                    <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 5">
+                    <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) == 5">
                 </div>
                 <div class="imgContainer" style="display:inline">
                   <p style="padding-left:10px">{{photo.starsCount}}</p>
@@ -48,9 +79,9 @@
           </div>
 
           <div class="item item-image" style="position:relative">
-              <img ng-src="{{photo.picUrl}}" style="position:relative" on-double-tap="rate(photo.id, myUser, users[myUser].name)">
+              <img image-lazy-src="{{photo.picUrl}}" style="position:relative" on-double-tap="ratePicture(photo.id,1,myToken)" image-lazy-loader="spiral" image-lazy-distance-from-bottom-to-load="100">
               <!-- TODO get image from user-->
-              <img ng-if="animIN == photo.id" class="animated rollIn" src="/img/Star%20Filled%201.png" style="height:50%;position:absolute;left:30%;top:20%;">
+              <img ng-if="animIN == photo.id" class="animated rollIn" src="img/Star%20Filled%201.png" style="height:50%;position:absolute;left:30%;top:20%;box-shadow:none">
 
           </div>
           <div class="row no-padding">
@@ -58,7 +89,7 @@
                   <i class="icon ion-android-share-alt" style="font-size:25px"></i> <!-- TODO share stuff -->
 
               </div>
-              <div class="col col-10 col-offset-50" ng-click="openComment(photo.id)" style="white-space:nowrap">
+              <div class="col col-10 col-offset-50" ng-click="openComment(photo)" style="white-space:nowrap">
                     <img src="img/Comment.png" style="height:25px;box-shadow:none;">
                    <!-- TODO Open comment page -->
               </div>
@@ -68,12 +99,14 @@
               </div>
           </div>
 
+          <ion-infinite-scroll
+              ng-if="!refreshing"
+              on-infinite="doRefresh(true)"
+              distance="1%">
+          </ion-infinite-scroll>
+
       </div>
 
-      <ion-infinite-scroll
-          ng-if="!refreshing"
-          on-infinite="doRefresh(true)"
-          distance="2%">
-      </ion-infinite-scroll>
+
     </ion-content>
 </ion-view>
