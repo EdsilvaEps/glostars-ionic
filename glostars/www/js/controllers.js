@@ -96,6 +96,8 @@ angular.module('starter.controllers', ['ngResource'])
     };
 
 
+    AuthService.clean();
+
     $scope.loginData = {};
     var token = $localStorage.getObject('userToken', null);
     var username = $localStorage.getObject('userName', null);
@@ -120,8 +122,10 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.doLogin = function(){
 
-
-        AuthService.login($scope.loginData).then(function success(response){
+        console.log("login data is:");
+        console.log($scope.loginData);
+        AuthService.login($scope.loginData)
+        .then(function success(response){
             if(AuthService.isAuthenticated()){
 
                 token = AuthService.getAuthentication();
@@ -179,12 +183,13 @@ angular.module('starter.controllers', ['ngResource'])
 }])
 
 
-.controller('SettingsCtrl', function($scope, $localStorage, $state){
+.controller('SettingsCtrl', function($scope, $localStorage, $state, AuthService){
     $scope.logOut = function(){
 
         $localStorage.removeItem('userToken');
         $localStorage.removeItem('userName');
         $localStorage.removeItem('userid');
+        AuthService.clean();
         $state.go('app.login');
 
     };
@@ -488,9 +493,9 @@ $rootScope, CommentFactory){
 
     $scope.doRefresh = function(loadMore){
 
-      $ionicLoading.show({
+      /*$ionicLoading.show({
                   template: '<p>Loading...</p><ion-spinner></ion-spinner>'
-              });
+              }); */
 
       if(loadMore){
           console.log('infinte scroll triggered');
@@ -1359,12 +1364,14 @@ $rootScope, CommentFactory){
 }])
 
 
+
+
 .controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory',
 'NotificationService','$localStorage','$rootScope','$ionicHistory','$cordovaCamera','$ionicPlatform',
-'$cordovaImagePicker', '$ionicPopup','UploadFactory','$timeout'
+'$cordovaImagePicker', '$ionicPopup','UploadFactory','$timeout','picsFactory', '$stateParams','CommentFactory'
 ,function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory,
   NotificationService, $localStorage, $rootScope, $ionicHistory, $cordovaCamera, $ionicPlatform,
-   $cordovaImagePicker, $ionicPopup, UploadFactory, $timeout){
+   $cordovaImagePicker, $ionicPopup, UploadFactory, $timeout, picsFactory, $stateParams, CommentFactory){
 
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -1401,13 +1408,7 @@ $rootScope, CommentFactory){
         follower:0
     };
 
-    $scope.getNotifs = function(){
-      $scope.myId = $localStorage.getObject('userid', null);
-      $scope.unseen.amount = 0;
-      $scope.unseen.activity = 0;
-      $scope.unseen.follower = 0;
-
-      $scope.loading = true;
+    $scope.updateNotifs = function(){
       NotificationService.getNotifications($scope.myId, myUserToken)
         .then(function successCallback(res){
             $scope.activityNotifications = NotificationService.getNotes().activityNotifications;
@@ -1433,7 +1434,60 @@ $rootScope, CommentFactory){
         });
     };
 
+
+    $scope.getNotifs = function(){
+      $scope.myId = $localStorage.getObject('userid', null);
+      $scope.unseen.amount = 0;
+      $scope.unseen.activity = 0;
+      $scope.unseen.follower = 0;
+
+
+      $scope.loading = true;
+      if($scope.$state.current.name === 'app.picture'){
+         console.log('we are in app.picture');
+          picsFactory.getSinglePic($stateParams.id, myUserToken)
+            .then(function successCallback(res){
+                $scope.photo = picsFactory.returnSinglePic();
+
+
+            });
+      }
+      else {
+
+          $scope.updateNotifs();
+
+      }
+
+
+    };
+
     $scope.getNotifs();
+
+
+
+    $scope.seePhotoInNewPage = function(picId, description){
+        var comment_1 = "commented on a picture you commented on";
+        var comment_2 = "tagged you in a comment";
+
+        picsFactory.getSinglePic(picId, myUserToken)
+          .then(function successCallback(res){
+
+            if(description === comment_1 || description === comment_2){
+                $state.go('app.picture', {id:picId, obj: description});
+                $scope.closeModal();
+            } else {
+              $state.go('app.picture', {id:picId});
+              $scope.closeModal();
+            }
+
+
+
+
+          })
+        //$state.go('app.picture');
+
+
+    };
 
     $scope.tab = 1;
 
@@ -1457,7 +1511,7 @@ $rootScope, CommentFactory){
 
     $scope.openModal = function(){
         $rootScope.$broadcast('comment-open');
-        $scope.getNotifs();
+        $scope.updateNotifs();
         $scope.notificationsModal.show();
     };
 
@@ -1465,6 +1519,147 @@ $rootScope, CommentFactory){
         $rootScope.$broadcast('comment-closed');
         $scope.notificationsModal.hide();
     }
+
+
+    $scope.animIN = null;
+    $scope.animOUT = false;
+
+
+    //------------------ picture rating -------------------------------//
+    var arrayObjectIndexOf = function(arr, obj){
+      for(var i = 0; i < arr.length; i++){
+          if(arr[i].id  === obj){
+              return i;
+            }
+      };
+          return null;
+    };
+
+    var arrayObjectIndexOfRatings = function(arr, obj){
+      for(var i = 0; i < arr.length; i++){
+          if(arr[i].raterId  === obj){
+              return i;
+            }
+      };
+          return null;
+    };
+
+
+    $scope.rateAnimation = function(photoId){
+
+        $scope.animIN = photoId;
+
+        $timeout(function anim(){
+            $scope.animIN = null;
+        }, 500);
+
+    };
+
+    $scope.dejaAime = function(id){
+      if($scope.photo){
+        var k = arrayObjectIndexOfRatings($scope.photo.ratings, $scope.myId);
+        if(k !== null){
+          return $scope.photo.ratings[k].starsCount;
+        }
+        return null;
+      }
+
+
+    };
+
+    $scope.ratePicture = function(picId, rating, myUserToken){
+
+      var newRating = {
+          raterId: $scope.myId,
+          ratingTime: new Date(),
+          starsCount: rating
+      };
+
+      //ATTENTION: custom made rating for this page
+      if($scope.dejaAime(picId)){
+          //we should be able to unrate this pic
+          console.log("we should be able to unrate this pic");
+      } else {
+          picsFactory.ratePicture(picId, rating, token);
+          $rootScope.$on('rate-success', function(event, args){
+              $scope.photo.ratings.push(newRating);
+              $scope.photo.starsCount += rating;
+              console.log("rate sucess");
+          });
+          $scope.rateAnimation(picId);
+      }
+
+
+
+
+    };
+
+    //-----------------------------------------------------------------//
+    //$scope.modal_n;
+    $ionicModal.fromTemplateUrl('templates/comment.html',{
+        scope: $scope
+    }).then(function(modal){
+        $scope.modal = modal;
+    });
+
+    $scope.openComment = function(obj) {
+      commentModalOpen = true;
+      $scope.modal.show();
+      $rootScope.$broadcast('comment-open');
+      console.log(obj);
+      $scope.com = obj;
+    };
+
+    $scope.closeComment = function() {
+      $scope.modal.hide();
+      commentModalOpen = false;
+      $rootScope.$broadcast('comment-closed');
+    };
+    // Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
+
+
+    //--------------------------- <comments> ---------------------------//
+
+    $scope.Check_1 = function(id){
+        return $scope.myId == id;
+    };
+
+    $scope.message = {"data": ""};
+    $scope.loading = false;
+
+    $scope.addComment = function(picId, token){
+        if ($scope.message.data !== ""){
+          $scope.loading = true;
+
+          CommentFactory.commentPicture($scope.me, picId, $scope.message.data, token)
+              .then(function successCallback(res){
+                  var id = arrayObjectIndexOf($scope.pics, picId);
+                  $scope.pics[id].comments = CommentFactory.getNewComment($scope.pics[id].comments);
+                  $scope.loading = false;
+                });
+
+
+          $scope.message.data = "";
+        }
+
+
+    };
+
+    $scope.deleteComment = function(picId, commentId, token){
+
+          picsFactory.deleteComment(commentId, token)
+            .then(function successCallback(res){
+                var i = arrayObjectIndexOf($scope.pics, picId);
+                $scope.pics[i].comments.splice(arrayObjectIndexOf($scope.pics[i].comments, commentId),1);
+            });
+    };
+    //--------------------------- </comments> ---------------------------//
+
+
+
 
     //----------------- picture upload ---------------------//
     $ionicModal.fromTemplateUrl('templates/photoup.html',{
@@ -1591,6 +1786,8 @@ $rootScope, CommentFactory){
       //----------------- picture upload ---------------------//
 
 }])
+
+
 
 
 .filter('getById', function() {

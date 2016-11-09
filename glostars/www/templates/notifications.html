@@ -13,7 +13,7 @@
             <br>
             <div ng-if="isSelected(1)">
                 <div class="list" ng-repeat="notification in activityNotifications" ng-if="loading == false">
-                    <a class="item item-avatar item-text-wrap" ui-sref=""><!-- send to picture -->
+                    <a class="item item-avatar item-text-wrap" ng-click="seePhotoInNewPage(notification.pictureId, notification.description)"><!-- send to picture -->
                         <img ng-src="{{notification.profilePicURL}}"><!-- person's profile pic -->
                         <h4>{{notification.name}} {{notification.description}}</h4>
                         <p>{{notification.date | date: 'medium'}}</p>

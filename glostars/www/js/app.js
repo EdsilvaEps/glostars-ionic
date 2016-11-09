@@ -262,16 +262,19 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       }
     })
     .state('app.picture', {
-      url: '/picture',
+      url: '/picture/:id',
       views: {
         'menuContent': {
           templateUrl: 'templates/picture.html',
           controller: 'FooterCtrl'
         },
         'footer@': {
-                templateUrl:'templates/bottomMenu.html',
-                controller:'FooterCtrl'
+            templateUrl:'templates/bottomMenu.html',
+            controller:'FooterCtrl'
         }
+      },
+      params: {
+        obj: null
       }
     })
 

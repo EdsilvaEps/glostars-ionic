@@ -419,8 +419,33 @@ angular.module('starter.services',['ngResource'])
              });
           };
 
+          var singlePic = [];
+          pics.getSinglePic = function(picId, token){
+            return $http({
+                method: 'GET',
+                url: baseURL + "api/images/picture/" + picId,
+                headers:{
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+                }
 
+            }).then(function successCallback(res){
+                console.log(res.data);
+                singlePic = res.data.resultPayload;
+                $rootScope.$broadcast('pictures-success');
 
+            }, function errorCallback(res){
+                  console.log('error getting sigle picture');
+                  $rootScope.$broadcast('pictures-failed');
+
+            });
+
+          };
+
+          pics.returnSinglePic = function(){
+              $rootScope.$broadcast('pictures-loaded');
+              return singlePic;
+          }
 
 
             return pics;
@@ -638,6 +663,25 @@ angular.module('starter.services',['ngResource'])
             };
 
 
+            authService.clean = function(){
+
+              userAuth = {
+                  access_token: null,
+                  token_type: null,
+                  expires_in: 0,
+                  username: null,
+                  issued: null,
+                  expires: null
+
+              };
+
+              loginData = {
+                  grant_type:'',
+                  password: null,
+                  username: null
+              };
+
+            };
 
             authService.getAuthentication = function(){
                 return userAuth.access_token;
