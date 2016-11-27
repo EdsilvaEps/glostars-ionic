@@ -1,10 +1,10 @@
 <ion-view>
     <ion-nav-bar class="home-bar">
         <ion-nav-buttons side="left">
-            <div class="bar bar-header" style="border-bottom:none;">
-                <button class="button" style="background-color: transparent; height:50px" ng-click="">
+            <div class="bar bar-header" style="border-bottom:none; box-shadow:none">
+                <button class="button" style="background-color: transparent; height:40px; padding-top:10px; padding-right:10px; box-shadow:none" ng-click="">
                     <i class="icon ion-arrow-left-a"></i>
-                    
+
                 </button>
             </div>
         </ion-nav-buttons>
@@ -16,13 +16,13 @@
             </div>
         </div>
         <ion-list>
-            <ion-item>About us</ion-item>
+            <ion-item ui-sref="app.aboutus()">About us</ion-item>
             <ion-item>Terms</ion-item>
             <ion-item>Data Privacy</ion-item>
-            <ion-item>FAQ</ion-item>
+            <ion-item ui-sref="app.FAQ()">FAQ</ion-item>
             <ion-item>Contact Us</ion-item>
             <ion-item ng-click="logOut()">Log out</ion-item>
         </ion-list>
-        
+
     </ion-content>
 </ion-view>

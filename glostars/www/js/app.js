@@ -121,6 +121,34 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       }
   })
 
+  .state('app.aboutus',{
+      url: '/aboutus',
+      views:{
+          'menuContent':{
+              templateUrl: 'templates/aboutus.html',
+              controller:'SettingsCtrl',
+          },
+          'footer@': {
+                  templateUrl:'templates/bottomMenu.html',
+                  controller:'FooterCtrl'
+          }
+      }
+  })
+
+  .state('app.FAQ',{
+      url: '/FAQ',
+      views:{
+          'menuContent':{
+              templateUrl: 'templates/FAQ.html',
+              controller:'SettingsCtrl',
+          },
+          'footer@': {
+                  templateUrl:'templates/bottomMenu.html',
+                  controller:'FooterCtrl'
+          }
+      }
+  })
+
   .state('app.signup', {
     url: '/signup',
     views:{

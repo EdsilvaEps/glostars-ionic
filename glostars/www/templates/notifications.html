@@ -13,14 +13,24 @@
             <br>
             <div ng-if="isSelected(1)">
                 <div class="list" ng-repeat="notification in activityNotifications" ng-if="loading == false">
-                    <a class="item item-avatar item-text-wrap" ng-click="seePhotoInNewPage(notification.pictureId, notification.description)"><!-- send to picture -->
+                  <div ng-class="{false: 'greyBackground'}[notification.seen]">
+                    <a class="item item-avatar item-text-wrap" ng-click="seePhotoInNewPage(notification.pictureId, notification.description)"  ><!-- send to picture -->
                         <img ng-src="{{notification.profilePicURL}}"><!-- person's profile pic -->
-                        <h4>{{notification.name}} {{notification.description}}</h4>
-                        <p>{{notification.date | date: 'medium'}}</p>
+                        <!--  -->
+                        <div>
+                          <h4>{{notification.name}} {{notification.description}}</h4>
+
+                        </div>
+                        <div>
+                          <img style="height:50px; width:auto" ng-src="{{notification.picUrl}}">
+                        </div>
+                          <p>{{notification.date | date: 'medium'}}</p>
+
                     </a>
                     <div ng-if="activityNotifications.length == 0">
                         <p>you don't have notifications</p>
                     </div>
+                  </div>
                 </div>
                 <div ng-if="loading == true" style="text-align: center;">
                   <ion-spinner></ion-spinner>
@@ -29,14 +39,17 @@
             </div>
             <div ng-if="isSelected(2)">
                 <div class="list" ng-repeat="notification in followerNotifications">
-                    <a class="item item-avatar" ui-sref="app.profile({id:notification.originatedById})" ng-click=closeModal();><!-- send to person's profil -->
+                  <div ng-class="{false: 'greyBackground'}[notification.seen]">
+                    <a class="item item-avatar" ui-sref="app.profile({id:notification.originatedById})" ng-click=closeModal(); style:"background-color:#ccccb3;"  ><!-- send to person's profil -->
                         <img ng-src="{{notification.profilePicURL}}"><!-- person's profile pic -->
                         <h4>{{notification.name}} started following you</h4>
                         <p>{{notification.date | date: 'medium'}}</p>
                     </a>
+                  </div>
                     <div ng-if="followerNotifications.length == 0">
                         <p>you don't have notifications</p>
                     </div>
+
                 </div>
             </div>
         </div>

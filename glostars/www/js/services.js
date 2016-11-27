@@ -168,10 +168,34 @@ angular.module('starter.services',['ngResource'])
                 }, function errorCallback(response){
 
                       console.log('ERROR IN USER SEARCH BY NAME');
-                      console.log(response.status);
+                      console.log(response);
                       //return null;
                 });
             };
+
+            userFac.getUserData = function(token){
+              return $http({
+                method:'GET',
+                url: baseURL + "api/user/Edit",
+                headers:{
+                    'Auth':'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+              }).then(function successCallback(response){
+
+                    console.log('USER EDIT RETURNED:');
+
+                    users = response.data.resultPayload;
+                    console.log(users);
+                    //return users;
+              }, function errorCallback(response){
+
+                    console.log('ERROR IN USER EDIT');
+                    console.log(response.status);
+                    //return null;
+              });
+
+            }
 
 
             userFac.getUser = function(){
@@ -235,6 +259,35 @@ angular.module('starter.services',['ngResource'])
               return amount;
 
             };
+
+            pics.getMutualFollowerPictures = function(){
+              var picsArray = {
+                 amount: pics_number.totalmutualFollowerPics,
+                 pics: pics.mutualFollowerPictures
+              };
+
+              return picsArray
+            };
+
+            pics.getPublicUserPictures = function(){
+              var picsArray = {
+                 amount: pics_number.totalpublicPictures,
+                 pics: pics.publicPictures
+              };
+
+              return picsArray
+            };
+
+            pics.getUserCompetitionPics = function(){
+              var picsArray = {
+                 amount: pics_number.totalCompetitonPic,
+                 pics: pics.competitionPictures
+              };
+
+              return picsArray
+            };
+
+
 
             pics.getAllpictures = function(){
                 var pictures = [];
@@ -367,6 +420,28 @@ angular.module('starter.services',['ngResource'])
 
           };
 
+          pics.unratePicture = function(picId, token){
+            return $http({
+              method:'POST',
+              url: baseURL + "api/images/removerate/" + picId,
+              headers:{
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + token
+              }
+
+            }).then(function successCallback(response){
+                if(response.data.responseCode == 1){
+                  $rootScope.$broadcast('unrate-success');
+                }
+                console.log(response.data);
+
+              }, function errorCallback(response){
+                console.log('ERROR UNRATING PIC');
+                console.log(response.data);
+              });
+
+          }
+
           var newComment = {};
 
           pics.commentPicture = function(picId, message, token){
@@ -446,6 +521,77 @@ angular.module('starter.services',['ngResource'])
               $rootScope.$broadcast('pictures-loaded');
               return singlePic;
           }
+
+          pics.replacePic_1 = function(list){ //for search function
+              var noPicturePathMale = "Content/Profile/Thumbs/male.png";
+              var noPicturePathFemale = "Content/Profile/Thumbs/female.png";
+
+
+              console.log('replacing pics');
+              for(var i = 0; i <= list.length-1; i ++){
+                  //console.log(list[i].profilemediumPath);
+                  if (list[i].profilemediumPath == "/Content/Profile/Thumbs/male.jpg"){
+                        console.log('changed profile path');
+                        list[i].profilemediumPath = noPicturePathMale;
+                  } else if(list[i].profilemediumPath == "/Content/Profile/Thumbs/female.jpg"){
+                        list[i].profilemediumPath = noPicturePathFemale;
+                        console.log('changed profile path');
+                  }
+              }
+              console.log('list:');
+              console.log(list);
+              return list;
+
+          };
+
+          pics.replacePic_2 = function(list){ // for general picture links
+              var noPicturePathMale = "Content/Profile/Thumbs/male.png";
+              var noPicturePathFemale = "Content/Profile/Thumbs/female.png";
+
+
+              console.log('replacing pics');
+              for(var i = 0; i <= list.length-1; i ++){
+                  //console.log(list[i].profilemediumPath);
+
+                  if(list[i].poster.profilePicURL == "/Content/Profile/MiniThumbs/male.jpg"){
+                        list[i].poster.profilePicURL = noPicturePathMale;
+
+                  } else if(list[i].poster.profilePicURL == "/Content/Profile/MiniThumbs/female.jpg"){
+                        list[i].poster.profilePicURL = noPicturePathFemale;
+                  }
+
+              }
+              console.log('list:');
+              console.log(list);
+              return list;
+
+          };
+
+          pics.replacePic_3 = function(list){ // for friends and followers
+              var noPicturePathMale = "Content/Profile/Thumbs/male.png";
+              var noPicturePathFemale = "Content/Profile/Thumbs/female.png";
+
+
+              console.log('replacing pics');
+              for(var i = 0; i <= list.length-1; i ++){
+                  //console.log(list[i].profilemediumPath);
+
+                  if(list[i].profilemediumPath == "/Content/Profile/Thumbs/male.jpg"){
+                        list[i].profilemediumPath = noPicturePathMale;
+
+                  } else if(list[i].profilemediumPath == "/Content/Profile/Thumbs/female.jpg"){
+                        list[i].profilemediumPath = noPicturePathFemale;
+                  }
+
+              }
+              console.log('list:');
+              console.log(list);
+              return list;
+
+          };
+
+
+
 
 
             return pics;
@@ -719,7 +865,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
-        .factory('RegisterService', ['$resource', 'baseURL', '$http', '$q', '$cordovaFacebook', '$ionicPopup',  function($resource, baseURL, $http, $q, $cordovaFacebook, $ionicPopup){
+        .factory('RegisterService', ['$resource', 'baseURL', '$http', '$q', '$cordovaFacebook', '$ionicPopup', '$ionicLoading',  function($resource, baseURL, $http, $q, $cordovaFacebook, $ionicPopup, $ionicLoading){
 
             var registerData = {
                 UserName: null,
@@ -761,8 +907,7 @@ angular.module('starter.services',['ngResource'])
                 return $http({
                     method:'POST',
                     url: baseURL+'api/account/register',
-                    data: registerData,
-                    unique:true
+                    data: registerData
 
                 }).then(function successCallback(response){
                         $ionicLoading.hide();
@@ -821,8 +966,8 @@ angular.module('starter.services',['ngResource'])
                     headers: {
                       'Content-Type': 'application/json',
                       'Authorization': 'Bearer ' + token},
-                    data: uploadData,
-                    unique:true
+                    data: uploadData
+                    //unique:true
 
                 }).then(function successCallback(response){
                         $ionicLoading.hide();
@@ -886,6 +1031,36 @@ angular.module('starter.services',['ngResource'])
 
             notifications.getNotes = function(){
               return notes;
+            };
+
+            var seenNotifs = {
+                activityNotifications: [],
+                followerNotifications: []
+            };
+
+            notifications.markAsSeen = function(userId, token, activityNotifs, followerNotifs){
+                seenNotifs = {
+                    activityNotifications: activityNotifs,
+                    followerNotifications: followerNotifs
+                };
+
+                return $http({
+                    method:'POST',
+                    url: baseURL + "api/notifications/user/" + userId,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: seenNotifs
+                }).then(function successCallback(response) {
+                      console.log('notifications seen');
+                      console.log(response);
+
+
+                }, function errorCallback(response){
+                      console.log('ERROR IN GETTING FOLLOWERS SEEN SERVICE');
+                      console.log(response.status);
+                });
             };
 
 

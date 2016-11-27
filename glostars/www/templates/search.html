@@ -6,7 +6,7 @@
           <i class="icon ion-ios-search placeholder-icon" style="font-size:20px" ng-click=""></i>
         </label>
         <button class="button button-assertive" style="box-shadow: 1px 1px 1px 1px; background-color:transparent" ng-click="select(1)">
-          Recent
+          <span>Recent</span>
         </button>
       </div>
 
@@ -28,14 +28,14 @@
               </div>
 
           </div>
-            
+
       </div>
 
 
       <div ng-if="isSelected(2)">
           <div class="list">
               <a class="item item-avatar" ng-repeat="person in users" ui-sref="app.profile({id:person.id})" ng-if="users.length > 0">
-                  <img ng-src="{{person.profilemediumPath}}">
+                  <img src="{{person.profilemediumPath}}">
                   <h2>{{person.name}} {{person.lastName}}</h2>
                   <br>
                   <p></p>

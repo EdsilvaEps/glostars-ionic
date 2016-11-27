@@ -65,8 +65,8 @@ angular.module('starter.controllers', ['ngResource'])
 
 .controller('LoginCtrl',['$scope','$state','AuthService','$http',
 '$resource', 'RegisterService', '$q', '$ionicLoading', '$localStorage',
-'$filter','ionicMaterialInk','$ionicSlideBoxDelegate', function($scope,$state,AuthService,$http,$resource,RegisterService,
-   $q, $ionicLoading, $localStorage, $filter, ionicMaterialInk, $ionicSlideBoxDelegate){
+'$filter','ionicMaterialInk','$ionicSlideBoxDelegate','usersFactory', function($scope,$state,AuthService,$http,$resource,RegisterService,
+   $q, $ionicLoading, $localStorage, $filter, ionicMaterialInk, $ionicSlideBoxDelegate, usersFactory){
 
 
 
@@ -96,7 +96,6 @@ angular.module('starter.controllers', ['ngResource'])
     };
 
 
-    AuthService.clean();
 
     $scope.loginData = {};
     var token = $localStorage.getObject('userToken', null);
@@ -104,6 +103,8 @@ angular.module('starter.controllers', ['ngResource'])
     var tokenExpiry = $localStorage.getObject('tokenExpiry', null);
     //TODO: encrypt data
     //TODO: the swipe screen has three views now, handle them here
+
+
 
     $scope.fastLogin = function() {
 
@@ -113,7 +114,14 @@ angular.module('starter.controllers', ['ngResource'])
 
        if(token !== null && username !== null){
           if(AuthService.checkToken(token, tokenExpiry)){
-              $state.go('app.home');
+
+            //save user id before entering the app
+            usersFactory.searchUser(username, token)
+              .then(function success(res){
+                  var myUser = usersFactory.getUser();
+                  $localStorage.storeObject('userid', myUser.userId);
+                  $state.go('app.home');
+              });
           }
 
        }
@@ -121,6 +129,8 @@ angular.module('starter.controllers', ['ngResource'])
     };
 
     $scope.doLogin = function(){
+
+        AuthService.clean();
 
         console.log("login data is:");
         console.log($scope.loginData);
@@ -143,7 +153,16 @@ angular.module('starter.controllers', ['ngResource'])
                 var tokenExpiry = $localStorage.getObject('tokenExpiry', null);
 
                 if(token && username && tokenExpiry){
-                  $state.go('app.home');
+
+                  //save user id before entering the app
+                  usersFactory.searchUser(username, token)
+                    .then(function success(res){
+                        var myUser = usersFactory.getUser();
+                        $localStorage.storeObject('userid', myUser.userId);
+                        $localStorage.storeObject('userData', myUser);
+                        $state.go('app.home');
+                    });
+
                 }
 
                 AuthService.checkToken(token, tokenExpiry);
@@ -161,8 +180,9 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.createAcc = function(){
         console.log($scope.userinfo);
-
-        RegisterService.createAccount($scope.userinfo.email, $scope.userinfo.email, $scope.userinfo.firstname, $scope.userinfo.bday.getFullYear(), $scope.userinfo.bday.getMonth()+1, $scope.userinfo.bday.getDate(), $scope.userinfo.sex, $scope.userinfo.lastname, $scope.userinfo.password).then(function success(response){
+        
+        RegisterService.createAccount($scope.userinfo.email, $scope.userinfo.email, $scope.userinfo.firstname, $scope.userinfo.bday.getFullYear(), $scope.userinfo.bday.getMonth()+1, $scope.userinfo.bday.getDate(), $scope.userinfo.sex, $scope.userinfo.lastname, $scope.userinfo.password)
+        .then(function success(response){
 
             $scope.loginData = {email: $scope.userinfo.email, password: $scope.userinfo.password};
 
@@ -189,6 +209,7 @@ angular.module('starter.controllers', ['ngResource'])
         $localStorage.removeItem('userToken');
         $localStorage.removeItem('userName');
         $localStorage.removeItem('userid');
+        $localStorage.removeItem('userData');
         AuthService.clean();
         $state.go('app.login');
 
@@ -244,13 +265,14 @@ $rootScope, CommentFactory){
               $scope.myUser = usersFactory.getUser();
               console.log('my user is');
               console.log($scope.myUser);
-              $localStorage.storeObject('userid', $scope.myUser.userId);
+              //$localStorage.storeObject('userid', $scope.myUser.userId);
 
 
               picsFactory.getMutualPictures($scope.myUser.userId, pags_number, $scope.myToken)
                 .then(function successCallback(res){
 
                   var mutualPics = picsFactory.getMutual();
+                  mutualPics = picsFactory.replacePic_2(mutualPics);
                   //prevent duplicates
                   for(var i = 0; i < mutualPics.length; i++){
 
@@ -414,6 +436,10 @@ $rootScope, CommentFactory){
 
       };
 
+      $scope.unrate = function(picId, token){
+          picsFactory.unratePicture(picId, token);
+      };
+
       $scope.dejaAime = function(id){
         var i = arrayObjectIndexOf($scope.pics, id);
         if(i !== null){
@@ -436,6 +462,8 @@ $rootScope, CommentFactory){
         if($scope.dejaAime(picId)){
             //we should be able to unrate this pic
             console.log("we should be able to unrate this pic");
+
+
         } else {
             picsFactory.ratePicture(picId, rating, token);
             $rootScope.$on('rate-success', function(event, args){
@@ -485,6 +513,10 @@ $rootScope, CommentFactory){
     $scope.animOUT = false;
 
 
+    $scope.publicPics = null;
+    $scope.mutualFollowerPics = null;
+    $scope.competitionPics = null;
+
     $scope.$on('$ionicView.enter', function(e) {
         $scope.pics = null;
         pags_number = 1;
@@ -492,10 +524,6 @@ $rootScope, CommentFactory){
     });
 
     $scope.doRefresh = function(loadMore){
-
-      /*$ionicLoading.show({
-                  template: '<p>Loading...</p><ion-spinner></ion-spinner>'
-              }); */
 
       if(loadMore){
           console.log('infinte scroll triggered');
@@ -508,12 +536,7 @@ $rootScope, CommentFactory){
             console.log('my user is');
             console.log($scope.user);
 
-            if($state === 'app.profile'){
-                console.log("anchoring: " + anchor);
-                $location.hash(0);
-                var handle = $ionicScrollDelegate.$getByHandle('content');
-                handle.anchorScroll();
-            }
+            usersFactory.getUserData($scope.myToken);
 
             usersFactory.searchUser(null, $scope.myToken, $scope.myId)
               .then(function successCallback(res){
@@ -526,6 +549,8 @@ $rootScope, CommentFactory){
               .then(function successCallback(res){
                     $scope.followers = FollowerService.getFollowers();
                     $scope.following = FollowerService.getFollowing();
+                    $scope.followers = picsFactory.replacePic_3($scope.followers);
+                    $scope.following = picsFactory.replacePic_3($scope.following);
                     console.log($scope.followers);
                     console.log($scope.following);
                     $scope.checkUser($scope.user.userId);
@@ -538,16 +563,57 @@ $rootScope, CommentFactory){
               .then(function successCallback(res){
 
 
+                  /*$scope.publicPics = {
+                       amount:0,
+                       pics: []
+                  };
+                  $scope.mutualFollowerPics = {
+                        amount:0,
+                        pics:[]
+                  };
+                  $scope.competitionPics = {
+                        amount:0,
+                        pics:[]
+                  };
+*/
+
                     $scope.picsAmount = picsFactory.getPicsAmount();
 
+                    //this adds, one-by-one, new pictures to the user's arrays of pics
                     if(pags_number == 1){
+                        $scope.mutualFollowerPics = picsFactory.getMutualFollowerPictures();
+                        $scope.publicPics = picsFactory.getPublicUserPictures();
+                        $scope.competitionPics = picsFactory.getUserCompetitionPics();
+
+                        //for the love of god, plz change this bit of code later:
                         $scope.pics = picsFactory.getAllpictures();
                     } else if(pags_number > 1){
+                        var mutPic = picsFactory.getMutualFollowerPictures();
+                        var pubPic = picsFactory.getPublicUserPictures();
+                        var comPic = picsFactory.getUserCompetitionPics();
+
+                        //for the love of god, plz change this bit of code later:
                         var newPics = picsFactory.getAllpictures();
 
-                        for (var i = 0; i < newPics.length; i++){
+                        for (var i = 0; i < mutPic.pics.length-1; i++){
+                          $scope.mutualFollowerPics.pics.push(mutPic.pics[i]);
+                          $scope.mutualFollowerPics.amount = mutPic.amount;
+                        }
+
+                        for (var i = 0; i < pubPic.pics.length-1; i++){
+                          $scope.publicPics.pics.push(pubPic.pics[i]);
+                          $scope.publicPics.amount = pubPic.amount;
+                        }
+
+                        for (var i = 0; i < comPic.pics.length-1; i++){
+                          $scope.competitionPics.pics.push(comPic.pics[i]);
+                          $scope.competitionPics.amount = comPic.amount;
+                        }
+
+                        for (var i = 0; i < newPics.length-1; i++){
                           $scope.pics.push(newPics[i]);
                         }
+
                     }
 
 
@@ -583,6 +649,17 @@ $rootScope, CommentFactory){
         $scope.tab = setTab;
 
     };
+    //----------- this for the second set of tabs------------//
+    $scope.tab_2nd = 1;
+    $scope.select_2nd = function(setTab){
+        console.log('select_2nd tab:' + setTab);
+        $scope.tab_2nd = setTab;
+    };
+
+    $scope.isSelected_2nd = function(checkTab){
+        return ($scope.tab_2nd === checkTab);
+    };
+    //-----------------------//
 
     $scope.isSelected = function(checkTab){
         return ($scope.tab === checkTab);
@@ -1114,6 +1191,7 @@ $rootScope, CommentFactory){
     $ionicScrollDelegate, $timeout, $state, $location, $ionicModal, $ionicLoading,
     CommentFactory){
 
+
     $scope.searchBox = null;
     $scope.tab = 1;
     $scope.searchText = "Search users here";
@@ -1136,6 +1214,7 @@ $rootScope, CommentFactory){
     });
 
 
+
     $scope.changeMe = function(){
         $scope.tab = 2;
         console.log("changed");
@@ -1145,6 +1224,8 @@ $rootScope, CommentFactory){
             usersFactory.findUserByName($scope.searchBox, $scope.myToken)
               .then(function successCallback(res){
                     $scope.users = usersFactory.getUserSearchList();
+                    $scope.users = picsFactory.replacePic_1($scope.users); //to replace empty profile pics for default thumbs
+                    console.log($scope.users);
                     $scope.searching = false;
               }, function errorCallback(res){
                     $scope.searching = false;
@@ -1173,6 +1254,7 @@ $rootScope, CommentFactory){
             $ionicLoading.hide();
 
             var newPics = picsFactory.getPublic();
+            newPics = picsFactory.replacePic_2(newPics);
 
             for(var i = 0; i < newPics.length; i++){
 
@@ -1396,6 +1478,7 @@ $rootScope, CommentFactory){
     var myUserToken = $localStorage.getObject('userToken', null);
     var myUsername = AuthService.getUsername();
     $scope.myId = $localStorage.getObject('userid', null);
+    $scope.me = $localStorage.getObject('userData', null);
 
 
     $scope.activityNotifications = [];
@@ -1405,12 +1488,23 @@ $rootScope, CommentFactory){
     $scope.unseen = {
         amount:0,
         activity:0,
-        follower:0
+        follower:0,
+        activityIndexes:[],
+        followerIndexes:[]
     };
 
     $scope.updateNotifs = function(){
+      console.log($scope.myId);
       NotificationService.getNotifications($scope.myId, myUserToken)
         .then(function successCallback(res){
+            $scope.unseen = {
+                amount:0,
+                activity:0,
+                follower:0,
+                activityIndexes:[],
+                followerIndexes:[]
+            };
+
             $scope.activityNotifications = NotificationService.getNotes().activityNotifications;
             $scope.followerNotifications = NotificationService.getNotes().followerNotifications;
 
@@ -1418,6 +1512,7 @@ $rootScope, CommentFactory){
                 if($scope.activityNotifications[i].seen === false){
                     $scope.unseen.amount += 1;
                     $scope.unseen.activity += 1;
+                    $scope.unseen.activityIndexes.push($scope.activityNotifications[i].id);
                 }
             }
 
@@ -1425,9 +1520,10 @@ $rootScope, CommentFactory){
                 if($scope.followerNotifications[i].seen === false){
                     $scope.unseen.amount += 1;
                     $scope.unseen.follower += 1;
+                    $scope.unseen.followerIndexes.push($scope.followerNotifications[i].followerNotificationId);
                 }
             }
-
+            //console.log($scope.unseen);
             $scope.loading = false;
 
 
@@ -1440,6 +1536,8 @@ $rootScope, CommentFactory){
       $scope.unseen.amount = 0;
       $scope.unseen.activity = 0;
       $scope.unseen.follower = 0;
+      $scope.unseen.activityIndexes = [];
+      $scope.unseen.followerIndexes = [];
 
 
       $scope.loading = true;
@@ -1462,6 +1560,14 @@ $rootScope, CommentFactory){
     };
 
     $scope.getNotifs();
+
+    $scope.setAsSeen = function(userId, token, indexes_act, indexes_followers){
+          NotificationService.markAsSeen(userId, token, indexes_act, indexes_followers)
+            .then(function successCallback(res){
+                $scope.updateNotifs();
+            });
+
+    };
 
 
 
@@ -1493,6 +1599,21 @@ $rootScope, CommentFactory){
 
     $scope.select = function(setTab){
         $scope.tab = setTab;
+
+        //to set notifications as seen as soon as we get to see them
+        if($scope.unseen.amount > 0){
+          if($scope.tab == 1){
+              if($scope.unseen.activity > 0){
+                  $scope.setAsSeen($scope.myId, myUserToken, $scope.unseen.activityIndexes, []);
+              }
+          }
+          else if($scope.tab == 2){
+              if($scope.unseen.follower > 0){
+                  $scope.setAsSeen($scope.myId, myUserToken, [], $scope.unseen.followerIndexes);
+              }
+          }
+        }
+
 
     };
 
@@ -1580,7 +1701,7 @@ $rootScope, CommentFactory){
           //we should be able to unrate this pic
           console.log("we should be able to unrate this pic");
       } else {
-          picsFactory.ratePicture(picId, rating, token);
+          picsFactory.ratePicture(picId, rating, myUserToken);
           $rootScope.$on('rate-success', function(event, args){
               $scope.photo.ratings.push(newRating);
               $scope.photo.starsCount += rating;
@@ -1593,6 +1714,8 @@ $rootScope, CommentFactory){
 
 
     };
+
+
 
     //-----------------------------------------------------------------//
     //$scope.modal_n;
@@ -1630,14 +1753,14 @@ $rootScope, CommentFactory){
     $scope.message = {"data": ""};
     $scope.loading = false;
 
-    $scope.addComment = function(picId, token){
+    $scope.addComment = function(picId, myUserToken){
         if ($scope.message.data !== ""){
           $scope.loading = true;
 
-          CommentFactory.commentPicture($scope.me, picId, $scope.message.data, token)
+          CommentFactory.commentPicture($scope.me, picId, $scope.message.data, myUserToken)
               .then(function successCallback(res){
-                  var id = arrayObjectIndexOf($scope.pics, picId);
-                  $scope.pics[id].comments = CommentFactory.getNewComment($scope.pics[id].comments);
+                  //var id = arrayObjectIndexOf($scope.pics, picId);
+                  $scope.photo.comments = CommentFactory.getNewComment($scope.photo.comments);
                   $scope.loading = false;
                 });
 
@@ -1648,12 +1771,12 @@ $rootScope, CommentFactory){
 
     };
 
-    $scope.deleteComment = function(picId, commentId, token){
+    $scope.deleteComment = function(picId, commentId, myUserToken){
 
-          picsFactory.deleteComment(commentId, token)
+          picsFactory.deleteComment(commentId, myUserToken)
             .then(function successCallback(res){
-                var i = arrayObjectIndexOf($scope.pics, picId);
-                $scope.pics[i].comments.splice(arrayObjectIndexOf($scope.pics[i].comments, commentId),1);
+                //var i = arrayObjectIndexOf($scope.pics, picId);
+                $scope.photo.comments.splice(arrayObjectIndexOf($scope.photo.comments, commentId),1);
             });
     };
     //--------------------------- </comments> ---------------------------//
@@ -1662,128 +1785,121 @@ $rootScope, CommentFactory){
 
 
     //----------------- picture upload ---------------------//
-    $ionicModal.fromTemplateUrl('templates/photoup.html',{
-        scope: $scope
-    }).then(function(modal){
-        $scope.pictureSetupModal = modal;
-    });
-
-    $scope.openPicSetup = function(){
-        $scope.showFloatingMenu = false;
-        $scope.pictureSetupModal.show();
-    };
-
-    $scope.closePicSetup = function(){
-        $scope.pictureSetupModal.hide();
-        $scope.showFloatingMenu = true;
-
-    };
-
-    $scope.imgSrc = null;
     /*
-    $ionicPlatform.ready(function() {
-          var options = {
-              quality: 90,
-              destinationType: Camera.DestinationType.DATA_URL,
-              sourceType: Camera.PictureSourceType.CAMERA,
-              allowEdit: true,
-              encodingType: Camera.EncodingType.JPEG,
-              targetWidth: 1000,
-              targetHeight: 1000,
-              popoverOptions: CameraPopoverOptions,
-              saveToPhotoAlbum: false
-          };
-
-          $scope.takePicture = function() {
-              $cordovaCamera.getPicture(options).then(function(imageData) {
-                  $scope.imgSrc = "data:image/jpeg;base64," + imageData;
-              }, function(err) {
-                  console.log(err);
-              });
-              if($scope.imgSrc !== null){
-                $scope.openPicSetup();
-              }
-
-              //$scope.registerform.show();
-          };
-
-          var pickoptions = {
-              maximumImagesCount: 1,
-              width: 100,
-              height: 100,
-              quality: 50
-          };
-
-          $scope.pickImage = function() {
-            $cordovaImagePicker.getPictures(pickoptions)
-              .then(function (results) {
-                  for (var i = 0; i < results.length; i++) {
-                      console.log('Image URI: ' + results[i]);
-                      $scope.imgSrc = results[0];
-                  }
-              }, function (error) {
-                  // error getting photos
-              });
-              if($scope.imgSrc !== null){
-                $scope.openPicSetup();
-              }
-          };
-
-
+      $ionicModal.fromTemplateUrl('templates/photoup.html',{
+          scope: $scope
+      }).then(function(modal){
+          $scope.pictureSetupModal = modal;
       });
 
-      */
-      $scope.pictureMode = function(){
-
+      $scope.openPicSetup = function(){
           $scope.showFloatingMenu = false;
-          var myPopup = $ionicPopup.show({
-              template:'',
-              title:'<b>Upload a picture</b>',
-              subTitle:'Choose a source...',
-              buttons:[
-                {text:'<p style="padding-top:1px"></p><p style="padding-left:5px">Camera </p>',
-                  onTap:function cam() {
-                      $scope.showFloatingMenu = true;
-                      //$scope.openPicSetup();
-                      $scope.takePicture();
-                      myPopup.close();
+          $scope.pictureSetupModal.show();
+      };
 
-                      }
-                },
-                {text:'<p style="padding-top:1px"></p><p>Album</p>',
-                   onTap:function album() {
-                      $scope.showFloatingMenu = true;
-                      //$scope.openPicSetup();
-                      $scope.pickImage();
-                      myPopup.close();
+      $scope.closePicSetup = function(){
+          $scope.pictureSetupModal.hide();
+          $scope.showFloatingMenu = true;
 
-                      }
+      };
+
+      $scope.imgSrc = null;
+      $ionicPlatform.ready(function() {
+            var options = {
+                quality: 90,
+                destinationType: Camera.DestinationType.DATA_URL,
+                sourceType: Camera.PictureSourceType.CAMERA,
+                allowEdit: true,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 1000,
+                targetHeight: 1000,
+                popoverOptions: CameraPopoverOptions,
+                saveToPhotoAlbum: false
+            };
+            $scope.takePicture = function() {
+                $cordovaCamera.getPicture(options).then(function(imageData) {
+                    $scope.imgSrc = "data:image/jpeg;base64," + imageData;
+                }, function(err) {
+                    console.log(err);
+                });
+                if($scope.imgSrc !== null){
+                  $scope.openPicSetup();
                 }
-              ]
-          });
-      };
+                //$scope.registerform.show();
+            };
+            var pickoptions = {
+                maximumImagesCount: 1,
+                width: 100,
+                height: 100,
+                quality: 50
+            };
+            $scope.pickImage = function() {
+              $cordovaImagePicker.getPictures(pickoptions)
+                .then(function (results) {
+                    for (var i = 0; i < results.length; i++) {
+                        console.log('Image URI: ' + results[i]);
+                        $scope.imgSrc = results[0];
+                    }
+                }, function (error) {
+                    // error getting photos
+                });
+                if($scope.imgSrc !== null){
+                  $scope.openPicSetup();
+                }
+            };
+        });
+        $scope.pictureMode = function(){
 
-      $scope.pictureData = {};
-      $scope.postPicture = function(){
-          $scope.pictureData.imgUri = $scope.imgSrc;
+            $scope.showFloatingMenu = false;
+            var myPopup = $ionicPopup.show({
+                template:'',
+                title:'<b>Upload a picture</b>',
+                subTitle:'Choose a source...',
+                buttons:[
+                  {text:'<p style="padding-top:1px"></p><p style="padding-left:5px">Camera </p>',
+                    onTap:function cam() {
+                        $scope.showFloatingMenu = true;
+                        //$scope.openPicSetup();
+                        $scope.takePicture();
+                        myPopup.close();
 
-          if($scope.pictureData.imgUri !== null){
-            UploadFactory.UploadPicture($scope.pictureData.description,
-            $scope.pictureData.privacy === "competition",
-            $scope.pictureData.privacy, $scope.pictureData.imgUri,
-            myUserToken).then(function successCallback(res){
-              //$scope.pictureData = null;
-              //$scope.closePicSetup();
-              //TODO: implement sharing
+                        }
+                  },
+                  {text:'<p style="padding-top:1px"></p><p>Album</p>',
+                     onTap:function album() {
+                        $scope.showFloatingMenu = true;
+                        //$scope.openPicSetup();
+                        $scope.pickImage();
+                        myPopup.close();
+
+                        }
+                  }
+                ]
             });
-            $scope.pictureData = null;
-            $scope.imgSrc = null;
-            $scope.closePicSetup();
-          } else {
+        };
+
+        $scope.pictureData = {};
+        $scope.postPicture = function(){
+            $scope.pictureData.imgUri = $scope.imgSrc;
+
+            if($scope.pictureData.imgUri !== null){
+              UploadFactory.UploadPicture($scope.pictureData.description,
+              $scope.pictureData.privacy === "competition",
+              $scope.pictureData.privacy, $scope.pictureData.imgUri,
+              myUserToken).then(function successCallback(res){
+                //$scope.pictureData = null;
+                //$scope.closePicSetup();
+                //TODO: implement sharing
+              });
+              $scope.pictureData = null;
+              $scope.imgSrc = null;
               $scope.closePicSetup();
-          }
-      };
-      //----------------- picture upload ---------------------//
+            } else {
+                $scope.closePicSetup();
+            }
+        }; */
+        //----------------- picture upload ---------------------//
+
 
 }])
 

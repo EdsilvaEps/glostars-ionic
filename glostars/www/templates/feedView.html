@@ -4,7 +4,7 @@
         pulling-text="Pull to refresh..."
         on-refresh="doRefresh()">
       </ion-refresher>
-        <div class="list card" ng-repeat="photo in pics" id="{{photo.id}}" style="box-shadow:none;border-bottom:1px solid gray ">
+        <div class="list card" ng-repeat="photo in pics | orderBy: 'uploaded'" id="{{photo.id}}" style="box-shadow:none;border-bottom:1px solid gray ">
           <div class="row">
             <div class="col">
               <div class="item item-avatar item-text-wrap" style="border-bottom:none">
@@ -20,7 +20,7 @@
           </div>
             <div class="row no-padding">
                 <div class="col col-20 text-right">
-                    <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" >{{photo.uploaded}}</span>
+                    <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" >{{photo.uploaded | date: 'medium'}}</span>
 
 
                 </div>
@@ -61,7 +61,7 @@
             <div class="item item-image" style="position:relative">
                 <img ng-src="{{photo.picUrl}}" style="position:relative" on-double-tap="ratePicture(photo.id,1,myToken)">
                 <!-- TODO get image from user-->
-                <img ng-if="animIN == photo.id" class="animated rollIn" src="img/Star%20Filled%201.png" style="height:50%;position:absolute;left:30%;top:20%;box-shadow:none">
+                <img ng-if="animIN == photo.id" class="animated rollIn" src="img/Star%20Filled%201.png" style="height:100px;position:absolute;left:35%;top:25%;box-shadow:none">
 
             </div>
             <div class="row no-padding">
