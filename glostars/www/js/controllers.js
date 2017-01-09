@@ -110,9 +110,10 @@ angular.module('starter.controllers', ['ngResource'])
 
         //var date = new Date();
         //date = $filter('date')(date, "dd/MM/yyyy");
-        //console.log(date);
+        //console.log("fast login");
 
        if(token !== null && username !== null){
+         console.log("fast login check");
           if(AuthService.checkToken(token, tokenExpiry)){
 
             //save user id before entering the app
@@ -121,7 +122,10 @@ angular.module('starter.controllers', ['ngResource'])
                   var myUser = usersFactory.getUser();
                   $localStorage.storeObject('userid', myUser.userId);
                   $state.go('app.home');
+
               });
+          } else {
+              //console.log("token: " + token + " username: " + username);
           }
 
        }
@@ -180,7 +184,7 @@ angular.module('starter.controllers', ['ngResource'])
 
     $scope.createAcc = function(){
         console.log($scope.userinfo);
-        
+
         RegisterService.createAccount($scope.userinfo.email, $scope.userinfo.email, $scope.userinfo.firstname, $scope.userinfo.bday.getFullYear(), $scope.userinfo.bday.getMonth()+1, $scope.userinfo.bday.getDate(), $scope.userinfo.sex, $scope.userinfo.lastname, $scope.userinfo.password)
         .then(function success(response){
 
@@ -290,7 +294,7 @@ $rootScope, CommentFactory){
                         $scope.refreshing = false;
                       }
 
-                  }, 3000);
+                  }, 2000);
 
 
                   $rootScope.$on('pictures-failed',function(event, args){
@@ -316,6 +320,11 @@ $rootScope, CommentFactory){
 
     $scope.doRefresh();
 
+
+    $scope.voteAnim = 0;
+    $scope.vote = function(id){
+      $scope.voteAnim = id;
+    };
 
     //----------------------------------------------------------//
 
@@ -532,7 +541,8 @@ $rootScope, CommentFactory){
 
       usersFactory.searchUser(null, $scope.myToken, $stateParams.id)
           .then(function success(res){
-            $scope.user = usersFactory.getUser();
+            //$scope.user = ;
+            $scope.user = picsFactory.replacePic_4(usersFactory.getUser());
             console.log('my user is');
             console.log($scope.user);
 
@@ -541,6 +551,7 @@ $rootScope, CommentFactory){
             usersFactory.searchUser(null, $scope.myToken, $scope.myId)
               .then(function successCallback(res){
                   $scope.me = usersFactory.getUser();
+                  $scope.me = picsFactory.replacePic_4($scope.me);
               });
 
             $scope.followers = null;
@@ -981,6 +992,7 @@ $rootScope, CommentFactory){
             $ionicLoading.hide();
             //$scope.pics = competitionFactory.getPics();
             var newpg = competitionFactory.getPics();
+            newpg = picsFactory.replacePic_2(newpg);
             for(var i = newpg.length-1; i >= 0; i--){
               $scope.pics.push(newpg[i])
 
@@ -1185,13 +1197,14 @@ $rootScope, CommentFactory){
 
 .controller('SearchCtrl',['$scope','usersFactory','$ionicModal',
 '$localStorage','picsFactory','$rootScope','$anchorScroll','$ionicScrollDelegate',
-'$timeout','$state','$location','$ionicModal','$ionicLoading','CommentFactory',
+'$timeout','$state','$location','$ionicModal','$ionicLoading','CommentFactory','HashtagService','$stateParams',
  function($scope, usersFactory, $ionicModal, $localStorage,
     picsFactory, $rootScope, $anchorScroll,
     $ionicScrollDelegate, $timeout, $state, $location, $ionicModal, $ionicLoading,
-    CommentFactory){
+    CommentFactory, HashtagService, $stateParams){
 
 
+    $scope.$state = $state;
     $scope.searchBox = null;
     $scope.tab = 1;
     $scope.searchText = "Search users here";
@@ -1221,6 +1234,20 @@ $rootScope, CommentFactory){
         $scope.searching = true;
 
         if($scope.searchBox !== null){
+          var arr = Array.from($scope.searchBox);
+          if(arr[0] == '#'){
+            arr.splice(0,1);
+            //in case we're looking for hashtags
+
+            console.log('looking for hashtags with: ' + arr.join(""));
+            HashtagService.searchHashtags(arr.join(""), $scope.myToken)
+              .then(function successCallback(res){
+                  $scope.hashtags = HashtagService.getSearchedHash();
+                  console.log($scope.hashtags);
+              });
+          }
+          else{
+            //in case we're looking for people
             usersFactory.findUserByName($scope.searchBox, $scope.myToken)
               .then(function successCallback(res){
                     $scope.users = usersFactory.getUserSearchList();
@@ -1231,9 +1258,36 @@ $rootScope, CommentFactory){
                     $scope.searching = false;
                     $scope.searchText = "no results found";
               });
+
+          }
+
+
         };
 
     };
+
+
+    $scope.HashPics = [];
+    $scope.goToHash = function(hashtag){
+      var arr = Array.from(hashtag);
+      arr.splice(0,1);
+
+      $state.go('app.hashtagFeed', {id:(arr.join(""))});
+
+
+
+    };
+    /*
+    if($scope.$state.current.name === 'app.picture'){
+       console.log('we are in app.picture');
+        picsFactory.getSinglePic($stateParams.id, myUserToken)
+          .then(function successCallback(res){
+              $scope.photo = picsFactory.returnSinglePic();
+
+
+          });
+    }*/
+
 
     $scope.refresh = function(loadMore){
       $scope.refreshing = true;
@@ -1248,32 +1302,45 @@ $rootScope, CommentFactory){
                     template: '<p>Loading...</p><ion-spinner></ion-spinner>'
                 });
       }
-      picsFactory.getPublicPictures(pags_number, $scope.myToken)
-        .then(function successCallback(res){
+      if($scope.$state.current.name === 'app.hashtagFeed'){
+          HashtagService.LoadHashResults($stateParams.id, $scope.myToken)
+            .then(function successCallback(res){
+              console.log($stateParams);
+                $ionicLoading.hide();
+                $scope.HashPics = HashtagService.getSearchedHash();
+                $scope.HashPics = picsFactory.replacePic_2($scope.HashPics);
 
-            $ionicLoading.hide();
+                console.log($scope.HashPics);
+        });
+      } else{
+        picsFactory.getPublicPictures(pags_number, $scope.myToken)
+          .then(function successCallback(res){
 
-            var newPics = picsFactory.getPublic();
-            newPics = picsFactory.replacePic_2(newPics);
+              $ionicLoading.hide();
 
-            for(var i = 0; i < newPics.length; i++){
+              var newPics = picsFactory.getPublic();
+              console.log(newPics);
+              newPics = picsFactory.replacePic_2(newPics);
 
-              $scope.pics.push(newPics[i]);
-            }
+              for(var i = 0; i < newPics.length; i++){
 
-            $timeout(function(){
-
-              if($scope.pics.length > 0){
-                console.log('infinte scroll invoked, pgs:' + pags_number);
-                $scope.refreshing = false;
+                $scope.pics.push(newPics[i]);
               }
 
-            }, 3000);
+              $timeout(function(){
 
-        }).finally(function() {
-         // Stop the ion-refresher from spinning
-         $scope.$broadcast('scroll.refreshComplete');
-       });
+                if($scope.pics.length > 0){
+                  console.log('infinte scroll invoked, pgs:' + pags_number);
+                  $scope.refreshing = false;
+                }
+
+              }, 3000);
+
+          }).finally(function() {
+           // Stop the ion-refresher from spinning
+           $scope.$broadcast('scroll.refreshComplete');
+         });
+      }
 
        usersFactory.searchUser(null, $scope.myToken, $scope.myId)
            .then(function success(res){
@@ -1450,10 +1517,12 @@ $rootScope, CommentFactory){
 
 .controller('FooterCtrl',['$scope','$ionicModal','$ionicPopover','AuthService','$state','usersFactory',
 'NotificationService','$localStorage','$rootScope','$ionicHistory','$cordovaCamera','$ionicPlatform',
-'$cordovaImagePicker', '$ionicPopup','UploadFactory','$timeout','picsFactory', '$stateParams','CommentFactory'
+'$cordovaImagePicker', '$ionicPopup','UploadFactory','$timeout','picsFactory', '$stateParams','CommentFactory',
+ '$cordovaLocalNotification'
 ,function($scope,$ionicModal,$ionicPopover, AuthService, $state, usersFactory,
   NotificationService, $localStorage, $rootScope, $ionicHistory, $cordovaCamera, $ionicPlatform,
-   $cordovaImagePicker, $ionicPopup, UploadFactory, $timeout, picsFactory, $stateParams, CommentFactory){
+   $cordovaImagePicker, $ionicPopup, UploadFactory, $timeout, picsFactory, $stateParams, CommentFactory,
+  $cordovaLocalNotification){
 
     $scope.$state = $state;
     console.log($scope.$state.current.name);
@@ -1476,9 +1545,10 @@ $rootScope, CommentFactory){
 
 
     var myUserToken = $localStorage.getObject('userToken', null);
-    var myUsername = AuthService.getUsername();
+    var myUsername = $localStorage.getObject('userName', null);
     $scope.myId = $localStorage.getObject('userid', null);
     $scope.me = $localStorage.getObject('userData', null);
+
 
 
     $scope.activityNotifications = [];
@@ -1494,6 +1564,8 @@ $rootScope, CommentFactory){
     };
 
     $scope.updateNotifs = function(){
+
+
       console.log($scope.myId);
       NotificationService.getNotifications($scope.myId, myUserToken)
         .then(function successCallback(res){
@@ -1561,14 +1633,6 @@ $rootScope, CommentFactory){
 
     $scope.getNotifs();
 
-    $scope.setAsSeen = function(userId, token, indexes_act, indexes_followers){
-          NotificationService.markAsSeen(userId, token, indexes_act, indexes_followers)
-            .then(function successCallback(res){
-                $scope.updateNotifs();
-            });
-
-    };
-
 
 
     $scope.seePhotoInNewPage = function(picId, description){
@@ -1604,12 +1668,15 @@ $rootScope, CommentFactory){
         if($scope.unseen.amount > 0){
           if($scope.tab == 1){
               if($scope.unseen.activity > 0){
-                  $scope.setAsSeen($scope.myId, myUserToken, $scope.unseen.activityIndexes, []);
+                  NotificationService.activityNotifsSeen(myUserToken);
+                  $scope.updateNotifs();
+
               }
           }
           else if($scope.tab == 2){
               if($scope.unseen.follower > 0){
-                  $scope.setAsSeen($scope.myId, myUserToken, [], $scope.unseen.followerIndexes);
+                  NotificationService.userNotifsSeen(myUserToken);
+                  $scope.updateNotifs();
               }
           }
         }
@@ -1753,7 +1820,8 @@ $rootScope, CommentFactory){
     $scope.message = {"data": ""};
     $scope.loading = false;
 
-    $scope.addComment = function(picId, myUserToken){
+    $scope.myToken = $localStorage.getObject('userToken', null);
+    $scope.addComment = function(picId, token){
         if ($scope.message.data !== ""){
           $scope.loading = true;
 
@@ -1785,7 +1853,6 @@ $rootScope, CommentFactory){
 
 
     //----------------- picture upload ---------------------//
-    /*
       $ionicModal.fromTemplateUrl('templates/photoup.html',{
           scope: $scope
       }).then(function(modal){
@@ -1804,7 +1871,49 @@ $rootScope, CommentFactory){
       };
 
       $scope.imgSrc = null;
+
+      // the following function must be commented for the app to work on browser
+      /*
       $ionicPlatform.ready(function() {
+
+          //-----------background operations----------//
+          cordova.plugins.backgroundMode.enable();
+
+          cordova.plugins.backgroundMode.onactivate = function(){
+
+            cordova.plugins.backgroundMode.configure({
+              silent: true
+            });
+
+              setTimeout(function () {
+                // Modify the currently displayed notification
+                $scope.updateNotifs();
+
+                if($scope.unseen.amount > 0){
+                    if($scope.unseen.activity > 0){
+
+                      cordova.plugins.notification.local.schedule({
+                        title: "Glostars",
+                        message: $scope.activityNotifications[$scope.unseen.activityIndexes[0]].name + " " +  $scope.activityNotifications[$scope.unseen.activityIndexes[0]].description,
+                        icon: $scope.activityNotifications[$scope.unseen.activityIndexes[0]].picUrl
+                      });
+
+                    }
+
+                    else if($scope.unseen.follower > 0){
+                      cordova.plugins.notification.local.schedule({
+                        title: "Glostars",
+                        message: $scope.followerNotifications[$scope.unseen.followerIndexes[0]].name + " " +  $scope.followerNotifications[$scope.unseen.followerIndexes[0]].description,
+                        icon: $scope.followerNotifications[$scope.unseen.followerIndexes[0]].profilePicURL
+                      });
+
+                    }
+                  }
+
+              }, 5000);
+            };
+            //-----------background operations----------//
+
             var options = {
                 quality: 90,
                 destinationType: Camera.DestinationType.DATA_URL,
@@ -1834,7 +1943,9 @@ $rootScope, CommentFactory){
                 quality: 50
             };
             $scope.pickImage = function() {
-              $cordovaImagePicker.getPictures(pickoptions)
+              $cordovaIma};
+};
+gePicker.getPictures(pickoptions)
                 .then(function (results) {
                     for (var i = 0; i < results.length; i++) {
                         console.log('Image URI: ' + results[i]);
@@ -1847,7 +1958,8 @@ $rootScope, CommentFactory){
                   $scope.openPicSetup();
                 }
             };
-        });
+        }); */
+        /*
         $scope.pictureMode = function(){
 
             $scope.showFloatingMenu = false;
@@ -1897,7 +2009,8 @@ $rootScope, CommentFactory){
             } else {
                 $scope.closePicSetup();
             }
-        }; */
+        };
+        */
         //----------------- picture upload ---------------------//
 
 

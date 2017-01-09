@@ -2,14 +2,26 @@
     <ion-header-bar class="bar bar-header bar-positive" on-drag-down="closeModal()">
         <h1 class="title">Notifications</h1>
         <button class="button button-clear button-primary" ng-click="closeModal()">Back</button>
+
     </ion-header-bar>
+
+    <ion-tabs class="tabs-striped tabs-stable">
+
+    <ion-tab ng-class="{active: isSelected(1)}" title="Notifications" ng-click="select(1)" badge="unseen.activity" badge-style="badge-assertive"></ion-tab>
+    <ion-tab ng-class="{active: isSelected(2)}" title="Followers" ng-click="select(2)" badge="unseen.follower" badge-style="badge-assertive"></ion-tab>
+
+  </ion-tabs>
     <ion-content class="padding">
+
+
         <div class="list">
             <!-- switch views tab  -->
+            <!--
             <div class="button-bar botton-block">
                 <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(1)]" ng-click="select(1)" style="padding-top:5px"><p>Notifications <span class="badge badge-assertive" ng-if="unseen.activity !== 0">{{unseen.activity}}</span></p></a>
                 <a class="button" ng-class="{true: 'buttonGrey', false: 'buttonWhite'}[isSelected(2)]" style="padding-top:5px" ng-click="select(2)"><p>Followers <span class="badge badge-assertive" ng-if="unseen.follower !== 0">{{unseen.follower}}</span></p></a>
             </div>
+            -->
             <br>
             <div ng-if="isSelected(1)">
                 <div class="list" ng-repeat="notification in activityNotifications" ng-if="loading == false">

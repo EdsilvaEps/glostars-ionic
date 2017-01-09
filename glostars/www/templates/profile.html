@@ -54,8 +54,8 @@
       -->
         <!-- photos buttom (list view) -->
         <div ng-if="isSelected(1)">
-          <div class="tabs tabs-default static" style="border-bottom: 1px solid black;">
-              <a class="tab-item" ng-click="select_2nd(1)" style="background-color:white; border-right:1px solid black;">Mutual Followers</a>
+          <div class="tabs tabs-default static" style="border-bottom: 1px solid black">
+              <a class="tab-item" ng-click="select_2nd(1)" style="background-color:white; border-right:1px solid black;">Mutual</a>
               <a class="tab-item" ng-click="select_2nd(2)" style="background-color:white; ">Public</a>
               <a class="tab-item" ng-click="select_2nd(3)" style="background-color:white; border-left:1px solid black">Competition</a>
 
@@ -86,14 +86,14 @@
                 </div>
             </div>
 
-            <div class="row" ng-repeat="photo in competitionPics.pics | orderBy: 'uploaded'" ng-if="$index % 2 === 0 && isSelected_2nd(3) && isSelected(1)">
+            <div class="row" ng-repeat="photo in competitionPics.pics | orderBy: 'uploaded'" ng-if="$index % 2 === 0 && isSelected_2nd(2) && isSelected(1)">
                 <div class="col col-50 item item-image" ng-if="$index+1 < competitionPics.pics.length" ng-click="switchToFeed(photo.id, user.userId)">
                     <img ng-src="{{ competitionPics.pics[$index].picUrl}}" class="profileGallery" >
                 </div>
                 <div class="col col-50 item item-image" ng-if="$index+1 < competitionPics.pics.length" ng-click="switchToFeed(photo.id, user.userId)">
                     <img ng-src="{{competitionPics.pics[$index+1].picUrl}}" class="profileGallery" >
                 </div>
-                <div ng-if="competitionPics.pics.length == 0">
+                <div ng-if="competitionPics.pics.length === 0">
                   <p>no competition pictures to show</p>
                 </div>
             </div>

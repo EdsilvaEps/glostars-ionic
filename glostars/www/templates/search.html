@@ -5,8 +5,8 @@
           <input type="search" placeholder="Search" ng-model="searchBox" ng-change="changeMe()">
           <i class="icon ion-ios-search placeholder-icon" style="font-size:20px" ng-click=""></i>
         </label>
-        <button class="button button-assertive" style="box-shadow: 1px 1px 1px 1px; background-color:transparent" ng-click="select(1)">
-          <span>Recent</span>
+        <button class="button button-small button-assertive" style="box-shadow: 1px 1px 1px 1px; background-color:transparent;font-size:15px;font-family:'Times New Roman';padding-right:5px;padding-left:5px;" ng-click="select(1)">
+          Recent
         </button>
       </div>
 
@@ -33,7 +33,7 @@
 
 
       <div ng-if="isSelected(2)">
-          <div class="list">
+          <div class="list" ng-if="users.length > 0">
               <a class="item item-avatar" ng-repeat="person in users" ui-sref="app.profile({id:person.id})" ng-if="users.length > 0">
                   <img src="{{person.profilemediumPath}}">
                   <h2>{{person.name}} {{person.lastName}}</h2>
@@ -44,6 +44,12 @@
                 <ion-spinner></ion-spinner>
               </div>
               <a ng-if="users.length == 0 && searching == false"> {{searchText}}</a>
+              <hr>
+          </div>
+          <div class="list" ng-if="hashtags.length > 0">
+              <a class="item" ng-repeat="hash in hashtags" ng-click="goToHash(hash)">
+                <h2>{{hash}}</h2>
+              </a>
           </div>
       </div>
 

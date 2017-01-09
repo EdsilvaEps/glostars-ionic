@@ -217,6 +217,20 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       }
     }
   })
+
+  .state('app.hashtagFeed',{
+      url:'/hashtagFeed/:id',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/hashtagFeed.html',
+          controller: 'SearchCtrl'
+        },
+        'footer@': {
+                templateUrl:'templates/bottomMenu.html',
+                controller:'FooterCtrl'
+        }
+      }
+  })
 /*
   .state('app.photoup', {
     url: '/photoup',

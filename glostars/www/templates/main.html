@@ -1,4 +1,4 @@
-<ion-view>
+  <ion-view>
 
 
     <ion-content lazy-scroll delegate-handle="content" class="has-header">
@@ -9,6 +9,9 @@
 
 
         <div class="list card" ng-repeat="photo in pics | orderBy: uploaded" style="box-shadow:none;border-bottom:1px solid gray ">
+          <div class="item item-divider" style="background-color: #ebebe0;font-size:18px" ng-if="photo.isfeatured">
+            Picture in Competition <i class="icon ion-heart-broken" style="padding-top:30px;padding-left:10px"> </i>
+          </div>
           <div class="row">
             <div class="col">
 
@@ -29,6 +32,7 @@
                   <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" >{{photo.uploaded | date: 'medium'}}</span>
               </div>
           </div>
+          <br>
 
           <div class="row">
             <!-- standard picture wrapper -->
@@ -45,8 +49,12 @@
                   <p style="padding-left:10px">{{photo.starsCount}}</p>
                 </div>
             </div>
-            <!-- competition picture wrapper -->
+            <!-- competition picture wrapper model 1-->
+            <!--
             <div class="col col-75 col-offset-33" ng-if="photo.isCompeting" style="padding-left:35px">
+            -->
+              <!-- individual stars -->
+                <!--
                 <div class="imgContainer" style="display:inline">
                     <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="photo.isCompeting" >
                     <img src="img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="(photo.privacy === 'public') && (!photo.isCompeting)">
@@ -75,11 +83,51 @@
                   <p style="padding-left:10px">{{photo.starsCount}}</p>
                 </div>
             </div>
+              -->
+
+
+
+            <!-- /competition picture wrapper model 1-->
+            <div class="col col-100" ng-if="photo.isCompeting">
+                <div class="imgContainer" style="display:inline">
+                  <!-- vote button -->
+                  <button class="button button-small button-light" style="height:5px;padding-right:5px;padding-left:5px;font-size:15px;font-family:'Times New Roman';border: solid 1px grey;border-radius: 30;box-shadow:none;" ng-click="vote(photo.id)">
+                    <span ng-if="voteAnim !== photo.id">Vote!</span><!-- <img src="img/vote_btn_img.png" style="height:40px; box-shadow:none"> -->
+                    <i class="icon ion-heart-broken" style="" ng-if="voteAnim == photo.id">{{photo.starsCount}}</i>
+                  </button>
+                </div>
+                <div ng-if="voteAnim == photo.id">
+                  <div class="imgContainer animated rollIn"  style="display:inline;padding-left:8px"  ng-click="ratePicture(photo.id,1,myToken)">
+                      <img src="img/Star_empty%20Ts.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) < 1">
+                      <img src="img/Star%20Filled%201s.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) >= 1">
+                  </div>
+                  <div class="imgContainer animated rollIn"  style="display:inline;padding-left:8px" ng-click="ratePicture(photo.id,2,myToken)" ng-if="photo.isCompeting">
+                      <img src="img/Star_empty%20Ts.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) < 2">
+                      <img src="img/Star%20Filled%201s.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) >= 2">
+                  </div>
+                  <div class="imgContainer animated rollIn"  style="display:inline;padding-left:8px" ng-click="ratePicture(photo.id,3,myToken)" ng-if="photo.isCompeting">
+                      <img src="img/Star_empty%20Ts.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) < 3">
+                      <img src="img/Star%20Filled%201s.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) >= 3">
+                  </div>
+                  <div class="imgContainer animated rollIn"  style="display:inline;padding-left:8px" ng-click="ratePicture(photo.id,4,myToken)" ng-if="photo.isCompeting">
+                      <img src="img/Star_empty%20Ts.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) < 4">
+                      <img src="img/Star%20Filled%201s.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) >= 4">
+                  </div>
+                  <div class="imgContainer animated rollIn"  style="display:inline;padding-left:8px" ng-click="ratePicture(photo.id,5,myToken)" ng-if="photo.isCompeting">
+                      <img src="img/Star_empty%20Ts.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) < 5">
+                      <img src="img/Star%20Filled%201s.png" style="height:33px;box-shadow:none" ng-if="dejaAime(photo.id) == 5">
+                  </div>
+                </div>
+            </div>
+
+            <!-- competition picture wrapper model 2 -->
+
+
 
           </div>
 
-          <div class="item item-image" style="position:relative">
-              <img image-lazy-src="{{photo.picUrl}}" style="position:relative" on-double-tap="ratePicture(photo.id,1,myToken)" image-lazy-loader="spiral" image-lazy-distance-from-bottom-to-load="100">
+          <div class="item item-image image-loader-container" style="position:relative">
+              <img image-lazy-src="{{photo.picUrl}}" image-lazy-background-image="false" style="position:relative; background-color:grey;background-size:100%" on-double-tap="ratePicture(photo.id,1,myToken)" image-lazy-loader="spiral" image-lazy-distance-from-bottom-to-load="10">
               <!-- TODO get image from user-->
               <img ng-if="animIN == photo.id" class="animated rollIn" src="img/Star%20Filled%201.png" style="height:100px;position:absolute;left:35%;top:25%;box-shadow:none">
 

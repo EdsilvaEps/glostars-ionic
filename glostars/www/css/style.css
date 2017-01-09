@@ -14,6 +14,12 @@
     padding-bottom: 40px;
 }
 
+.pad-without-top {
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
+}
+
 .logimg {
     padding-left: 80px;
     padding-top: 50px;
@@ -102,6 +108,7 @@
 
 .ion-heart-broken:before {
     content: url('../img/icons_s/Competition_Ash.png')!important;
+    font-size: 10px;
 }
 
 .ion-ios-play:before {

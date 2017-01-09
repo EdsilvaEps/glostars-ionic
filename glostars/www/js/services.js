@@ -1,4 +1,4 @@
-'use stric';
+  'use stric';
 
 // run the server before starting to watch the project:
 // on the terminal, type: sudo json-server --watch db.json
@@ -354,23 +354,28 @@ angular.module('starter.services',['ngResource'])
             };
 
             var mutualPics = [];
+            var ListPics = {
+                ListPhoto:[]
+            };
             pics.getMutualPictures = function(userid, count, token) {
 
                 console.log('getting mutual followers pics');
 
                 return $http({
-                    method:'GET',
+                    method:'POST',
                     url: baseURL + "api/images/mutualpic/" + userid + "/" + count,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token
-                    }
+                    },
+                    data: ListPics
 
                 }).then(function successCallback(response){
 
                     console.log('mutual pics');
                     console.log(response.data);
-                    mutualPics = response.data.resultPayload.mutualFollowerPictures;
+                    mutualPics = response.data.resultPayload.data;
+                    ListPics.ListPhoto = [];
                     if(response.data.resultPayload == null){
                       $rootScope.$broadcast('pictures-failed');
                     }
@@ -384,7 +389,12 @@ angular.module('starter.services',['ngResource'])
 
             };
 
+
             pics.getMutual = function(){
+                for(var i = 0; i <= (mutualPics.length - 1); i ++){
+                    ListPics.ListPhoto.push(mutualPics[i].id);
+                }
+                console.log(ListPics);
                 $rootScope.$broadcast('pictures-loaded');
                 return mutualPics;
             };
@@ -490,7 +500,7 @@ angular.module('starter.services',['ngResource'])
                   console.log(res.data);
 
              }, function errorCallback(res){
-                  console.log('ERROR WITH DELETING COMMENT');
+                  console.log('ERROR WITH DELETING COMMENT');84
              });
           };
 
@@ -553,10 +563,10 @@ angular.module('starter.services',['ngResource'])
               for(var i = 0; i <= list.length-1; i ++){
                   //console.log(list[i].profilemediumPath);
 
-                  if(list[i].poster.profilePicURL == "/Content/Profile/MiniThumbs/male.jpg"){
+                  if(list[i].poster.profilePicURL == "/Content/Profile/Thumbs/male.jpg"){
                         list[i].poster.profilePicURL = noPicturePathMale;
 
-                  } else if(list[i].poster.profilePicURL == "/Content/Profile/MiniThumbs/female.jpg"){
+                  } else if(list[i].poster.profilePicURL == "/Content/Profile/Thumbs/female.jpg"){
                         list[i].poster.profilePicURL = noPicturePathFemale;
                   }
 
@@ -587,6 +597,28 @@ angular.module('starter.services',['ngResource'])
               console.log('list:');
               console.log(list);
               return list;
+
+          };
+
+          pics.replacePic_4 = function(obj){ // for profile pics
+              var noPicturePathMale = "Content/Profile/Thumbs/male.png";
+              var noPicturePathFemale = "Content/Profile/Thumbs/female.png";
+
+
+              console.log('replacing pics');
+              if(obj.profilePicUrl == "/Content/Profile/Thumbs/male.jpg"){
+                    console.log('replace male');
+                    obj.profilePicUrl = noPicturePathMale;
+
+              } else if(obj.profilePicUrl == "/Content/Profile/Thumbs/female.jpg"){
+                    console.log('replace female');
+                    obj.profilePicUrl = noPicturePathFemale;
+              }
+
+
+              console.log('object:');
+              console.log(obj);
+              return obj;
 
           };
 
@@ -711,19 +743,26 @@ angular.module('starter.services',['ngResource'])
                     year: new Date(expires).getFullYear()
                 };
 
-                if(now.year <= tokenExpiry.year){
+                if(now.year == tokenExpiry.year){
                     if(now.month == tokenExpiry.month){
                         if(now.day < tokenExpiry.day){
                           console.log('token valid');
                           return true;
-                        } else return false;
+                        } else{
+                            console.log("token invalid: outdated by: " + (now.day - tokenExpiry.day)  + " day(s)");
+                            return false;
+                        }
                     } else if(now.month < tokenExpiry.month){
                       console.log('token valid');
                       return true;
                     } else {
+                      console.log('token invalid: outdated by: ' + (now.month - tokenExpiry.month) + ' month(s)');
                       return false;
                     }
-                } else return false;
+                } else if(now.year < tokenExpiry.year){
+                    return true;
+                }
+                else return false;
             };
 
 
@@ -1038,6 +1077,44 @@ angular.module('starter.services',['ngResource'])
                 followerNotifications: []
             };
 
+            //will set to seen user followers notifications
+            notifications.userNotifsSeen = function(token){
+              return $http({
+                  method: 'POST',
+                  url: baseURL + "api/notifications/userFollowSeen",
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  }
+              }).then(function successCallback(response){
+                    console.log('notifications seen');
+                    console.log(response);
+
+              }, function errorCallback(response){
+                  console.log('ERROR IN userNotifsSeen SERVICE');
+                  console.log(response.status);
+              });
+            };
+
+            //will set to seen user activity notifications
+            notifications.activityNotifsSeen = function(token){
+              return $http({
+                  method: 'POST',
+                  url: baseURL + "api/notifications/userActivitySeen",
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                  }
+              }).then(function successCallback(response){
+                    console.log('notifications seen');
+                    console.log(response);
+
+              }, function errorCallback(response){
+                  console.log('ERROR IN activityNotifsSeen SERVICE');
+                  console.log(response.status);
+              });
+            };
+            /*
             notifications.markAsSeen = function(userId, token, activityNotifs, followerNotifs){
                 seenNotifs = {
                     activityNotifications: activityNotifs,
@@ -1062,9 +1139,59 @@ angular.module('starter.services',['ngResource'])
                       console.log(response.status);
                 });
             };
-
+            */
 
             return notifications;
+
+        }])
+
+        .factory('HashtagService',['baseURL', '$http',  function(baseURL, $http){
+            var results = [];
+            var hash = {};
+
+            hash.searchHashtags = function(hashtag, token){
+                return $http({
+                    method: 'GET',
+                    url: baseURL + "api/images/GetSimilarHashTag?searchTag=" + hashtag,
+                    headers:{
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
+                }).then(function successCallback(response){
+                    console.log('hashtags retrieved');
+                    results = response.data.resultPayload;
+
+                }, function errorCallback(response) {
+                    console.log('ERROR RETRIEVING HASHTAGS');
+                    console.log(response);
+                });
+            };
+
+            hash.getSearchedHash = function(){
+                return results;
+            };
+
+            hash.LoadHashResults = function(hashtag, token){
+              var page = 1;
+              return $http({
+                  method: 'GET',
+                  url: baseURL + "api/images/HashTagPhoto?searchTag=" + hashtag + "&count=" + page,
+                  headers:{
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + token
+                  }
+              }).then(function successCallback(response){
+                  console.log('hashtag pics retrieved');
+                  results = response.data.resultPayload;
+                  console.log(results);
+
+              }, function errorCallback(response) {
+                  console.log('ERROR RETRIEVING HASHTAG PICS');
+                  console.log(response);
+              });
+            };
+
+            return hash;
 
         }])
 
@@ -1176,6 +1303,7 @@ angular.module('starter.services',['ngResource'])
         }])
 
 
+
         .factory('PictureService',['$cordovaCamera', 'cordovaImagePicker', function($cordovaCamera, $cordovaImagePicker){
 
             var image = {};
@@ -1250,5 +1378,7 @@ angular.module('starter.services',['ngResource'])
                 }
             };
         }])
+
+
 
 ;

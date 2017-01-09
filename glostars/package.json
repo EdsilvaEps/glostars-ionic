@@ -3,6 +3,7 @@
   "version": "1.1.1",
   "description": "glostars: An Ionic project",
   "dependencies": {
+    "@ionic/cloud-angular": "^0.8.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-jshint": "^2.0.1",
