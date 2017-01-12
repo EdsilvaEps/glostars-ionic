@@ -1,7 +1,7 @@
 <ion-view>
 
 
-  <ion-content class="has-header">
+  <ion-content class="has-header has-footer">
 
       <div class="list card" ng-repeat="photo in HashPics | orderBy: uploaded" style="box-shadow:none;border-bottom:1px solid gray ">
         <div class="item item-divider" style="background-color: #ebebe0;font-size:18px" ng-if="photo.isfeatured">
@@ -122,10 +122,10 @@
         </div>
 
         <div class="item item-image image-loader-container" style="position:relative">
-            <img image-lazy-src="{{photo.picUrl}}" image-lazy-background-image="false" style="position:relative; background-color:grey;background-size:100%" on-double-tap="ratePicture(photo.id,1,myToken)" image-lazy-loader="spiral" image-lazy-distance-from-bottom-to-load="10">
+            <img ng-src="{{photo.picUrl}}" style="position:relative; background-color:grey;background-size:100%">
             <!-- TODO get image from user-->
-            <img ng-if="animIN == photo.id" class="animated rollIn" src="img/Star%20Filled%201.png" style="height:100px;position:absolute;left:35%;top:25%;box-shadow:none">
-
+            <!--<img ng-if="animIN == photo.id" class="animated rollIn" src="img/Star%20Filled%201.png" style="height:100px;position:absolute;left:35%;top:25%;box-shadow:none">
+            -->
         </div>
         <div class="row no-padding">
             <div class="col text-left" ng-click="openPopover($event)">

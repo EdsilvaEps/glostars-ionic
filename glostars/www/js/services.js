@@ -984,6 +984,8 @@ angular.module('starter.services',['ngResource'])
 
             var upload = {};
 
+            var callBack = [];
+
             upload.UploadPicture = function(description, isCompeting, privacy, imgUri, token){
 
               $ionicLoading.show({
@@ -1012,20 +1014,28 @@ angular.module('starter.services',['ngResource'])
                         $ionicLoading.hide();
 
                          console.log('SUCCESSFULLY UPLOADED');
-                         $rootScope.broadcast('upload-success');
+                         console.log(response);
+                         //$rootScope.broadcast('upload-success');
+                         callBack = response.data;
                         //return response;
 
                 }, function errorCallback(response){
                         $ionicLoading.hide();
 
                         console.log("ERROR IN PICTURE UPLOAD");
-                        $rootScope.broadcast('upload-fail');
+                        //$rootScope.broadcast('upload-fail');
+                        callBack = response.data
                         //res = response.data;
                         //console.log(response);
                 });
 
 
             };
+
+            upload.getCallBack = function(){
+                return callBack;
+            };
+
 
             return upload;
 

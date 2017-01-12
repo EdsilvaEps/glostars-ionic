@@ -207,7 +207,22 @@ angular.module('starter.controllers', ['ngResource'])
 }])
 
 
-.controller('SettingsCtrl', function($scope, $localStorage, $state, AuthService){
+.controller('SettingsCtrl', function($scope, $localStorage, $state, AuthService, UploadFactory){
+
+    var token = $localStorage.getObject('userToken', null);
+
+    $scope.testPic = {
+        uri:null,
+        privacy:''
+    };
+
+    $scope.testSend = function(){
+        console.log("pic to send:");
+        console.log("uri: " + $scope.testPic.uri);
+        console.log("privacy: " + $scope.testPic.privacy);
+        UploadFactory.UploadPicture('test purposes pic', false, $scope.testPic.privacy, $scope.testPic.uri, token);
+    };
+
     $scope.logOut = function(){
 
         $localStorage.removeItem('userToken');
@@ -218,6 +233,8 @@ angular.module('starter.controllers', ['ngResource'])
         $state.go('app.login');
 
     };
+
+
 
 })
 
@@ -1877,6 +1894,7 @@ $rootScope, CommentFactory){
       $ionicPlatform.ready(function() {
 
           //-----------background operations----------//
+
           cordova.plugins.backgroundMode.enable();
 
           cordova.plugins.backgroundMode.onactivate = function(){
@@ -1936,30 +1954,6 @@ $rootScope, CommentFactory){
                 }
                 //$scope.registerform.show();
             };
-            var pickoptions = {
-                maximumImagesCount: 1,
-                width: 100,
-                height: 100,
-                quality: 50
-            };
-            $scope.pickImage = function() {
-              $cordovaIma};
-};
-gePicker.getPictures(pickoptions)
-                .then(function (results) {
-                    for (var i = 0; i < results.length; i++) {
-                        console.log('Image URI: ' + results[i]);
-                        $scope.imgSrc = results[0];
-                    }
-                }, function (error) {
-                    // error getting photos
-                });
-                if($scope.imgSrc !== null){
-                  $scope.openPicSetup();
-                }
-            };
-        }); */
-        /*
         $scope.pictureMode = function(){
 
             $scope.showFloatingMenu = false;
@@ -1999,21 +1993,22 @@ gePicker.getPictures(pickoptions)
               $scope.pictureData.privacy === "competition",
               $scope.pictureData.privacy, $scope.pictureData.imgUri,
               myUserToken).then(function successCallback(res){
+                $scope.debugText = UploadFactory.getCallBack();
                 //$scope.pictureData = null;
                 //$scope.closePicSetup();
                 //TODO: implement sharing
               });
               $scope.pictureData = null;
               $scope.imgSrc = null;
-              $scope.closePicSetup();
+              //$scope.closePicSetup();
             } else {
-                $scope.closePicSetup();
+              //  $scope.closePicSetup();
             }
         };
-        */
-        //----------------- picture upload ---------------------//
 
-
+      });
+      */
+      //----------------- picture upload ---------------------//
 }])
 
 

@@ -135,6 +135,21 @@ angular.module('starter', ['ionic','ngCordova','ionic-material','starter.control
       }
   })
 
+  //----------------test page--------------------------//
+  .state('app.testpicsend',{
+      url: '/testpicsend',
+      views:{
+          'menuContent':{
+              templateUrl: 'templates/testpicsend.html',
+              controller:'SettingsCtrl',
+          },
+          'footer@': {
+                  templateUrl:'templates/bottomMenu.html',
+                  controller:'FooterCtrl'
+          }
+      }
+  })
+
   .state('app.FAQ',{
       url: '/FAQ',
       views:{
