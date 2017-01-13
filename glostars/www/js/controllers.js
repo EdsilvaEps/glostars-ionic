@@ -1243,6 +1243,10 @@ $rootScope, CommentFactory){
 
     });
 
+    $scope.voteAnim = 0;
+    $scope.vote = function(id){
+      $scope.voteAnim = id;
+    };
 
 
     $scope.changeMe = function(){
@@ -1324,10 +1328,10 @@ $rootScope, CommentFactory){
             .then(function successCallback(res){
               console.log($stateParams);
                 $ionicLoading.hide();
-                $scope.HashPics = HashtagService.getSearchedHash();
-                $scope.HashPics = picsFactory.replacePic_2($scope.HashPics);
+                $scope.pics = HashtagService.getSearchedHash();
+                $scope.pics = picsFactory.replacePic_2($scope.pics);
 
-                console.log($scope.HashPics);
+                console.log($scope.pics);
         });
       } else{
         picsFactory.getPublicPictures(pags_number, $scope.myToken)
@@ -1486,6 +1490,9 @@ $rootScope, CommentFactory){
         return null;
 
       };
+
+
+
 
       $scope.ratePicture = function(picId, rating, token){
 
