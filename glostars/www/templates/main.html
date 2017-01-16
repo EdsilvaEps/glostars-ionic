@@ -22,25 +22,29 @@
 
                   <i ui-sref="app.profile({id:photo.poster.userId})">
                       <h2><strong>{{photo.poster.name}}</strong></h2></i>
-                      <p style="padding-top:10px">{{photo.description}}</p>
+                      <div  style="display:inline-block">
+                        <p style="padding-top:10px">{{photo.description}}<br> <img src="img/Public%20B.png" style="height:20px;box-shadow:none;float:left;margin: 0 0 0 0" ng-if="(photo.privacy === 'public') && (!photo.isCompeting)"><img src="img/Competition%20B.png" style="height:20px;box-shadow:none;float:left;margin: 0 0 0 0" ng-if="photo.isCompeting"> <span>&#8231</span><span style="color:#D1D0CE" am-time-ago="photo.uploaded"></span></p> <!--{{photo.uploaded | date: 'medium'}}-->
+
+                      </div>
+
 
               </div>
             </div>
           </div>
-          <div class="row no-padding">
+          <!-- <div class="row no-padding">
               <div class="col col-20 text-right">
                   <p style="color:#D1D0CE;"><span style="left:5%;position:absolute" >{{photo.uploaded | date: 'medium'}}</span>
               </div>
           </div>
-          <br>
+          <br> -->
 
           <div class="row">
             <!-- standard picture wrapper -->
             <div class="col col-33 col-offset-75" ng-if="!photo.isCompeting">
-                <div class="imgContainer" style="display:inline">
+                <!-- <div class="imgContainer" style="display:inline">
                     <img src="img/Competition%20B.png" style="height:20px;box-shadow:none" ng-if="photo.isCompeting" >
                     <img src="img/Public%20B.png" style="height:20px;box-shadow:none" ng-if="(photo.privacy === 'public') && (!photo.isCompeting)">
-                </div>
+                </div> -->
                 <div class="imgContainer" style="display:inline;padding-left:2px" ng-click="ratePicture(photo.id,1,myToken)">
                     <img src="img/Star_empty%20Ts.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) < 1">
                     <img src="img/Star%20Filled%201s.png" style="height:20px;box-shadow:none" ng-if="dejaAime(photo.id) >= 1">

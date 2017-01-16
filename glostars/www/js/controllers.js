@@ -240,10 +240,10 @@ angular.module('starter.controllers', ['ngResource'])
 
 
 .controller('HomeCtrl', ['$scope','usersFactory','picsFactory','$ionicModal','$ionicPopover','$timeout',
-'AuthService','$localStorage','FollowerService','competitionFactory','$rootScope','CommentFactory'
+'AuthService','$localStorage','FollowerService','competitionFactory','$rootScope','CommentFactory','moment'
 , function($scope,usersFactory,picsFactory ,$ionicModal,
 $ionicPopover,$timeout,AuthService, $localStorage, FollowerService, competitionFactory,
-$rootScope, CommentFactory){
+$rootScope, CommentFactory,moment){
 
     $scope.message = "Loading...";
     $scope.showFeed = false;
@@ -252,6 +252,8 @@ $rootScope, CommentFactory){
     $scope.animOUT = false;
     $scope.refreshing = true;
     var pags_number = 1;
+
+
 
     //-------------- getting my user data ----------------------//
 
@@ -262,7 +264,12 @@ $rootScope, CommentFactory){
     console.log($scope.myToken);
     $scope.pics = [];
 
+    $scope.testMes = {
+       text: 'hellow',
+       time: new Date()
+    };
 
+    console.log($scope.testMes.time);
 
     $scope.$on('$ionicView.enter', function(e) {
         $scope.pics = [];
